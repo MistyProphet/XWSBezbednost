@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="RTGSnalog">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ID_poruke">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="50"/>
+                            <xs:minLength value="1"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Podaci_o_bankama">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element default="AAAAAA00" name="SWIFT_banke_duznika"
+                                type="TSwift_kod_banke"/>
+                            <xs:element default="000-0000000000000-00"
+                                name="Obracunski_racun_banke_duznika" type="TBroj_Bankarskog_Racuna"/>
+                            <xs:element default="AAAAAA00" name="SWIFT_banke_poverioca"
+                                type="TSwift_kod_banke"/>
+                            <xs:element default="000-0000000000000-00"
+                                name="Obracunski_racun_banke_poverioca"
+                                type="TBroj_Bankarskog_Racuna"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Podaci_o_uplati">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Opsti_deo">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Duznik" type="TLice"/>
+                                        <xs:element name="Svrha_placanja">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:string">
+                                                  <xs:maxLength value="255"/>
+                                                  <xs:minLength value="1"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+                                        <xs:element name="Poverilac" type="TLice"/>
+                                        <xs:element name="Datum_naloga" type="xs:date"/>
+                                        <xs:element name="Datum_valute" type="xs:date"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Uplata">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element default="000-0000000000000-00"
+                                            name="Racun_duznika" type="TBroj_Bankarskog_Racuna"/>
+                                        <xs:element name="Model_zaduzenja" type="TModel"/>
+                                        <xs:element name="Poziv_na_broj_zaduzenja"
+                                            type="TPoziv_na_broj"/>
+                                        <xs:element default="000-0000000000000-00"
+                                            name="Racun_poverioca" type="TBroj_Bankarskog_Racuna"/>
+                                        <xs:element name="Model_odobrenja" type="TModel"/>
+                                        <xs:element name="Poziv_na_broj_odobrenja"
+                                            type="TPoziv_na_broj"/>
+                                        <xs:element name="Iznos">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:decimal">
+                                                  <xs:totalDigits value="15"/>
+                                                  <xs:fractionDigits value="2"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+                                        <xs:element name="Sifra_valute">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:string">
+                                                  <xs:length value="3"/>
+                                                  <xs:pattern value="[A-Z]{3}|[0-9]{3}"/>
+                                                  <xs:enumeration value="EUR"/>
+                                                  <xs:enumeration value="RSD"/>
+                                                  <xs:enumeration value="GBP"/>
+                                                  <xs:enumeration value="CHF"/>
+                                                  <xs:enumeration value="HUF"/>
+                                                  <xs:enumeration value="JPY"/>
+                                                  <xs:enumeration value="TRY"/>
+                                                  <xs:enumeration value="USD"/>
+                                                  <xs:enumeration value="AUD"/>
+                                                  <xs:enumeration value="036"/>
+                                                  <xs:enumeration value="840"/>
+                                                  <xs:enumeration value="949"/>
+                                                  <xs:enumeration value="392"/>
+                                                  <xs:enumeration value="348"/>
+                                                  <xs:enumeration value="756"/>
+                                                  <xs:enumeration value="826"/>
+                                                  <xs:enumeration value="941"/>
+                                                  <xs:enumeration value="978"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="TBroj_Bankarskog_Racuna">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{3}-\d{13}-\d{2}"/>
+            <xs:length value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TSwift_kod_banke">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{6}[A-Z0-9]{2}(X{3}|[A-Z0-9]{3})?"/>
+            <xs:minLength value="8"/>
+            <xs:maxLength value="11"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TLice">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="255"/>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TModel">
+        <xs:restriction base="xs:unsignedInt">
+            <xs:totalDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TPoziv_na_broj">
+        <xs:restriction base="xs:string">
+            <xs:length value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

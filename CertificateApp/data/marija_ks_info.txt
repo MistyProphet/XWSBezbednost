@@ -1,0 +1,9 @@
+Type: JKS
+Password: test10
+
+Alias: marija
+password: marija1
+Kljucevi RSA 1024
+
+Alias: jovan
+Sertifikat

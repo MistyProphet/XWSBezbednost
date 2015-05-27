@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/general_types"
+    xmlns:gen="http://www.project.com/general_types">
+
+    <xs:import namespace="http://www.project.com/mt102" schemaLocation="mt102.xsd"/>
+    <xs:import namespace="http://www.project.com/mt103" schemaLocation="mt103.xsd"/>
+    <xs:import namespace="http://www.project.com/mt910" schemaLocation="mt910.xsd"/>
+    <xs:import namespace="http://www.project.com/mt900" schemaLocation="mt900.xsd"/>
+    <xs:import namespace="http://www.project.com/stavka_preseka" schemaLocation="stavka_preseka.xsd"/>
+    <xs:import namespace="http://www.project.com/zaglavlje_preseka"
+        schemaLocation="zaglavlje_preseka.xsd"/>
+    <xs:import namespace="http://www/project.com/zahtev_za_izvod"
+        schemaLocation="zahtev_za_izvod.xsd"/>
+</xs:schema>

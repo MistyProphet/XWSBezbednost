@@ -24,17 +24,14 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-<jaxws:endpoint 
-		id="helloDoc" 
-		address="/HelloDocument"
-		implementor="yu.ac.ns.ftn.informatika.ws.hello.RTGSDocumentImpl"
-		wsdlLocation="WEB-INF/wsdl/HelloDocument.wsdl"/>
-
 	<jaxws:endpoint 
-		id="address" 
-		address="/AddressBook"
-		implementor="yu.ac.ns.ftn.informatika.ws.address.AddressBookImpl"
-		wsdlLocation="WEB-INF/wsdl/AddressBook.wsdl"/>
+		id="helloDoc" 
+		address="/CB"
+		implementor="com.project.cbws.BankaPortImpl"
+		wsdlLocation="WEB-INF/wsdl/Banka.wsdl"/>
+
+
+
 </beans>
   
 

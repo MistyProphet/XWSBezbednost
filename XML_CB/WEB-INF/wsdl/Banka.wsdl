@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.project.com/CBws"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ws="http://www.project.com/CBws"
+    xmlns:mt103="http://www.project.com/mt103"
+    xmlns:mt900="http://www.project.com/mt900"
+    xmlns:mt910="http://www.project.com/mt910"
+    xmlns:mt102="http://www.project.com/mt102"
+    xmlns:common="http://www.project.com/common_types"
+    >
+    <wsdl:types>
+        <xs:schema>
+            <xs:import schemaLocation="../scheme/mt103.xsd" namespace="http://www.project.com/mt103"></xs:import>
+            <xs:import schemaLocation="../scheme/mt900.xsd" namespace="http://www.project.com/mt900"></xs:import>
+            <xs:import schemaLocation="../scheme/mt910.xsd" namespace="http://www.project.com/mt910"></xs:import>
+            <xs:import schemaLocation="../scheme/mt102.xsd" namespace="http://www.project.com/mt102"></xs:import>
+            <xs:import schemaLocation="../scheme/common_types.xsd" namespace="http://www.project.com/common_types"></xs:import>
+       		
+        </xs:schema>
+        
+    </wsdl:types>
+    
+    <!-- RTGS -->    
+ 	 <wsdl:message name="recieveMT103request">
+        <wsdl:part name="MT103" element="mt103:mt103"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendMT900response">
+        <wsdl:part name="MT900" element="mt900:mt900"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendMT103fault">
+        <wsdl:part name="MT103fault" element="common:status"></wsdl:part>
+    </wsdl:message>   
+    <wsdl:message name="sendMT103">
+        <wsdl:part name="MT103" element="mt103:mt103"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendMT910">
+        <wsdl:part name="MT910" element="mt910:mt910"></wsdl:part>
+    </wsdl:message>
+
+    <!-- Clearing -->
+    <wsdl:message name="recieveMT102request">
+        <wsdl:part name="MT102" element="mt102:mt102"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendMT102fault">
+        <wsdl:part name="MT102fault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendMT102">
+        <wsdl:part name="MT102" element="mt102:mt102"></wsdl:part>
+    </wsdl:message>
+  
+    
+    <wsdl:portType name="BankaPort">
+        <wsdl:operation name="recieveMT103">
+            <wsdl:input name="recieveMT103" message="ws:recieveMT103request"></wsdl:input>
+            <wsdl:output name="sendMT900" message="ws:sendMT900response"></wsdl:output>
+            <wsdl:fault name="MT103fault" message="ws:sendMT103fault"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="recieveMT102">
+            <wsdl:input name="recieveMT102" message="ws:recieveMT102request"></wsdl:input>
+            <wsdl:output name="sendMT900" message="ws:sendMT900response"></wsdl:output>
+            <wsdl:fault name="MT102fault" message="ws:sendMT102fault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="BankaBinding" type="ws:BankaPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="recieveMT103">
+            <wsdl:input name="recieveMT103">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="sendMT900">
+                <soap:body use="literal"/>
+            </wsdl:output>
+       </wsdl:operation>   
+        
+        <wsdl:operation name="recieveMT102">
+            <wsdl:input name="recieveMT102">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="sendMT900">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="MT102fault"></wsdl:fault>
+        </wsdl:operation>
+      
+    </wsdl:binding>
+    
+    <wsdl:service name="BankaService">
+        <wsdl:port name="BankaPort" binding="ws:BankaBinding">
+            <soap:address location="http://localhost:8080/BankaPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+</wsdl:definitions>

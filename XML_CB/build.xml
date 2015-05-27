@@ -9,7 +9,7 @@
 	<property name="gen.dir" value="${basedir}/gen"/>
 	<property name="webinf.dir" value="${basedir}/WEB-INF"/>
 	<property name="wsdl.dir" value="WEB-INF/wsdl"/>
-	
+	<property name="scheme.dir" value="WEB-INF/scheme"/>
 	<target name="check-war-name" unless="war.name">
 		<fail>
 			Property "war.name" is not set. Please use the file
@@ -93,8 +93,7 @@
 	<target name="generate-code">
 		<echo level="info" message="Generating code using wsdl2java..."/>
 		
-		<wsdl2java file="${wsdl.dir}/HelloDocument.wsdl"/>
-		<wsdl2java file="${wsdl.dir}/AddressBook.wsdl"/>
+		<wsdl2java file="${wsdl.dir}/Banka.wsdl"/>
 	   
 	</target>
 	
@@ -128,6 +127,7 @@
 			</lib>
 			<webinf dir="${webinf.dir}">
 				<include name="wsdl/**"/>
+				<include name="scheme/**"/>
 				<include name="cxf-servlet.xml"/>
 			</webinf>
 		</war>

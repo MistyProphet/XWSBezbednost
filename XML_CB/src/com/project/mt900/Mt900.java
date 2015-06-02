@@ -2,6 +2,7 @@
 package com.project.mt900;
 
 import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,6 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.project.mt102.Mt102;
+import com.project.mt103.Mt103;
 
 
 /**
@@ -105,7 +109,32 @@ public class Mt900 {
     @XmlElement(name = "Podaci_o_zaduzenju", required = true)
     protected Mt900 .PodaciOZaduzenju podaciOZaduzenju;
 
-    /**
+    public Mt900 (Mt103 mt103){
+    	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
+		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
+		zaduzenje.setObracunskiRacunBankeDuznika(mt103.getPodaciOBankama().getObracunskiRacunBankeDuznika());
+		zaduzenje.setSifraValute(mt103.getPodaciOUplati().getUplata().getSifraValute());
+		zaduzenje.setSWIFTKodBankeDuznika(mt103.getPodaciOBankama().getSWIFTBankeDuznika());
+		zaduzenje.setIznos(mt103.getPodaciOUplati().getUplata().getIznos());
+		zaduzenje.setDatumValute(mt103.getPodaciOUplati().getOpstiDeo().getDatumValute());
+		this.setPodaciOZaduzenju(zaduzenje);
+	
+    }
+    public Mt900() {
+   
+	
+	}
+	public Mt900(Mt102 mt102) {
+	 	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
+			zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
+			zaduzenje.setObracunskiRacunBankeDuznika(mt102.getRacunBankeDuznika());
+			zaduzenje.setSifraValute(mt102.getSifraValute());
+			zaduzenje.setSWIFTKodBankeDuznika(mt102.getRacunBankeDuznika());
+			zaduzenje.setIznos(mt102.getUkupanIznos());
+			zaduzenje.setDatumValute(mt102.getDatumValute());
+			this.setPodaciOZaduzenju(zaduzenje);
+	}
+	/**
      * Gets the value of the idPoruke property.
      * 
      * @return

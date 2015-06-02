@@ -1,21 +1,27 @@
-<project name="Vezbe WSDL WS" default="main" basedir=".">
+<?xml version="1.0" encoding="utf-8"?>
+<project name="vezbe-wsdl-ws" basedir=".">
 
 	<property file="ant.properties" />
 
-	<property name="bin.dir" value="${basedir}/bin"/>
-	<property name="src.dir" value="${basedir}/src"/>
-	<property name="lib.dir" value="${basedir}/lib"/>
-	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="gen.dir" value="${basedir}/gen"/>
-	<property name="webinf.dir" value="${basedir}/WEB-INF"/>
-	<property name="wsdl.dir" value="WEB-INF/wsdl"/>
-	<property name="scheme.dir" value="WEB-INF/scheme"/>
-	<target name="check-war-name" unless="war.name">
-		<fail>
-			Property "war.name" is not set. Please use the file
-			"ant.properties" in this directory ${basedir} to
-			set this property.
-		</fail>
+	<property name="build" value="${basedir}/build" />
+	<property name="dist" value="${basedir}/dist" />
+	<property name="docs" value="${basedir}/docs" />
+	<property name="lib" value="${basedir}/lib" />
+	<property name="src" value="${basedir}/src" />
+	<property name="web" value="${basedir}" />
+	<property name="webinf.dir" value="${basedir}/WEB-INF" />
+	<property name="wsdl.dir" value="WEB-INF/wsdl" />
+
+	<path id="classpath">
+		<fileset dir="${lib}" includes="*.jar" />
+	</path>
+
+	<!-- Delete all built files -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+		<delete file="${tomee.dir}/webapps/${earname}" />
+		<delete dir="${tomee.dir}/webapps/${dirname}" />
 	</target>
 
 	<target name="check-tomee" unless="tomee.dir">
@@ -27,124 +33,118 @@
 			etc.
 		</fail>
 	</target>
-	
+
 	<target name="check-environment">
-		<antcall target="check-war-name"/>
-		<antcall target="check-tomee"/>
+		<antcall target="check-tomee" />
 	</target>
-	
+
 	<target name="init" depends="check-environment">
-		<echo message="java.home = ${java.home}"/>
-		<echo message="deploy.dir = ${tomee.dir}"/>
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+		<echo message="java.home = ${java.home}" />
+		<echo message="tomee.dir = ${tomee.dir}" />
 	</target>
 
-	<path id="cxf.classpath">
-		<pathelement location="${basedir}"/>
-		<pathelement location="${src.dir}"/>
-		<pathelement path="${bin.dir}"/>
-		<fileset dir="${lib.dir}">
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="${tomee.dir}/lib">
-			<include name="*.jar"/>
-		</fileset>
-	</path>
-	
-	<macrodef name="wsdl2java">
-        <attribute name="src.dest.dir" default="${gen.dir}"/>
-        <attribute name="file"/>
-        <attribute name="servicename.arg" default=""/>
-        <attribute name="bindingfile" default=""/>
-        <attribute name="dir" default="${basedir}"/>
-        <attribute name="package" default="NOT_SPECIFIED"/>
-        <sequential>
-            <condition property="package.arg.@{file}" value="-p @{package}">
-                <not>
-                    <equals arg1="@{package}" arg2="NOT_SPECIFIED"/>
-                </not>
-            </condition>
-            <property name="package.arg.@{file}" value=""/>
-            <condition property="binding.arg" value='-b "@{bindingfile}"'>
-                <not>
-                    <equals arg1="@{bindingfile}" arg2=""/>
-                </not>
-            </condition>
-            <property name="binding.arg" value=""/>
-            <java failonerror="true" classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="yes">
-                <classpath>
-                    <path refid="cxf.classpath" />
-                </classpath>
-                <sysproperty key="exitOnFinish" value="true"/>
-                <arg line="@{servicename.arg}"/>
-                <arg line="${package.arg.@{file}}"/>
-                <arg line="${binding.arg}"/>
-                <arg value="-verbose"/>
-            	<arg value="-validate"/>
-            	<arg value="-client"/>
-            	<arg value="-server"/>
-            	<arg value="-impl"/>
-                <arg value="-d"/>
-                <arg value="@{src.dest.dir}"/>
-                <arg value="@{dir}/@{file}"/>
-            </java>
-        </sequential>
-    </macrodef>
-		
-	<target name="generate-code">
-		<echo level="info" message="Generating code using wsdl2java..."/>
-		
-		<wsdl2java file="${wsdl.dir}/Banka.wsdl"/>
-	   
-	</target>
-	
+	<!-- Compile everything -->
 	<target name="compile" depends="init">
-		<javac destdir="${bin.dir}" debug="on">
-			<classpath>
-				<fileset dir="${lib.dir}">
-					<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<src path="${src.dir}"/>
-		</javac>
-	</target>
-
-	<target name="copy-non-java" depends="compile"
-			description="Copies non java files to bin directory">
-		<copy todir="${bin.dir}">
-			<fileset dir="${src.dir}" excludes="**/*.java"/>
+		<javac srcdir="${src}" destdir="${build}" classpathref="classpath" debug="true" />
+		<copy todir="${build}">
+			<fileset dir="${src}" includes="**/*.properties" />
+			<fileset dir="${src}" includes="**/*.xml" />
 		</copy>
 	</target>
-	
+
+	<!-- War -->
 	<target name="war" depends="compile">
-		<delete file="${war.name}"/>
-		<war warfile="${dist.dir}/${war.name}" webxml="${webinf.dir}/web.xml">
-			<classes dir="${bin.dir}">
-				<exclude name="**/client/*.class"/>
-				<include name="**/*.class"/>
+		<war destfile="${dist}/${warname}" webxml="${web}/WEB-INF/web.xml">
+			<zipfileset dir="${web}">
+				<include name="*.jsp" />
+				<include name="*.css" />
+				<include name="*.js" />
+				<include name="w3school.xml" />
+			</zipfileset>
+			<classes dir="build">
+				<!--<include name="servlet/*.class" />-->
+				<include name="entity/*.class" />
+				
+				<!--<include name="messages/*.properties"/>!-->
+				<include name="log4j.properties" />
 			</classes>
-			<lib dir="${lib.dir}">
-				<include name="spring-*.jar"/>
+			<lib dir="${lib}">
+				<include name="spring-*.jar" />
 			</lib>
 			<webinf dir="${webinf.dir}">
-				<include name="wsdl/**"/>
-				<include name="scheme/**"/>
-				<include name="cxf-servlet.xml"/>
+				<include name="wsdl/**" />
+				<include name="scheme/**" />
+				<include name="cxf-servlet.xml" />
 			</webinf>
 		</war>
 	</target>
 
-	<target name="deploy" depends="war">
+	<!-- Jar -->
+	<target name="jar" depends="compile">
+		<mkdir dir="${dist}" />
+		<jar destfile="${dist}/${jarname}">
+			<zipfileset dir="${build}/META-INF" prefix="META-INF">
+				<include name="persistence.xml" />
+				
+			</zipfileset>
+			<zipfileset dir="${build}">
+			
+				<include name="**/*.class" />
+			</zipfileset>
+		</jar>
+	</target>
+
+	<!-- Ear -->
+	<target name="ear" depends="jar,war">
+		<mkdir dir="${dist}" />
+		<ear destfile="${dist}/${earname}" appxml="${build}/META-INF/application.xml">
+			<zipfileset dir="${dist}">
+				<include name="${jarname}" />
+				<include name="${warname}" />
+			</zipfileset>
+		</ear>
+	</target>
+
+	<!-- Deploy  -->
+	<target name="deploy" depends="ear">
+		<copy todir="${tomee.dir}/lib">
+			<fileset dir="${lib}" includes="mysql-connector-java-5.1.22-bin.jar" />
+			<fileset dir="${lib}" includes="log4j-1.2.8.jar" />
+		</copy>
 		<copy todir="${tomee.dir}/webapps">
-			<fileset dir="${dist.dir}" includes="${war.name}"/>
+			<fileset dir="${dist}" includes="${earname}" />
 		</copy>
 	</target>
 
-	<target name="clean">
-		<delete file="${dist.dir}/${war.name}"/>
-		<delete file="${tomee.dir}/webapps/${war.name}"/>
+	<!-- Setup -->
+	<target name="prepare-database">
+		<echo message="Inserting default user into database." />
+		<java classname="initdb.InitDB" fork="true">
+			<classpath>
+				<pathelement path="${build}" />
+				<fileset dir="${lib}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
 	</target>
 
-	<target name="main" depends="deploy">
+	<!-- Empty database -->
+	<target name="drop-tables">
+		<sql classpath="${lib}/mysql-connector-java-5.1.22-bin.jar" driver="${db.driver}" url="${db.connectionString}" userid="${db.username}" password="${db.password}">
+			DROP TABLE IF EXISTS admin;
+			DROP TABLE IF EXISTS branch;
+			DROP TABLE IF EXISTS buyer;
+			DROP TABLE IF EXISTS category;
+			DROP TABLE IF EXISTS comment;
+			DROP TABLE IF EXISTS cupons;
+			DROP TABLE IF EXISTS image;
+			DROP TABLE IF EXISTS offer;
+			DROP TABLE IF EXISTS payment;
+			DROP TABLE IF EXISTS seller;
+		</sql>
 	</target>
 
 </project>

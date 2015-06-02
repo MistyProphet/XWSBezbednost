@@ -81,6 +81,15 @@ public class SignedCertificateAction extends NewCertificateAction {
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		
+		if(certificateForm.getCommonName().getText().equals("") ||
+		certificateForm.getName2().getText().equals("") ||
+		certificateForm.getSurname().getText().equals("") ||
+		certificateForm.getValidity().getText().equals("") ||
+		certificateForm.getFile()==null){
+			return;
+		}
+		
 		file = certificateForm.getFile();
 		 frame2 = new JFrame();
 		 frame2.setSize(300, 100);

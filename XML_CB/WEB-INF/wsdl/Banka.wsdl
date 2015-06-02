@@ -15,17 +15,14 @@
     xmlns:mt102="http://www.project.com/mt102"
     xmlns:common="http://www.project.com/common_types"
     >
-    <wsdl:types>
-        <xs:schema>
-            <xs:import schemaLocation="../scheme/mt103.xsd" namespace="http://www.project.com/mt103"></xs:import>
-            <xs:import schemaLocation="../scheme/mt900.xsd" namespace="http://www.project.com/mt900"></xs:import>
-            <xs:import schemaLocation="../scheme/mt910.xsd" namespace="http://www.project.com/mt910"></xs:import>
-            <xs:import schemaLocation="../scheme/mt102.xsd" namespace="http://www.project.com/mt102"></xs:import>
-            <xs:import schemaLocation="../scheme/common_types.xsd" namespace="http://www.project.com/common_types"></xs:import>
-       		
-        </xs:schema>
-        
-    </wsdl:types>
+    <wsdl:import location="http://localhost:8080/data/mt103.xsd" namespace="http://www.project.com/mt103"></wsdl:import>
+    <wsdl:import location="http://localhost:8080/data/mt102.xsd" namespace="http://www.project.com/mt102"></wsdl:import>
+    <wsdl:import location="http://localhost:8080/data/mt900.xsd" namespace="http://www.project.com/mt900"></wsdl:import>
+    <wsdl:import location="http://localhost:8080/data/mt910.xsd" namespace="http://www.project.com/mt910"></wsdl:import>
+    <wsdl:import location="http://localhost:8080/data/common_types.xsd" namespace="http://www.project.com/common_types"></wsdl:import>
+    
+    
+   
     
     <!-- RTGS -->    
  	 <wsdl:message name="recieveMT103request">

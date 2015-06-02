@@ -25,19 +25,16 @@
 		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	
 	<jaxws:endpoint 
-		id="rtgsService" 
-		address="/RTGSService"
-		implementor="yu.ac.ns.ftn.informatika.ws.service.RTGSServiceImpl"
-		wsdlLocation="WEB-INF/wsdl/RTGSService.wsdl"/>
-
-	<!--  <jaxws:endpoint 
-		id="helloMessage"
-		address="/HelloMessage"
-		implementor="yu.ac.ns.ftn.informatika.ws.style.message.HelloMessageProvider"
-		wsdlLocation="WEB-INF/wsdl/HelloMessage.wsdl"
-		xmlns:msp="http://informatika.ftn.ns.ac.yu/ws/style/message"
-		serviceName="msp:HelloMessageService"
-		endpointName="msp:HelloMessagePort"/>-->
+		id="banka" 
+		address="/Banka"
+		implementor="com.project.cbws.BankaPortImpl"
+		wsdlLocation="WEB-INF/wsdl/Banka.wsdl"/>
+	
+	<jaxws:endpoint 
+		id="centralnaBanka" 
+		address="/CentralnaBanka"
+		implementor="com.project.cbws.CBportImpl"
+		wsdlLocation="WEB-INF/wsdl/CB.wsdl"/>
 
 </beans>
   

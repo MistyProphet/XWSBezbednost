@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/mt103" xmlns:cmn="http://www.project.com/common_types"
+    xmlns:mt103="http://www.project.com/mt103" xmlns:np="http://www.project.com/nalog_za_placanje">
+    <xs:import namespace="http://www.project.com/common_types" schemaLocation="common_types.xsd"/>
+    <xs:import namespace="http://www.project.com/nalog_za_placanje"
+        schemaLocation="nalog_za_placanje.xsd"/>
+    <xs:element name="mt103">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ID_poruke">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="1"/>
+                            <xs:maxLength value="50"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Podaci_o_bankama">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element default="AAAAAA00" name="SWIFT_banke_duznika"
+                                type="cmn:TSwift_kod_banke"/>
+                            <xs:element default="000-0000000000000-00"
+                                name="Obracunski_racun_banke_duznika"
+                                type="cmn:TBroj_Bankarskog_Racuna"/>
+                            <xs:element default="AAAAAA00" name="SWIFT_banke_poverioca"
+                                type="cmn:TSwift_kod_banke"/>
+                            <xs:element default="000-0000000000000-00"
+                                name="Obracunski_racun_banke_poverioca"
+                                type="cmn:TBroj_Bankarskog_Racuna"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
+                <xs:element ref="np:Uplata"/>
+                <xs:element name="Datum_valute" type="xs:date"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

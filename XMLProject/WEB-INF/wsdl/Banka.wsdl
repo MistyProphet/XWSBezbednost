@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.project.com/BankaWS"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ws="http://www.project.com/BankaWS"
+    xmlns:mt103="http://www.project.com/mt103"
+    xmlns:mt900="http://www.project.com/mt900"
+    xmlns:mt910="http://www.project.com/mt910"
+    xmlns:mt102="http://www.project.com/mt102"
+    xmlns:nalog_za_placanje="http://www.project.com/nalog_za_placanje"
+    xmlns:zahtev="http://www.project.com/zahtev_za_izvod"
+    xmlns:presek="http://www.project.com/presek"
+    xmlns:common="http://www.project.com/common_types"
+    >
+    <wsdl:types>
+        <xs:schema>
+            <xs:import schemaLocation="../scheme/mt103.xsd" namespace="http://www.project.com/mt103"></xs:import>
+            <xs:import schemaLocation="../scheme/mt900.xsd" namespace="http://www.project.com/mt900"></xs:import>
+            <xs:import schemaLocation="../scheme/mt910.xsd" namespace="http://www.project.com/mt910"></xs:import>
+            <xs:import schemaLocation="../scheme/mt102.xsd" namespace="http://www.project.com/mt102"></xs:import>
+            <xs:import schemaLocation="../scheme/nalog_za_placanje.xsd" namespace="http://www.project.com/nalog_za_placanje"></xs:import>
+            <xs:import schemaLocation="../scheme/zahtev_za_izvod.xsd" namespace="http://www.project.com/zahtev_za_izvod"></xs:import>
+            <xs:import schemaLocation="../scheme/presek.xsd" namespace="http://www.project.com/presek"></xs:import>
+            <xs:import schemaLocation="../scheme/common_types.xsd" namespace="http://www.project.com/common_types"></xs:import>
+        </xs:schema>
+    </wsdl:types>
+    
+    <!-- RTGS -->    
+    <wsdl:message name="receiveMT103">
+        <wsdl:part name="MT103" element="mt103:mt103"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="receiveMT103fault">
+        <wsdl:part name="MT103fault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="receiveMT910">
+        <wsdl:part name="MT910" element="mt910:mt910"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="receiveMT910fault">
+        <wsdl:part name="MT910fault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    
+    <!-- Clearing -->
+    <wsdl:message name="receiveMT102">
+        <wsdl:part name="MT102" element="mt102:mt102"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="receiveMT102fault">
+        <wsdl:part name="MT102fault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="odradiClearing"></wsdl:message>
+    <wsdl:message name="clearingFault">
+        <wsdl:part name="clearingFault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    
+    <!-- Nalozi za placanje -->
+    <wsdl:message name="receiveNalog">
+        <wsdl:part name="Nalog" element="nalog_za_placanje:Nalog_Za_Placanje"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="receiveNalogFault">
+        <wsdl:part name="NalogFault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    
+    <!-- Izvod -->
+    <wsdl:message name="receiveZahtevZaIzvod">
+        <wsdl:part name="Zahtev" element="zahtev:Zahtev_za_Izvod"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendPresek">
+        <wsdl:part name="Presek" element="presek:Presek"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendPresekFault">
+        <wsdl:part name="sendPresekFault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="statusResponse">
+        <wsdl:part name="statusResponse" element="common:status"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:portType name="BankaPort">
+        <wsdl:operation name="receiveMT103">
+            <wsdl:input name="receiveMT103" message="ws:receiveMT103"></wsdl:input>
+            <wsdl:output name="statusResponseMT103" message="ws:statusResponse"></wsdl:output>
+            <wsdl:fault name="receiveMT103fault" message="ws:receiveMT103fault"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="receiveMT910">
+            <wsdl:input name="receiveMT910" message="ws:receiveMT910"></wsdl:input>
+            <wsdl:output name="statusResponseMT910" message="ws:statusResponse"></wsdl:output>
+            <wsdl:fault name="receiveMT910fault" message="ws:receiveMT103fault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="odradiClearing">
+            <wsdl:input name="odradiClearingGrupni" message="ws:odradiClearing"></wsdl:input>
+            <wsdl:output name="odradiClearingStatus" message="ws:statusResponse"></wsdl:output>
+            <wsdl:fault name="odradiClearingFault" message="ws:clearingFault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="receiveMT102">
+            <wsdl:input name="receiveMT102" message="ws:receiveMT102"></wsdl:input>
+            <wsdl:output name="statusResponseMT102" message="ws:statusResponse"></wsdl:output>
+            <wsdl:fault name="receiveMT102fault" message="ws:receiveMT102fault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="receiveNalog">
+            <wsdl:input name="receiveNalog" message="ws:receiveNalog"></wsdl:input>
+            <wsdl:output name="statusResponseNalog" message="ws:statusResponse"></wsdl:output>
+            <wsdl:fault name="receiveNalogFault" message="ws:receiveNalogFault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="sendPresek">
+            <wsdl:input name="sendPresekRequest" message="ws:receiveZahtevZaIzvod"></wsdl:input>
+            <wsdl:output name="sendPresekResponse" message="ws:sendPresek"></wsdl:output>
+            <wsdl:fault name="PresekFault" message="ws:sendPresekFault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="BankaBinding" type="ws:BankaPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="receiveMT103">
+            <wsdl:input name="receiveMT103">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="statusResponseMT103">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="receiveMT103fault"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="receiveMT910">
+            <wsdl:input name="receiveMT910">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="statusResponseMT910">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="receiveMT910fault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="odradiClearing">
+            <wsdl:input name="odradiClearingGrupni">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="odradiClearingStatus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="odradiClearingFault"></wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="receiveMT102">
+            <wsdl:input name="receiveMT102">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="statusResponseMT102">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="receiveMT102fault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="receiveNalog">
+            <wsdl:input name="receiveNalog">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="statusResponseNalog">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="receiveNalogFault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="sendPresek">
+            <wsdl:input name="sendPresekRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="sendPresekResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="PresekFault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="BankaService">
+        <wsdl:port name="BankaPort" binding="ws:BankaBinding">
+            <soap:address location="http://localhost:9090/BankaPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+</wsdl:definitions>

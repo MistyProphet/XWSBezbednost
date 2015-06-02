@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/mt102" xmlns:cmn="http://www.project.com/common_types"
+    xmlns:mt102="http://www.project.com/mt102" xmlns:np="http://www.project.com/nalog_za_placanje">
+    <xs:import namespace="http://www.project.com/nalog_za_placanje"
+        schemaLocation="nalog_za_placanje.xsd"/>
+    <xs:import namespace="http://www.project.com/common_types" schemaLocation="common_types.xsd"/>
+    <xs:element name="mt102">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ID_poruke">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:length value="50"/>
+                            <xs:whiteSpace value="preserve"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="SWIFT_kod_banke_duznika">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:length value="8"/>
+                            <xs:pattern value=""/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="racun_banke_duznika">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:length value="18"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="SWIFT_kod_banke_poverioca">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:length value="8"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="racun_banke_poverioca" type="cmn:TBroj_Bankarskog_Racuna"/>
+                <xs:element name="ukupan_iznos">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:decimal">
+                            <xs:minExclusive value="0"/>
+                            <xs:totalDigits value="15"/>
+                            <xs:fractionDigits value="2"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
+                <xs:element name="datum_valute" type="xs:date"/>
+                <xs:element name="datum" type="xs:date"/>
+                <xs:element maxOccurs="unbounded" ref="np:Placanje"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

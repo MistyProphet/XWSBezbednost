@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.project.com/CBws"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ws="http://www.project.com/CBws"
+    xmlns:mt103="http://www.project.com/mt103"
+    xmlns:mt900="http://www.project.com/mt900"
+    xmlns:mt910="http://www.project.com/mt910"
+    xmlns:mt102="http://www.project.com/mt102"
+    xmlns:common="http://www.project.com/common_types"
+    >
+    <wsdl:types>
+        <xs:schema>
+            <xs:import schemaLocation="../scheme/mt103.xsd" namespace="http://www.project.com/mt103"></xs:import>
+            <xs:import schemaLocation="../scheme/mt900.xsd" namespace="http://www.project.com/mt900"></xs:import>
+            <xs:import schemaLocation="../scheme/mt910.xsd" namespace="http://www.project.com/mt910"></xs:import>
+            <xs:import schemaLocation="../scheme/mt102.xsd" namespace="http://www.project.com/mt102"></xs:import>
+            <xs:import schemaLocation="../scheme/common_types.xsd" namespace="http://www.project.com/common_types"></xs:import>
+        </xs:schema>
+    </wsdl:types>
+    
+    <!-- RTGS -->    
+    <wsdl:message name="recieveMT103request">
+        <wsdl:part name="MT103" element="mt103:mt103"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="recieveMT103response">
+        <wsdl:part name="MT900RTGS" element="mt900:mt900RTGS"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="recieveMT103fault">
+        <wsdl:part name="MT103fault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    
+    <!-- Clearing -->
+    <wsdl:message name="recieveMT102request">
+        <wsdl:part name="MT102" element="mt102:mt102"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="recieveMT102response">
+        <wsdl:part name="MT900Clearing" element="mt900:mt900Clearing"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="recieveMT102fault">
+        <wsdl:part name="MT102fault" element="common:status"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:portType name="CBport">
+        <wsdl:operation name="recieveMT103CB">
+            <wsdl:input name="recieveMT103request" message="ws:recieveMT103request"></wsdl:input>
+            <wsdl:output name="recieveMT103response" message="ws:recieveMT103response"></wsdl:output>
+            <wsdl:fault name="MT103fault" message="ws:recieveMT103fault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="recieveMT102CB">
+            <wsdl:input name="recieveMT102request" message="ws:recieveMT102request"></wsdl:input>
+            <wsdl:output name="recieveMT102response" message="ws:recieveMT102response"></wsdl:output>
+            <wsdl:fault name="MT102fault" message="ws:recieveMT102fault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="CBbinding" type="ws:CBport">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="recieveMT103CB">
+            <wsdl:input name="recieveMT103request">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="recieveMT103response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="MT103fault"></wsdl:fault>
+        </wsdl:operation>
+        
+        <wsdl:operation name="recieveMT102CB">
+            <wsdl:input name="recieveMT102request">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="recieveMT102response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="MT102fault"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="CBservice">
+        <wsdl:port name="CBport" binding="ws:CBbinding">
+            <soap:address location="http://localhost:9090/CBport"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+</wsdl:definitions>

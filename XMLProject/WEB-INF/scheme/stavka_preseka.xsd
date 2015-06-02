@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/stavka_preseka"
+    xmlns:np="http://www.project.com/nalog_za_placanje"
+    xmlns:sp="http://www.project.com/stavka_preseka" xmlns:cmn="http://www.project.com/common_types">
+    <xs:import namespace="http://www.project.com/nalog_za_placanje"
+        schemaLocation="nalog_za_placanje.xsd"/>
+    <xs:import namespace="http://www.project.com/common_types" schemaLocation="common_types.xsd"/>
+    <xs:element name="Stavka_preseka">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="np:Uplata"/>
+                <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"/>
+                <xs:element name="Datum_valute" type="xs:date"/>
+                <xs:element name="Smer">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:length value="1"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

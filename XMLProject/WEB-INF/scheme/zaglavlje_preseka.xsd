@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/zaglavlje_preseka"
+    xmlns:cmn="http://www.project.com/common_types"
+    xmlns:zp="http://www.project.com/zaglavlje_preseka">
+
+    <xs:import namespace="http://www.project.com/common_types" schemaLocation="common_types.xsd"/>
+    <xs:element name="Zaglavlje_preseka">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Broj_racuna" type="cmn:TBroj_Bankarskog_Racuna"/>
+                <xs:element name="Datum_naloga" type="xs:date"/>
+                <xs:element name="Broj_preseka">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:unsignedInt">
+                            <xs:totalDigits value="2"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Prethodno_stanje" type="cmn:TStanje"/>
+                <xs:element name="Broj_promena_u_korist" type="cmn:TBroj_Promena"/>
+                <xs:element name="Ukupno_u_korist" type="cmn:TStanje"/>
+                <xs:element name="Broj_promena_na_teret" type="cmn:TBroj_Promena"/>
+                <xs:element name="Ukupno_na_teret" type="cmn:TStanje"/>
+                <xs:element name="Novo_stanje" type="cmn:TStanje"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

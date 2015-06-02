@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/mt910" xmlns:cmn="http://www.project.com/common_types"
+    xmlns:mt910="http://www.project.com/mt910">
+    <xs:import namespace="http://www.project.com/common_types" schemaLocation="common_types.xsd"/>
+    <xs:element name="mt910">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ID_poruke">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:maxLength value="50"/>
+                            <xs:minLength value="1"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Podaci_o_odobrenju">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element default="AAAAAA00" name="SWIFT_kod_banke_poverioca"
+                                type="cmn:TSwift_kod_banke"/>
+                            <xs:element default="000-0000000000000-00"
+                                name="Obracunski_racun_banke_poverioca"
+                                type="cmn:TBroj_Bankarskog_Racuna"/>
+                            <xs:element name="ID_poruke_naloga">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:maxLength value="50"/>
+                                        <xs:minLength value="1"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="Datum_valute" type="xs:date"/>
+                            <xs:element name="Iznos">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:decimal">
+                                        <xs:totalDigits value="15"/>
+                                        <xs:fractionDigits value="2"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

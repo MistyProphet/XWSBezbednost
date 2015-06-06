@@ -28,7 +28,7 @@ public class Banka {
 	}
 	
 	public void checkMT102SWIFTCode(Mt102 mt102) throws WrongBankSWIFTCodeException {
-		if (!mt102.getSWIFTKodBankePoverioca().trim().equals(SWIFTCode.trim())) {
+		if (!mt102.getBankaPoverioca().getSWIFTKod().trim().equals(SWIFTCode.trim())) {
 			throw new WrongBankSWIFTCodeException();
 		}
 	}
@@ -36,7 +36,7 @@ public class Banka {
 	public void checkOverallMT102Sum(Mt102 mt102) throws WrongOverallSumException {
 		BigDecimal sum = new BigDecimal(0);
 		
-		for (Placanje p : mt102.getPlacanja().placanja) {
+		for (Placanje p : mt102.getPlacanje()) {
 			sum.add(p.getUplata().getIznos());
 		}
 		
@@ -58,7 +58,7 @@ public class Banka {
 			}
 			
 			for (NalogZaPlacanje nalog : naloziZaClearing.get(banka)) {
-				mt102.getPlacanja().placanja.add(nalog.getPlacanje());
+				mt102.getPlacanje().add(nalog.getPlacanje());
 			}
 			
 		}

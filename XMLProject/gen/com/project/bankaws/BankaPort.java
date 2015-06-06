@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  */
 @WebService(targetNamespace = "http://www.project.com/BankaWS", name = "BankaPort")
 @XmlSeeAlso({com.project.zaglavlje_preseka.ObjectFactory.class, com.project.common_types.ObjectFactory.class, com.project.nalog_za_placanje.ObjectFactory.class, com.project.stavka_preseka.ObjectFactory.class, com.project.mt900.ObjectFactory.class, com.project.zahtev_za_izvod.ObjectFactory.class, com.project.mt102.ObjectFactory.class, com.project.mt103.ObjectFactory.class, com.project.mt910.ObjectFactory.class, com.project.presek.ObjectFactory.class})
-@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 public interface BankaPort {
 
     @WebResult(name = "status", targetNamespace = "http://www.project.com/common_types", partName = "statusResponse")

@@ -30,11 +30,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TRacunKlijenta }
+     * 
+     */
+    public TRacunKlijenta createTRacunKlijenta() {
+        return new TRacunKlijenta();
+    }
+
+    /**
      * Create an instance of {@link Status }
      * 
      */
     public Status createStatus() {
         return new Status();
+    }
+
+    /**
+     * Create an instance of {@link TBanka }
+     * 
+     */
+    public TBanka createTBanka() {
+        return new TBanka();
     }
 
 }

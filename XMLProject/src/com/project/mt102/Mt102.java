@@ -3,7 +3,7 @@ package com.project.mt102;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-
+import com.project.common_types.TBanka;
 import com.project.nalog_za_placanje.Placanje;
 
 
@@ -33,29 +33,8 @@ import com.project.nalog_za_placanje.Placanje;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="SWIFT_kod_banke_duznika">
- *           &lt;simpleType>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *               &lt;length value="8"/>
- *               &lt;pattern value=""/>
- *             &lt;/restriction>
- *           &lt;/simpleType>
- *         &lt;/element>
- *         &lt;element name="racun_banke_duznika">
- *           &lt;simpleType>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *               &lt;length value="18"/>
- *             &lt;/restriction>
- *           &lt;/simpleType>
- *         &lt;/element>
- *         &lt;element name="SWIFT_kod_banke_poverioca">
- *           &lt;simpleType>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *               &lt;length value="8"/>
- *             &lt;/restriction>
- *           &lt;/simpleType>
- *         &lt;/element>
- *         &lt;element name="racun_banke_poverioca" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
+ *         &lt;element name="Banka_Duznika" type="{http://www.project.com/common_types}TBanka"/>
+ *         &lt;element name="Banka_Poverioca" type="{http://www.project.com/common_types}TBanka"/>
  *         &lt;element name="ukupan_iznos">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}decimal">
@@ -65,25 +44,10 @@ import com.project.nalog_za_placanje.Placanje;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="sifra_valute">
- *           &lt;simpleType>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *               &lt;length value="3"/>
- *             &lt;/restriction>
- *           &lt;/simpleType>
- *         &lt;/element>
+ *         &lt;element name="sifra_valute" type="{http://www.project.com/common_types}TOznaka_Valute"/>
  *         &lt;element name="datum_valute" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="datum" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="placanja">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
+ *         &lt;element ref="{http://www.project.com/nalog_za_placanje}Placanje" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -95,29 +59,23 @@ import com.project.nalog_za_placanje.Placanje;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "idPoruke",
-    "swiftKodBankeDuznika",
-    "racunBankeDuznika",
-    "swiftKodBankePoverioca",
-    "racunBankePoverioca",
+    "bankaDuznika",
+    "bankaPoverioca",
     "ukupanIznos",
     "sifraValute",
     "datumValute",
     "datum",
-    "placanja"
+    "placanje"
 })
 @XmlRootElement(name = "mt102")
 public class Mt102 {
 
     @XmlElement(name = "ID_poruke", required = true)
     protected String idPoruke;
-    @XmlElement(name = "SWIFT_kod_banke_duznika", required = true)
-    protected String swiftKodBankeDuznika;
-    @XmlElement(name = "racun_banke_duznika", required = true)
-    protected String racunBankeDuznika;
-    @XmlElement(name = "SWIFT_kod_banke_poverioca", required = true)
-    protected String swiftKodBankePoverioca;
-    @XmlElement(name = "racun_banke_poverioca", required = true)
-    protected String racunBankePoverioca;
+    @XmlElement(name = "Banka_Duznika", required = true)
+    protected TBanka bankaDuznika;
+    @XmlElement(name = "Banka_Poverioca", required = true)
+    protected TBanka bankaPoverioca;
     @XmlElement(name = "ukupan_iznos", required = true)
     protected BigDecimal ukupanIznos;
     @XmlElement(name = "sifra_valute", required = true)
@@ -128,8 +86,8 @@ public class Mt102 {
     @XmlElement(required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar datum;
-    @XmlElement(required = true)
-    protected Mt102 .Placanja placanja;
+    @XmlElement(name = "Placanje", namespace = "http://www.project.com/nalog_za_placanje", required = true)
+    protected List<Placanje> placanje;
 
     /**
      * Gets the value of the idPoruke property.
@@ -156,99 +114,51 @@ public class Mt102 {
     }
 
     /**
-     * Gets the value of the swiftKodBankeDuznika property.
+     * Gets the value of the bankaDuznika property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link TBanka }
      *     
      */
-    public String getSWIFTKodBankeDuznika() {
-        return swiftKodBankeDuznika;
+    public TBanka getBankaDuznika() {
+        return bankaDuznika;
     }
 
     /**
-     * Sets the value of the swiftKodBankeDuznika property.
+     * Sets the value of the bankaDuznika property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link TBanka }
      *     
      */
-    public void setSWIFTKodBankeDuznika(String value) {
-        this.swiftKodBankeDuznika = value;
+    public void setBankaDuznika(TBanka value) {
+        this.bankaDuznika = value;
     }
 
     /**
-     * Gets the value of the racunBankeDuznika property.
+     * Gets the value of the bankaPoverioca property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link TBanka }
      *     
      */
-    public String getRacunBankeDuznika() {
-        return racunBankeDuznika;
+    public TBanka getBankaPoverioca() {
+        return bankaPoverioca;
     }
 
     /**
-     * Sets the value of the racunBankeDuznika property.
+     * Sets the value of the bankaPoverioca property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link TBanka }
      *     
      */
-    public void setRacunBankeDuznika(String value) {
-        this.racunBankeDuznika = value;
-    }
-
-    /**
-     * Gets the value of the swiftKodBankePoverioca property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSWIFTKodBankePoverioca() {
-        return swiftKodBankePoverioca;
-    }
-
-    /**
-     * Sets the value of the swiftKodBankePoverioca property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSWIFTKodBankePoverioca(String value) {
-        this.swiftKodBankePoverioca = value;
-    }
-
-    /**
-     * Gets the value of the racunBankePoverioca property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getRacunBankePoverioca() {
-        return racunBankePoverioca;
-    }
-
-    /**
-     * Sets the value of the racunBankePoverioca property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRacunBankePoverioca(String value) {
-        this.racunBankePoverioca = value;
+    public void setBankaPoverioca(TBanka value) {
+        this.bankaPoverioca = value;
     }
 
     /**
@@ -348,53 +258,32 @@ public class Mt102 {
     }
 
     /**
-     * Gets the value of the placanja property.
+     * Gets the value of the placanje property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Mt102 .Placanja }
-     *     
-     */
-    public Mt102 .Placanja getPlacanja() {
-        return placanja;
-    }
-
-    /**
-     * Sets the value of the placanja property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the placanje property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Mt102 .Placanja }
-     *     
-     */
-    public void setPlacanja(Mt102 .Placanja value) {
-        this.placanja = value;
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     * <p>
+     * For example, to add a new item, do as follows:
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     *    getPlacanje().add(newItem);
      * </pre>
      * 
      * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Placanje }
+     * 
+     * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class Placanja {
-    	public ArrayList<Placanje> placanja;
-
+    public List<Placanje> getPlacanje() {
+        if (placanje == null) {
+            placanje = new ArrayList<Placanje>();
+        }
+        return this.placanje;
     }
 
 }

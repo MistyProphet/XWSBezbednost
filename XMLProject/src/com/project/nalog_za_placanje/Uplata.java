@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import com.project.common_types.TRacunKlijenta;
 
 
 /**
@@ -21,7 +22,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Duznik" type="{http://www.project.com/common_types}TLice"/>
+ *         &lt;element name="Racun_duznika" type="{http://www.project.com/common_types}TRacun_Klijenta"/>
  *         &lt;element name="Svrha_placanja">
  *           &lt;simpleType>
  *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -30,12 +31,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="Primalac" type="{http://www.project.com/common_types}TLice"/>
+ *         &lt;element name="Racun_primaoca" type="{http://www.project.com/common_types}TRacun_Klijenta"/>
  *         &lt;element name="Datum_naloga" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="Racun_duznika" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
  *         &lt;element name="Model_zaduzenja" type="{http://www.project.com/common_types}TModel"/>
  *         &lt;element name="Poziv_na_broj_zaduzenja" type="{http://www.project.com/common_types}TPoziv_na_broj"/>
- *         &lt;element name="Racun_poverioca" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
  *         &lt;element name="Model_odobrenja" type="{http://www.project.com/common_types}TModel"/>
  *         &lt;element name="Poziv_na_broj_odobrenja" type="{http://www.project.com/common_types}TPoziv_na_broj"/>
  *         &lt;element name="Iznos">
@@ -56,14 +55,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "duznik",
-    "svrhaPlacanja",
-    "primalac",
-    "datumNaloga",
     "racunDuznika",
+    "svrhaPlacanja",
+    "racunPrimaoca",
+    "datumNaloga",
     "modelZaduzenja",
     "pozivNaBrojZaduzenja",
-    "racunPoverioca",
     "modelOdobrenja",
     "pozivNaBrojOdobrenja",
     "iznos"
@@ -71,23 +68,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlRootElement(name = "Uplata")
 public class Uplata {
 
-    @XmlElement(name = "Duznik", required = true)
-    protected String duznik;
+    @XmlElement(name = "Racun_duznika", required = true)
+    protected TRacunKlijenta racunDuznika;
     @XmlElement(name = "Svrha_placanja", required = true)
     protected String svrhaPlacanja;
-    @XmlElement(name = "Primalac", required = true)
-    protected String primalac;
+    @XmlElement(name = "Racun_primaoca", required = true)
+    protected TRacunKlijenta racunPrimaoca;
     @XmlElement(name = "Datum_naloga", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar datumNaloga;
-    @XmlElement(name = "Racun_duznika", required = true, defaultValue = "000-0000000000000-00")
-    protected String racunDuznika;
     @XmlElement(name = "Model_zaduzenja")
     protected long modelZaduzenja;
     @XmlElement(name = "Poziv_na_broj_zaduzenja", required = true)
     protected String pozivNaBrojZaduzenja;
-    @XmlElement(name = "Racun_poverioca", required = true, defaultValue = "000-0000000000000-00")
-    protected String racunPoverioca;
     @XmlElement(name = "Model_odobrenja")
     protected long modelOdobrenja;
     @XmlElement(name = "Poziv_na_broj_odobrenja", required = true)
@@ -96,27 +89,27 @@ public class Uplata {
     protected BigDecimal iznos;
 
     /**
-     * Gets the value of the duznik property.
+     * Gets the value of the racunDuznika property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link TRacunKlijenta }
      *     
      */
-    public String getDuznik() {
-        return duznik;
+    public TRacunKlijenta getRacunDuznika() {
+        return racunDuznika;
     }
 
     /**
-     * Sets the value of the duznik property.
+     * Sets the value of the racunDuznika property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link TRacunKlijenta }
      *     
      */
-    public void setDuznik(String value) {
-        this.duznik = value;
+    public void setRacunDuznika(TRacunKlijenta value) {
+        this.racunDuznika = value;
     }
 
     /**
@@ -144,27 +137,27 @@ public class Uplata {
     }
 
     /**
-     * Gets the value of the primalac property.
+     * Gets the value of the racunPrimaoca property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link TRacunKlijenta }
      *     
      */
-    public String getPrimalac() {
-        return primalac;
+    public TRacunKlijenta getRacunPrimaoca() {
+        return racunPrimaoca;
     }
 
     /**
-     * Sets the value of the primalac property.
+     * Sets the value of the racunPrimaoca property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link TRacunKlijenta }
      *     
      */
-    public void setPrimalac(String value) {
-        this.primalac = value;
+    public void setRacunPrimaoca(TRacunKlijenta value) {
+        this.racunPrimaoca = value;
     }
 
     /**
@@ -189,30 +182,6 @@ public class Uplata {
      */
     public void setDatumNaloga(XMLGregorianCalendar value) {
         this.datumNaloga = value;
-    }
-
-    /**
-     * Gets the value of the racunDuznika property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getRacunDuznika() {
-        return racunDuznika;
-    }
-
-    /**
-     * Sets the value of the racunDuznika property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRacunDuznika(String value) {
-        this.racunDuznika = value;
     }
 
     /**
@@ -253,30 +222,6 @@ public class Uplata {
      */
     public void setPozivNaBrojZaduzenja(String value) {
         this.pozivNaBrojZaduzenja = value;
-    }
-
-    /**
-     * Gets the value of the racunPoverioca property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getRacunPoverioca() {
-        return racunPoverioca;
-    }
-
-    /**
-     * Sets the value of the racunPoverioca property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRacunPoverioca(String value) {
-        this.racunPoverioca = value;
     }
 
     /**

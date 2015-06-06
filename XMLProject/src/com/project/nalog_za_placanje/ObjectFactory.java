@@ -38,19 +38,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Placanje }
-     * 
-     */
-    public Placanje createPlacanje() {
-        return new Placanje();
-    }
-
-    /**
      * Create an instance of {@link NalogZaPlacanje }
      * 
      */
     public NalogZaPlacanje createNalogZaPlacanje() {
         return new NalogZaPlacanje();
+    }
+
+    /**
+     * Create an instance of {@link Placanje }
+     * 
+     */
+    public Placanje createPlacanje() {
+        return new Placanje();
     }
 
 }

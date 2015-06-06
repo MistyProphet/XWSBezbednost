@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import com.project.common_types.TBanka;
 
 
 /**
@@ -34,8 +35,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="SWIFT_kod_banke_duznika" type="{http://www.project.com/common_types}TSwift_kod_banke"/>
- *                   &lt;element name="Obracunski_racun_banke_duznika" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
+ *                   &lt;element name="Banka_duznika" type="{http://www.project.com/common_types}TBanka"/>
  *                   &lt;element name="ID_poruke_naloga">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -53,32 +53,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                       &lt;/restriction>
  *                     &lt;/simpleType>
  *                   &lt;/element>
- *                   &lt;element name="Sifra_valute">
- *                     &lt;simpleType>
- *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *                         &lt;length value="3"/>
- *                         &lt;pattern value="[A-Z]{3}|[0-9]{3}"/>
- *                         &lt;enumeration value="EUR"/>
- *                         &lt;enumeration value="RSD"/>
- *                         &lt;enumeration value="GBP"/>
- *                         &lt;enumeration value="CHF"/>
- *                         &lt;enumeration value="HUF"/>
- *                         &lt;enumeration value="JPY"/>
- *                         &lt;enumeration value="TRY"/>
- *                         &lt;enumeration value="USD"/>
- *                         &lt;enumeration value="AUD"/>
- *                         &lt;enumeration value="036"/>
- *                         &lt;enumeration value="840"/>
- *                         &lt;enumeration value="949"/>
- *                         &lt;enumeration value="392"/>
- *                         &lt;enumeration value="348"/>
- *                         &lt;enumeration value="756"/>
- *                         &lt;enumeration value="826"/>
- *                         &lt;enumeration value="941"/>
- *                         &lt;enumeration value="978"/>
- *                       &lt;/restriction>
- *                     &lt;/simpleType>
- *                   &lt;/element>
+ *                   &lt;element name="Sifra_valute" type="{http://www.project.com/common_types}TOznaka_Valute"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -164,8 +139,7 @@ public class Mt900Clearing {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="SWIFT_kod_banke_duznika" type="{http://www.project.com/common_types}TSwift_kod_banke"/>
-     *         &lt;element name="Obracunski_racun_banke_duznika" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
+     *         &lt;element name="Banka_duznika" type="{http://www.project.com/common_types}TBanka"/>
      *         &lt;element name="ID_poruke_naloga">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -183,32 +157,7 @@ public class Mt900Clearing {
      *             &lt;/restriction>
      *           &lt;/simpleType>
      *         &lt;/element>
-     *         &lt;element name="Sifra_valute">
-     *           &lt;simpleType>
-     *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
-     *               &lt;length value="3"/>
-     *               &lt;pattern value="[A-Z]{3}|[0-9]{3}"/>
-     *               &lt;enumeration value="EUR"/>
-     *               &lt;enumeration value="RSD"/>
-     *               &lt;enumeration value="GBP"/>
-     *               &lt;enumeration value="CHF"/>
-     *               &lt;enumeration value="HUF"/>
-     *               &lt;enumeration value="JPY"/>
-     *               &lt;enumeration value="TRY"/>
-     *               &lt;enumeration value="USD"/>
-     *               &lt;enumeration value="AUD"/>
-     *               &lt;enumeration value="036"/>
-     *               &lt;enumeration value="840"/>
-     *               &lt;enumeration value="949"/>
-     *               &lt;enumeration value="392"/>
-     *               &lt;enumeration value="348"/>
-     *               &lt;enumeration value="756"/>
-     *               &lt;enumeration value="826"/>
-     *               &lt;enumeration value="941"/>
-     *               &lt;enumeration value="978"/>
-     *             &lt;/restriction>
-     *           &lt;/simpleType>
-     *         &lt;/element>
+     *         &lt;element name="Sifra_valute" type="{http://www.project.com/common_types}TOznaka_Valute"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -219,8 +168,7 @@ public class Mt900Clearing {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "swiftKodBankeDuznika",
-        "obracunskiRacunBankeDuznika",
+        "bankaDuznika",
         "idPorukeNaloga",
         "datumValute",
         "iznos",
@@ -228,10 +176,8 @@ public class Mt900Clearing {
     })
     public static class PodaciOZaduzenju {
 
-        @XmlElement(name = "SWIFT_kod_banke_duznika", required = true, defaultValue = "AAAAAA00")
-        protected String swiftKodBankeDuznika;
-        @XmlElement(name = "Obracunski_racun_banke_duznika", required = true, defaultValue = "000-0000000000000-00")
-        protected String obracunskiRacunBankeDuznika;
+        @XmlElement(name = "Banka_duznika", required = true)
+        protected TBanka bankaDuznika;
         @XmlElement(name = "ID_poruke_naloga", required = true)
         protected String idPorukeNaloga;
         @XmlElement(name = "Datum_valute", required = true)
@@ -243,51 +189,27 @@ public class Mt900Clearing {
         protected String sifraValute;
 
         /**
-         * Gets the value of the swiftKodBankeDuznika property.
+         * Gets the value of the bankaDuznika property.
          * 
          * @return
          *     possible object is
-         *     {@link String }
+         *     {@link TBanka }
          *     
          */
-        public String getSWIFTKodBankeDuznika() {
-            return swiftKodBankeDuznika;
+        public TBanka getBankaDuznika() {
+            return bankaDuznika;
         }
 
         /**
-         * Sets the value of the swiftKodBankeDuznika property.
+         * Sets the value of the bankaDuznika property.
          * 
          * @param value
          *     allowed object is
-         *     {@link String }
+         *     {@link TBanka }
          *     
          */
-        public void setSWIFTKodBankeDuznika(String value) {
-            this.swiftKodBankeDuznika = value;
-        }
-
-        /**
-         * Gets the value of the obracunskiRacunBankeDuznika property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getObracunskiRacunBankeDuznika() {
-            return obracunskiRacunBankeDuznika;
-        }
-
-        /**
-         * Sets the value of the obracunskiRacunBankeDuznika property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setObracunskiRacunBankeDuznika(String value) {
-            this.obracunskiRacunBankeDuznika = value;
+        public void setBankaDuznika(TBanka value) {
+            this.bankaDuznika = value;
         }
 
         /**

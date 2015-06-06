@@ -17,11 +17,7 @@
                 <xs:element name="Podaci_o_odobrenju">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element default="AAAAAA00" name="SWIFT_kod_banke_poverioca"
-                                type="cmn:TSwift_kod_banke"/>
-                            <xs:element default="000-0000000000000-00"
-                                name="Obracunski_racun_banke_poverioca"
-                                type="cmn:TBroj_Bankarskog_Racuna"/>
+                            <xs:element name="Banka_poverioca" type="cmn:TBanka"/>
                             <xs:element name="ID_poruke_naloga">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">

@@ -1,0 +1,71 @@
+package com.project.crud;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import org.apache.commons.io.IOUtils;
+
+import com.project.rest.misc.RequestMethod;
+
+
+/**
+ * Klasa demonstrira upotrebu osnovne CREATE operacije nad XML bazom
+ * podataka (BaseX) posredstvom HTTP (PUT) protokola postujuci REST princip.
+ * 
+ * Pomocu PUT metode je moguce kreirati novu semu baze, dodati novi resurs 
+ * u bazu ili azurirati vec postojeci XML resurs. 
+ * 
+ * @author Igor Cverdelj-Fogarasi
+ *
+ */
+public final class RESTPut {
+	
+	public static final String REST_URL = ResourceBundle.getBundle("basex").getString("rest.url");
+	
+	public static void run() throws Exception {
+		System.out.println("=== PUT: create a new database ===");
+
+		/* URL konekcije ka konkretnom resursu - semi baze */
+		URL url = new URL(REST_URL + "factbook1");
+		System.out.println("\n* URL: " + url);
+
+		/* Uspostavljanje konekcije */
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		/* Tip konekcije je OUTPUT */
+		conn.setDoOutput(true); // postavlja se kada se ocekuje odgovor od servera
+							    // stavlja se kada se salje output kao request body. Za GET obicno ne treba
+		/* Postavljanje HTTP request metode */
+		conn.setRequestMethod(RequestMethod.PUT);
+		
+		/* Preuzimanje output stream-a iz otvorene konekcije */
+		OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+		/* Ucitavanje XML resursa sa classpath-a */
+		InputStream in = new BufferedInputStream(new FileInputStream("src/main/resources/factbook.xml"));
+		// Ovaj fajl ce se poslati u telu PUT zahteva za kreiranje baze: po defultu ce xml dokument dobiti isto ime kao sto je ime baze.
+		// Probati u browser-u: http://localhost:8080/BaseX75/rest/factbook1 - izlistava fajlove u bazi, fajl koji smo dodali je dobio ime factbook1.xml
+		// Moguce je videti i sam fajl: kao i sam fajl: http://localhost:8080/BaseX75/rest/factbook1/factbook1.xml
+			  
+		// Preferirano: kreirati XML u bazi (kako je prikazano u RESTUtil -> prvo PUT zahtev za kreiranje seme, a nakon toga PUT zahtev za postavljanje XMLa u semu). 
+		// 				na ovaj nacin se moze dodeliti zeljeno ime
+		
+
+		/* Slanje podataka kroz stream */
+		System.out.println("\n* Send document...");
+		IOUtils.copy(in, out);
+		IOUtils.closeQuietly(in);
+		IOUtils.closeQuietly(out);
+		
+		/* Response kod vracen od strane servera */
+		RESTUtil.printResponse(conn);
+
+		/* Obavezno zatvaranje tekuce konekcije */
+		conn.disconnect();
+	}
+	
+}

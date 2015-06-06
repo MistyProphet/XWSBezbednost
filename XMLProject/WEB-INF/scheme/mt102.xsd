@@ -16,29 +16,8 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="SWIFT_kod_banke_duznika">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:length value="8"/>
-                            <xs:pattern value=""/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:element>
-                <xs:element name="racun_banke_duznika">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:length value="18"/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:element>
-                <xs:element name="SWIFT_kod_banke_poverioca">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:length value="8"/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:element>
-                <xs:element name="racun_banke_poverioca" type="cmn:TBroj_Bankarskog_Racuna"/>
+                <xs:element name="Banka_Duznika" type="cmn:TBanka"/>
+                <xs:element name="Banka_Poverioca" type="cmn:TBanka"/>
                 <xs:element name="ukupan_iznos">
                     <xs:simpleType>
                         <xs:restriction base="xs:decimal">

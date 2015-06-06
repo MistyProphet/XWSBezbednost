@@ -33,7 +33,7 @@
     <xs:element name="Uplata">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Duznik" type="cmn:TLice"/>
+                <xs:element name="Racun_duznika" type="cmn:TRacun_Klijenta"/>
                 <xs:element name="Svrha_placanja">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
@@ -42,14 +42,10 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="Primalac" type="cmn:TLice"/>
+                <xs:element name="Racun_primaoca" type="cmn:TRacun_Klijenta"/>
                 <xs:element name="Datum_naloga" type="xs:date"/>
-                <xs:element default="000-0000000000000-00" name="Racun_duznika"
-                    type="cmn:TBroj_Bankarskog_Racuna"/>
                 <xs:element name="Model_zaduzenja" type="cmn:TModel"/>
                 <xs:element name="Poziv_na_broj_zaduzenja" type="cmn:TPoziv_na_broj"/>
-                <xs:element default="000-0000000000000-00" name="Racun_poverioca"
-                    type="cmn:TBroj_Bankarskog_Racuna"/>
                 <xs:element name="Model_odobrenja" type="cmn:TModel"/>
                 <xs:element name="Poziv_na_broj_odobrenja" type="cmn:TPoziv_na_broj"/>
                 <xs:element name="Iznos">

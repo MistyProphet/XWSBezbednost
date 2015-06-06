@@ -17,11 +17,7 @@
                 <xs:element name="Podaci_o_zaduzenju">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element default="AAAAAA00" name="SWIFT_kod_banke_duznika"
-                                type="cmn:TSwift_kod_banke"/>
-                            <xs:element default="000-0000000000000-00"
-                                name="Obracunski_racun_banke_duznika"
-                                type="cmn:TBroj_Bankarskog_Racuna"/>
+                            <xs:element name="Banka_duznika" type="cmn:TBanka"/>
                             <xs:element name="ID_poruke_naloga">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
@@ -60,11 +56,6 @@
                 <xs:element name="Podaci_o_zaduzenju">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element default="AAAAAA00" name="SWIFT_kod_banke_duznika"
-                                type="cmn:TSwift_kod_banke"/>
-                            <xs:element default="000-0000000000000-00"
-                                name="Obracunski_racun_banke_duznika"
-                                type="cmn:TBroj_Bankarskog_Racuna"/>
                             <xs:element name="ID_poruke_naloga">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
@@ -83,6 +74,7 @@
                                 </xs:simpleType>
                             </xs:element>
                             <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
+                            <xs:element name="Banka_duznika" type="cmn:TBanka"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

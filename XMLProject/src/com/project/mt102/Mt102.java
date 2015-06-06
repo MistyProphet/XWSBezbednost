@@ -2,6 +2,8 @@
 package com.project.mt102;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.project.nalog_za_placanje.Placanje;
 
 
 /**
@@ -389,7 +393,7 @@ public class Mt102 {
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
     public static class Placanja {
-
+    	public ArrayList<Placanje> placanja;
 
     }
 

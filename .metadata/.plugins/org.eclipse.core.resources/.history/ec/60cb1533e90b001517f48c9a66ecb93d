@@ -1,0 +1,46 @@
+package com.project.banka;
+
+public class Bank {
+
+	private int id;
+	private String name;
+	private String SWIFTCode;
+	
+	public Bank(int id, String name, String sWIFTCode) {
+		super();
+		this.id = id;
+		this.name = name;
+		SWIFTCode = sWIFTCode;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSWIFTCode() {
+		return SWIFTCode;
+	}
+
+	public void setSWIFTCode(String sWIFTCode) {
+		SWIFTCode = sWIFTCode;
+	}
+
+	@Override
+	public String toString() {
+		return "Bank [id=" + id + ", name=" + name + ", SWIFTCode=" + SWIFTCode
+				+ "]";
+	}
+	
+}

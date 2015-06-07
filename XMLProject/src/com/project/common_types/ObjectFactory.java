@@ -46,6 +46,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TBankarskiRacunKlijenta }
+     * 
+     */
+    public TBankarskiRacunKlijenta createTBankarskiRacunKlijenta() {
+        return new TBankarskiRacunKlijenta();
+    }
+
+    /**
      * Create an instance of {@link TBanka }
      * 
      */

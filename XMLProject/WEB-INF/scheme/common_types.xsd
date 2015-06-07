@@ -90,4 +90,12 @@
         </xs:sequence>
         <xs:attribute name="id" type="xs:long"/>
     </xs:complexType>
+    <xs:complexType name="TBankarski_Racun_Klijenta">
+        <xs:sequence>
+            <xs:element name="Racun" type="cmn:TRacun_Klijenta"/>
+            <xs:element name="Stanje" type="xs:double"/>
+            <xs:element name="Raspoloziva_sredstva" type="xs:double"/>
+            <xs:element name="Valuta" type="cmn:TOznaka_Valute"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

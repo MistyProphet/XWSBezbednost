@@ -181,7 +181,7 @@
     
     <wsdl:service name="BankaService">
         <wsdl:port name="BankaPort" binding="ws:BankaBinding">
-            <soap:address location="http://localhost:9090/BankaPort"/>
+            <soap:address location="http://localhost:8080/BankaPort"/>
         </wsdl:port>
     </wsdl:service>
     

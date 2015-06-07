@@ -16,7 +16,8 @@ import javax.xml.ws.Service;
 import com.project.banka.Banka;
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
-import com.project.common_types.TRacunKlijenta;
+import com.project.exceptions.NoMoneyException;
+import com.project.exceptions.WrongBankException;
 import com.project.mt103.Mt103;
 import com.project.mt103.Mt103.PodaciOBankama;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
@@ -43,7 +44,8 @@ public class BankaPortImpl implements BankaPort {
     private Integer mt103ID = 1;
     
     public void init() {
-    	current_bank = new Banka();
+    	current_bank = new Banka(); //Ovo promeniti na specificnu banku?
+    	//Podesiti swift kod
     	current_bank.init();
     }
     
@@ -130,8 +132,8 @@ public class BankaPortImpl implements BankaPort {
      * @see com.project.bankaws.BankaPort#receiveNalog(com.project.nalog_za_placanje.NalogZaPlacanje  nalog )*
      */
     public com.project.common_types.Status receiveNalog(com.project.nalog_za_placanje.NalogZaPlacanje nalog) throws ReceiveNalogFault    { 
-        LOG.info("Executing operation receiveNalog");
-        System.out.println(nalog);
+        LOG.info("Executing operation receiveNalog...");
+        //System.out.println(nalog);
         com.project.common_types.Status _return = new com.project.common_types.Status();
         try {
         	if(!nalog.isHitno() || (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == -1)){
@@ -142,11 +144,11 @@ public class BankaPortImpl implements BankaPort {
         		checkNalog(nalog);
             	//provera da li je racun primaoca u istoj banci
         		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
-        		TBankarskiRacunKlijenta racun_primaoca = current_bank.getScpecificAccount(broj_rk_primaoca);
+        		TBankarskiRacunKlijenta racun_primaoca = current_bank.getSpecificAccount(broj_rk_primaoca);
         		if(racun_primaoca != null){
         			//ako jeste, prebaciti odmah pare
         			String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
-        			TBankarskiRacunKlijenta racun_duznika = current_bank.getScpecificAccount(broj_rk_duznika);
+        			TBankarskiRacunKlijenta racun_duznika = current_bank.getSpecificAccount(broj_rk_duznika);
         			if(racun_duznika != null){
         				double iznos = nalog.getPlacanje().getUplata().getIznos().doubleValue();
         				if(racun_duznika.getRaspolozivaSredstva() >= iznos){
@@ -157,9 +159,11 @@ public class BankaPortImpl implements BankaPort {
         					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva() + iznos);
         				} else {
         					//no-money exception
+        					throw new NoMoneyException();
         				}
         			} else {
         				//wrong-bank exception
+        				throw new WrongBankException();
         			}
         		}else {
         			//ako nije, kreirati MT103 nalog i poslati CB
@@ -170,36 +174,40 @@ public class BankaPortImpl implements BankaPort {
             		rtgsNalog.setUplata(nalog.getPlacanje().getUplata());
             		
             		PodaciOBankama pob = new PodaciOBankama();
-            		String cbOznakaBankeDuznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna().substring(0, 2); 
             		String cbOznakaBankePoverioca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().substring(0, 2);
-            		//Proveriti sa CB, dobiti banke
-            		TBanka bankaDuznika = new TBanka();
+            		//Proveriti sa CB, dobiti banku na osnovu prve tri cifre racuna. To je jedinstvena oznaka banke kod CB
             		TBanka bankaPoverioca = new TBanka();
             		///////////////////////////////
-            		pob.setBankaDuznika(bankaDuznika);
+            		
+            		
+            		pob.setBankaDuznika(current_bank.getPodaci_o_banci());
             		pob.setBankaPoverioca(bankaPoverioca);
             		rtgsNalog.setPodaciOBankama(pob);
             		
             		//rezervisati sredstva klijenta (raspoloziva sredstva)
-            		//uzeti broj racuna iz baze, ovo je temporary solution
-            		TBankarskiRacunKlijenta ban_racun = new TBankarskiRacunKlijenta();
-            		TRacunKlijenta klijent_racun = new TRacunKlijenta();
-            		klijent_racun.setId(null);
-            		klijent_racun.setBrojRacuna("");
-            		klijent_racun.setVlasnik("");
-            		ban_racun.setRacun(klijent_racun);
-            		ban_racun.setRaspolozivaSredstva(ban_racun.getStanje());
-            		ban_racun.setValuta("RSD");
-            		double iznos = nalog.getPlacanje().getUplata().getIznos().doubleValue();
-            		ban_racun.setRaspolozivaSredstva(ban_racun.getRaspolozivaSredstva() - iznos);
+            		TBankarskiRacunKlijenta racun_duznika = current_bank.getSpecificAccount(nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna());
+            		if(racun_duznika != null){
+            			double iznos = nalog.getPlacanje().getUplata().getIznos().doubleValue();
+            			if(racun_duznika.getRaspolozivaSredstva() >= iznos){
+        					//duznik ima dovoljno para, skidamo pare
+                			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva() - iznos);
+        				} else {
+        					//no-money exception
+        					throw new NoMoneyException();
+        				}
+            		} else {
+        				//wrong-bank exception
+        				throw new WrongBankException();
+            		}
+            		
             		//poslati MT103
-            		URL wsdl = new URL("http://localhost:8080/XMLProject/services/CentralnaBanka?wsdl"); // 8080 ili 9090? Vidi wsdl, tamo je za port naveden 9090
-        	    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice"); //Nije dobar prvi parametar, moramo videti kod Ljilje sta je ona podesila
-        	    	QName portName = new QName("http://www.project.com/CBws", "CBport");
+            		URL wsdl = new URL("http://localhost:8080/XML_CB/services/Banka?wsdl");
+        	    	QName serviceName = new QName("http://www.project.com/CBws", "BankaService");
+        	    	QName portName = new QName("http://www.project.com/CBws", "BankaPort");
         	    	
         	    	Service service = Service.create(wsdl, serviceName);
         	    	
-        	        //CB centralnaBanka = service.getPort(portName, CB.class); moramo imati CB u nasem projektu?
+        	        //CB centralnaBanka = service.getPort(portName, CB.class); //ubaciti Ljiljine klase
         	        //centralnaBanka.recieveMT103CB(rtgsNalog);
         		}
 
@@ -209,21 +217,22 @@ public class BankaPortImpl implements BankaPort {
         	}
             return _return;
         } catch (java.lang.Exception ex) {
-        	_return.setStatusCode(-1); 		//Ovo se ovde postavlja, ili se generise Fault poruka?
-        	_return.setStatusText("An error occured. Your payment hasn't been processed.");
+        	//_return.setStatusCode(-1); //Dogovoriti kodove greski. 1 za ok, -1 za gresku
+        	//_return.setStatusText("An error occured. Your payment hasn't been processed.");//Da li i ovo vracamo?
             ex.printStackTrace();
-            throw new RuntimeException(ex);
+            throw new ReceiveNalogFault("An error occured. Your payment hasn't been processed.");
         }
         //throw new ReceiveNalogFault("receiveNalogFault...");
     }
     
-    public void checkNalog(NalogZaPlacanje nalog) {
-    	//da li je racun duznika u ovoj banci
-    	//da li klijent ima toliko para na racunu
+    public void checkNalog(NalogZaPlacanje nalog) throws Exception {
     	//da li su validni formati racuna
     	//da li postoji ta druga banka
     	//valuta stanja na racunu i valuta placanja -> Kursni list?
-    	//exceptioni za sve ovo
+    }
+    
+    public static void main(String[] args) {
+    	//test area
     }
 
 }

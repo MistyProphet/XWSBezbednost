@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
-import com.project.common_types.TRacunKlijenta;
 import com.project.exceptions.WrongBankSWIFTCodeException;
 import com.project.exceptions.WrongOverallSumException;
 import com.project.mt102.Mt102;
@@ -17,30 +17,59 @@ import com.project.util.Util;
 
 public class Banka {
 	
-	private String SWIFTCode;
+	private TBanka podaci_o_banci;
 	private ArrayList<TBankarskiRacunKlijenta> accounts;
 	//Key - naziv banke za koju je namenjen niz naloga
 	private HashMap<String,ArrayList<NalogZaPlacanje>> naloziZaClearing;
+	private Integer broj_racuna_ID = 1;
 	
 	public void init() {
+		podaci_o_banci = new TBanka();
 		accounts = new ArrayList<TBankarskiRacunKlijenta>();
 		naloziZaClearing = new HashMap<String, ArrayList<NalogZaPlacanje>>();
-		//ucitavanje iz baze?
+		//ucitavanje iz baze na osnovu swift koda?
+	}
+	
+	public void setPodaci_o_banci(TBanka podaci){
+		podaci_o_banci.setId(podaci.getId());
+		podaci_o_banci.setBrojRacunaBanke(podaci.getBrojRacunaBanke());
+		podaci_o_banci.setNazivBanke(podaci.getNazivBanke());
+		podaci_o_banci.setSWIFTKod(podaci.getSWIFTKod());
+	}
+	
+	public TBanka getPodaci_o_banci(){
+		return podaci_o_banci;
+	}
+	
+	public Integer getBrojRacunaID(){
+		return broj_racuna_ID;
 	}
 	
 	public String getSWIFTCode() {
-		return SWIFTCode;
+		return podaci_o_banci.getSWIFTKod();
 	}
 
-	public void setSWIFTCode(String sWIFTCode) {
-		SWIFTCode = sWIFTCode;
+	public void setSWIFTCode(String SWIFTCode) {
+		podaci_o_banci.setSWIFTKod(SWIFTCode);
+	}
+	
+	public String getNazivBanke(){
+		return podaci_o_banci.getNazivBanke();
+	}
+	
+	public String getBrojRacunaBanke(){
+		return podaci_o_banci.getBrojRacunaBanke();
+	}
+	
+	public String getID(){
+		return podaci_o_banci.getId().toString();
 	}
 
 	public ArrayList<TBankarskiRacunKlijenta> getAccounts() {
 		return accounts;
 	}
 	
-	public TBankarskiRacunKlijenta getScpecificAccount(String account_number){
+	public TBankarskiRacunKlijenta getSpecificAccount(String account_number){
 		for(TBankarskiRacunKlijenta rk: accounts){
 			if(rk.getRacun().getBrojRacuna().equals(account_number)){
 				return rk;
@@ -59,7 +88,7 @@ public class Banka {
 	}
 	
 	public void checkMT102SWIFTCode(Mt102 mt102) throws WrongBankSWIFTCodeException {
-		if (!mt102.getBankaPoverioca().getSWIFTKod().trim().equals(SWIFTCode.trim())) {
+		if (!mt102.getBankaPoverioca().getSWIFTKod().trim().equals(podaci_o_banci.getSWIFTKod().trim())) {
 			throw new WrongBankSWIFTCodeException();
 		}
 	}

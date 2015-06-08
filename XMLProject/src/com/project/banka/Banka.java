@@ -113,6 +113,8 @@ public class Banka {
 			try {
 				mt102.setDatum(Util.getXMLGregorianCalendarNow());
 				mt102.setDatumValute(Util.getXMLGregorianCalendarNow());
+				mt102.setBankaDuznika(podaci_o_banci);
+				//mt102.setBankaPoverioca(value);
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}

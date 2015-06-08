@@ -25,32 +25,7 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="Sifra_valute">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:length value="3"/>
-                            <xs:pattern value="[A-Z]{3}|[0-9]{3}"/>
-                            <xs:enumeration value="EUR"/>
-                            <xs:enumeration value="RSD"/>
-                            <xs:enumeration value="GBP"/>
-                            <xs:enumeration value="CHF"/>
-                            <xs:enumeration value="HUF"/>
-                            <xs:enumeration value="JPY"/>
-                            <xs:enumeration value="TRY"/>
-                            <xs:enumeration value="USD"/>
-                            <xs:enumeration value="AUD"/>
-                            <xs:enumeration value="036"/>
-                            <xs:enumeration value="840"/>
-                            <xs:enumeration value="949"/>
-                            <xs:enumeration value="392"/>
-                            <xs:enumeration value="348"/>
-                            <xs:enumeration value="756"/>
-                            <xs:enumeration value="826"/>
-                            <xs:enumeration value="941"/>
-                            <xs:enumeration value="978"/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:element>
+                <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
                 <xs:element ref="np:Uplata"/>
             </xs:sequence>
         </xs:complexType>
@@ -58,7 +33,7 @@
     <xs:element name="Uplata">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Duznik" type="cmn:TLice"/>
+                <xs:element name="Racun_duznika" type="cmn:TRacun_Klijenta"/>
                 <xs:element name="Svrha_placanja">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
@@ -67,14 +42,10 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="Primalac" type="cmn:TLice"/>
+                <xs:element name="Racun_primaoca" type="cmn:TRacun_Klijenta"/>
                 <xs:element name="Datum_naloga" type="xs:date"/>
-                <xs:element default="000-0000000000000-00" name="Racun_duznika"
-                    type="cmn:TBroj_Bankarskog_Racuna"/>
                 <xs:element name="Model_zaduzenja" type="cmn:TModel"/>
                 <xs:element name="Poziv_na_broj_zaduzenja" type="cmn:TPoziv_na_broj"/>
-                <xs:element default="000-0000000000000-00" name="Racun_poverioca"
-                    type="cmn:TBroj_Bankarskog_Racuna"/>
                 <xs:element name="Model_odobrenja" type="cmn:TModel"/>
                 <xs:element name="Poziv_na_broj_odobrenja" type="cmn:TPoziv_na_broj"/>
                 <xs:element name="Iznos">

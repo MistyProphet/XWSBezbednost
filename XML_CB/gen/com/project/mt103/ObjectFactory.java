@@ -38,35 +38,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Mt103 .PodaciOUplati }
-     * 
-     */
-    public Mt103 .PodaciOUplati createMt103PodaciOUplati() {
-        return new Mt103 .PodaciOUplati();
-    }
-
-    /**
      * Create an instance of {@link Mt103 .PodaciOBankama }
      * 
      */
     public Mt103 .PodaciOBankama createMt103PodaciOBankama() {
         return new Mt103 .PodaciOBankama();
-    }
-
-    /**
-     * Create an instance of {@link Mt103 .PodaciOUplati.OpstiDeo }
-     * 
-     */
-    public Mt103 .PodaciOUplati.OpstiDeo createMt103PodaciOUplatiOpstiDeo() {
-        return new Mt103 .PodaciOUplati.OpstiDeo();
-    }
-
-    /**
-     * Create an instance of {@link Mt103 .PodaciOUplati.Uplata }
-     * 
-     */
-    public Mt103 .PodaciOUplati.Uplata createMt103PodaciOUplatiUplata() {
-        return new Mt103 .PodaciOUplati.Uplata();
     }
 
 }

@@ -37,12 +37,4 @@ public class ObjectFactory {
         return new Mt102();
     }
 
-    /**
-     * Create an instance of {@link Mt102 .Placanja }
-     * 
-     */
-    public Mt102 .Placanja createMt102Placanja() {
-        return new Mt102 .Placanja();
-    }
-
 }

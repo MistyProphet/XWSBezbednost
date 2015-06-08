@@ -13,7 +13,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
-import com.project.mt900.Mt900.PodaciOZaduzenju;
 
 
 /**
@@ -58,32 +57,7 @@ import com.project.mt900.Mt900.PodaciOZaduzenju;
  *                       &lt;/restriction>
  *                     &lt;/simpleType>
  *                   &lt;/element>
- *                   &lt;element name="Sifra_valute">
- *                     &lt;simpleType>
- *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *                         &lt;length value="3"/>
- *                         &lt;pattern value="[A-Z]{3}|[0-9]{3}"/>
- *                         &lt;enumeration value="EUR"/>
- *                         &lt;enumeration value="RSD"/>
- *                         &lt;enumeration value="GBP"/>
- *                         &lt;enumeration value="CHF"/>
- *                         &lt;enumeration value="HUF"/>
- *                         &lt;enumeration value="JPY"/>
- *                         &lt;enumeration value="TRY"/>
- *                         &lt;enumeration value="USD"/>
- *                         &lt;enumeration value="AUD"/>
- *                         &lt;enumeration value="036"/>
- *                         &lt;enumeration value="840"/>
- *                         &lt;enumeration value="949"/>
- *                         &lt;enumeration value="392"/>
- *                         &lt;enumeration value="348"/>
- *                         &lt;enumeration value="756"/>
- *                         &lt;enumeration value="826"/>
- *                         &lt;enumeration value="941"/>
- *                         &lt;enumeration value="978"/>
- *                       &lt;/restriction>
- *                     &lt;/simpleType>
- *                   &lt;/element>
+ *                   &lt;element name="Sifra_valute" type="{http://www.project.com/common_types}TOznaka_Valute"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -110,36 +84,7 @@ public class Mt910 {
     @XmlElement(name = "Podaci_o_odobrenju", required = true)
     protected Mt910 .PodaciOOdobrenju podaciOOdobrenju;
 
-    public Mt910(Mt103 mt103) {
-    	PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
-		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
-		zaduzenje.setSifraValute(mt103.getPodaciOUplati().getUplata().getSifraValute());
-		zaduzenje.setIznos(mt103.getPodaciOUplati().getUplata().getIznos());
-		zaduzenje.setDatumValute(mt103.getPodaciOUplati().getOpstiDeo().getDatumValute());
-		
-		zaduzenje.setObracunskiRacunBankePoverioca(mt103.getPodaciOBankama().getObracunskiRacunBankePoverioca());
-		zaduzenje.setSWIFTKodBankePoverioca(mt103.getPodaciOBankama().getSWIFTBankePoverioca());
-		this.setPodaciOOdobrenju(zaduzenje);
-		
-    }
-
-	public Mt910(Mt102 mt102) {
-	  	PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
-			zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
-			zaduzenje.setSifraValute(mt102.getSifraValute());
-			zaduzenje.setIznos(mt102.getUkupanIznos());
-			zaduzenje.setDatumValute(mt102.getDatumValute());
-			
-			zaduzenje.setObracunskiRacunBankePoverioca(mt102.getRacunBankePoverioca());
-			zaduzenje.setSWIFTKodBankePoverioca(mt102.getSWIFTKodBankePoverioca());
-			this.setPodaciOOdobrenju(zaduzenje);
-	}
-
-	public Mt910() {
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
+    /**
      * Gets the value of the idPoruke property.
      * 
      * @return
@@ -151,6 +96,37 @@ public class Mt910 {
         return idPoruke;
     }
 
+
+    public Mt910(Mt103 mt103) {
+    	this.idPoruke = mt103.getIDPoruke();
+    	PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
+		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
+		zaduzenje.setSifraValute(mt103.getSifraValute());
+		zaduzenje.setIznos(mt103.getUplata().getIznos());
+		zaduzenje.setDatumValute(mt103.getDatumValute());
+		
+		zaduzenje.setObracunskiRacunBankePoverioca(mt103.getPodaciOBankama().getBankaPoverioca().getBrojRacunaBanke());
+		zaduzenje.setSWIFTKodBankePoverioca(mt103.getPodaciOBankama().getBankaPoverioca().getSWIFTKod());
+		this.setPodaciOOdobrenju(zaduzenje);
+		
+    }
+
+	public Mt910(Mt102 mt102) {
+		this.idPoruke = mt102.getIDPoruke();
+		PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
+			zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
+			zaduzenje.setSifraValute(mt102.getSifraValute());
+			zaduzenje.setIznos(mt102.getUkupanIznos());
+			zaduzenje.setDatumValute(mt102.getDatumValute());
+			
+			zaduzenje.setObracunskiRacunBankePoverioca(mt102.getBankaPoverioca().getBrojRacunaBanke());
+			zaduzenje.setSWIFTKodBankePoverioca(mt102.getBankaPoverioca().getSWIFTKod());
+			this.setPodaciOOdobrenju(zaduzenje);
+	}
+
+	public Mt910() {
+		// TODO Auto-generated constructor stub
+	}
     /**
      * Sets the value of the idPoruke property.
      * 
@@ -217,32 +193,7 @@ public class Mt910 {
      *             &lt;/restriction>
      *           &lt;/simpleType>
      *         &lt;/element>
-     *         &lt;element name="Sifra_valute">
-     *           &lt;simpleType>
-     *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
-     *               &lt;length value="3"/>
-     *               &lt;pattern value="[A-Z]{3}|[0-9]{3}"/>
-     *               &lt;enumeration value="EUR"/>
-     *               &lt;enumeration value="RSD"/>
-     *               &lt;enumeration value="GBP"/>
-     *               &lt;enumeration value="CHF"/>
-     *               &lt;enumeration value="HUF"/>
-     *               &lt;enumeration value="JPY"/>
-     *               &lt;enumeration value="TRY"/>
-     *               &lt;enumeration value="USD"/>
-     *               &lt;enumeration value="AUD"/>
-     *               &lt;enumeration value="036"/>
-     *               &lt;enumeration value="840"/>
-     *               &lt;enumeration value="949"/>
-     *               &lt;enumeration value="392"/>
-     *               &lt;enumeration value="348"/>
-     *               &lt;enumeration value="756"/>
-     *               &lt;enumeration value="826"/>
-     *               &lt;enumeration value="941"/>
-     *               &lt;enumeration value="978"/>
-     *             &lt;/restriction>
-     *           &lt;/simpleType>
-     *         &lt;/element>
+     *         &lt;element name="Sifra_valute" type="{http://www.project.com/common_types}TOznaka_Valute"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-    targetNamespace="http://www/project.com/zahtev_za_izvod"
-    xmlns:zi="http://www/project.com/zahtev_za_izvod">
+    targetNamespace="http://www.project.com/zahtev_za_izvod"
+    xmlns:zi="http://www.project.com/zahtev_za_izvod">
 
     <xs:element name="Zahtev_za_Izvod">
         <xs:complexType>

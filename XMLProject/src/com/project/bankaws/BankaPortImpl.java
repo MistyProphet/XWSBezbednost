@@ -85,6 +85,7 @@ public class BankaPortImpl implements BankaPort {
      */
     public com.project.common_types.Status receiveMT102(com.project.mt102.Mt102 mt102) throws ReceiveMT102Fault    { 
         LOG.info("Executing operation receiveMT102");
+        current_bank.obradiClearingNalog(mt102);
         System.out.println(mt102);
         try {
             com.project.common_types.Status _return = new com.project.common_types.Status();

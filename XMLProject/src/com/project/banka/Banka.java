@@ -112,7 +112,7 @@ public class Banka {
 		}
 	}
 	
-	public void Clearing() {
+	public void formirajClearingNalog() {
 	
 		Mt102 mt102 = null;
 		for (String banka : naloziZaClearing.keySet()) {
@@ -133,6 +133,13 @@ public class Banka {
 		}
 	}
 
+	public void obradiClearingNalog(Mt102 mt102) {
+		
+		for (Placanje nalog : mt102.getPlacanje()) {
+			mt102.getPlacanje().add(nalog.getPlacanje());
+		}
+
+	}
 	
 	public void addNalogZaClearing(NalogZaPlacanje nalog) throws JAXBException, IOException {
 		Long idBanke = null;

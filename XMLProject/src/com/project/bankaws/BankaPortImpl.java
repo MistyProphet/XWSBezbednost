@@ -136,8 +136,9 @@ public class BankaPortImpl implements BankaPort {
         //System.out.println(nalog);
         com.project.common_types.Status _return = new com.project.common_types.Status();
         try {
+        	
         	if(!nalog.isHitno() || (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == -1)){
-        		//Clearing
+        		current_bank.addNalogZaClearing(nalog);
         	} else {
         		//RTGS
         		//proveriti validnost naloga

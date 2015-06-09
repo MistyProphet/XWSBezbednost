@@ -135,8 +135,12 @@ public class Banka {
 
 	public void obradiClearingNalog(Mt102 mt102) {
 		
-		for (Placanje nalog : mt102.getPlacanje()) {
-			mt102.getPlacanje().add(nalog.getPlacanje());
+		for (Placanje placanje : mt102.getPlacanje()) {
+			String broj_rk_primaoca = placanje.getUplata().getRacunPrimaoca().getBrojRacuna();
+    		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
+    		if(racun_primaoca != null){
+    			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
+    		}
 		}
 
 	}

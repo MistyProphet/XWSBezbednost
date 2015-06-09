@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<racuni>
+<TBankarski_Racun_Klijenta id="1">
+	<Racun id="1">
+	   <Vlasnik>Pera Peric</Vlasnik>
+	   <Broj_Racuna>001-0000000000001-00</Broj_Racuna>
+	   </Racun>
+    <Stanje>10000</Stanje>
+    <Raspoloziva_sredstva>9000</Raspoloziva_sredstva>
+    <Valuta>RSD</Valuta>
+</TBankarski_Racun_Klijenta>
+
+<TBankarski_Racun_Klijenta id="2">
+	<Racun id="2">
+	   <Vlasnik>Mika Mikic</Vlasnik>
+	   <Broj_Racuna>001-0000000000002-00</Broj_Racuna>
+	   </Racun>
+    <Stanje>1000</Stanje>
+    <Raspoloziva_sredstva>1000</Raspoloziva_sredstva>
+    <Valuta>RSD</Valuta>
+</TBankarski_Racun_Klijenta>
+</racuni>

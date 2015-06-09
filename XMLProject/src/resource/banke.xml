@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<racuni_banaka>
+
+	<kod_banke id='AAAARS01'>
+		<racun_banke>
+			111-1231231231231-32
+	</racun_banke>
+	<stanje_racuna>
+			33432523.43
+	</stanje_racuna>
+	</kod_banke>
+	<kod_banke id='BBBBRS01'>
+		<racun_banke>
+			111-1231555551231-32
+	</racun_banke>
+	<stanje_racuna>
+			656432523.43
+	</stanje_racuna>
+	</kod_banke>
+	<kod_banke id='CCCCRS01'>
+		<racun_banke>
+			111-1231266661231-32
+	</racun_banke>
+	<stanje_racuna>
+			55656523.43
+	</stanje_racuna>
+	</kod_banke>
+</racuni_banaka>

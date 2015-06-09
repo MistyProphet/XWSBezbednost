@@ -40,7 +40,7 @@ import com.project.util.Util;
 public class BankaPortImpl implements BankaPort {
 
     private static final Logger LOG = Logger.getLogger(BankaPortImpl.class.getName());
-    private Banka current_bank;
+    public Banka current_bank;
     private Integer mt103ID = 1;
     
     public void init() {
@@ -152,13 +152,13 @@ public class BankaPortImpl implements BankaPort {
         			String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
         			TBankarskiRacunKlijenta racun_duznika = current_bank.getSpecificAccount(broj_rk_duznika);
         			if(racun_duznika != null){
-        				double iznos = nalog.getPlacanje().getUplata().getIznos().doubleValue();
-        				if(racun_duznika.getRaspolozivaSredstva() >= iznos){
+        				BigDecimal iznos = nalog.getPlacanje().getUplata().getIznos();
+        				if(racun_duznika.getRaspolozivaSredstva().subtract(iznos).compareTo(new BigDecimal(0))>=0){
         					//duznik ima dovoljno para, skidamo pare
-        					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva() - iznos);
+        					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
         					//dodajemo primaocu
-        					racun_primaoca.setStanje(racun_primaoca.getStanje() + iznos);
-        					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva() + iznos);
+        					racun_primaoca.setStanje(racun_primaoca.getStanje().add(iznos));
+        					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(iznos));
         				} else {
         					//no-money exception
         					throw new NoMoneyException();
@@ -189,10 +189,10 @@ public class BankaPortImpl implements BankaPort {
             		//rezervisati sredstva klijenta (raspoloziva sredstva)
             		TBankarskiRacunKlijenta racun_duznika = current_bank.getSpecificAccount(nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna());
             		if(racun_duznika != null){
-            			double iznos = nalog.getPlacanje().getUplata().getIznos().doubleValue();
-            			if(racun_duznika.getRaspolozivaSredstva() >= iznos){
+            			BigDecimal iznos = nalog.getPlacanje().getUplata().getIznos();
+            			if(racun_duznika.getRaspolozivaSredstva().subtract(iznos).compareTo(new BigDecimal(0))>=0){
         					//duznik ima dovoljno para, skidamo pare
-                			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva() - iznos);
+                			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
         				} else {
         					//no-money exception
         					throw new NoMoneyException();

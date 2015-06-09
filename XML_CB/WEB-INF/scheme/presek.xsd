@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/presek" xmlns:pr="http://www.project.com/presek"
+    xmlns:sp="http://www.project.com/stavka_preseka"
+    xmlns:zp="http://www.project.com/zaglavlje_preseka">
+    <xs:import namespace="http://www.project.com/zaglavlje_preseka"
+        schemaLocation="zaglavlje_preseka.xsd"/>
+    <xs:import namespace="http://www.project.com/stavka_preseka" schemaLocation="stavka_preseka.xsd"/>
+    <xs:element name="Presek">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="zp:Zaglavlje_preseka"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="sp:Stavka_preseka"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

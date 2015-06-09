@@ -51,4 +51,51 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:simpleType name="TOznaka_Valute">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="TRacun_Klijenta">
+        <xs:sequence>
+            <xs:element name="Vlasnik" type="cmn:TLice"/>
+            <xs:element name="Broj_Racuna" type="cmn:TBroj_Bankarskog_Racuna"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:long"/>
+    </xs:complexType>
+    <xs:simpleType name="TBroj_Racuna_Banke">
+        <xs:restriction base="xs:string">
+            <xs:length value="20"/>
+            <xs:pattern value="\d{3}-\d{13}-\d{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="TBanka">
+        <xs:sequence>
+            <xs:element name="Naziv_banke">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="255"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="SWIFTKod" type="cmn:TSwift_kod_banke"/>
+            <xs:element name="Broj_racuna_banke">
+                <xs:simpleType>
+                    <xs:restriction base="cmn:TBroj_Racuna_Banke">
+                        <xs:pattern value="\d{3}-\d{13}-\d{2}"/>
+                        <xs:length value="20"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:long"/>
+    </xs:complexType>
+    <xs:complexType name="TBankarski_Racun_Klijenta">
+        <xs:sequence>
+            <xs:element name="Racun" type="cmn:TRacun_Klijenta"/>
+            <xs:element name="Stanje" type="xs:double"/>
+            <xs:element name="Raspoloziva_sredstva" type="xs:double"/>
+            <xs:element name="Valuta" type="cmn:TOznaka_Valute"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

@@ -1,110 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
     targetNamespace="http://www.project.com/mt103" xmlns:cmn="http://www.project.com/common_types"
-    xmlns:mt103="http://www.project.com/mt103">
+    xmlns:mt103="http://www.project.com/mt103" xmlns:np="http://www.project.com/nalog_za_placanje">
     <xs:import namespace="http://www.project.com/common_types" schemaLocation="common_types.xsd"/>
+    <xs:import namespace="http://www.project.com/nalog_za_placanje"
+        schemaLocation="nalog_za_placanje.xsd"/>
     <xs:element name="mt103">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="ID_poruke">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
-                            <xs:maxLength value="50"/>
                             <xs:minLength value="1"/>
+                            <xs:maxLength value="50"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
                 <xs:element name="Podaci_o_bankama">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element default="AAAAAA00" name="SWIFT_banke_duznika"
-                                type="cmn:TSwift_kod_banke"/>
-                            <xs:element default="000-0000000000000-00"
-                                name="Obracunski_racun_banke_duznika"
-                                type="cmn:TBroj_Bankarskog_Racuna"/>
-                            <xs:element default="AAAAAA00" name="SWIFT_banke_poverioca"
-                                type="cmn:TSwift_kod_banke"/>
-                            <xs:element default="000-0000000000000-00"
-                                name="Obracunski_racun_banke_poverioca"
-                                type="cmn:TBroj_Bankarskog_Racuna"/>
+                            <xs:element name="Banka_Duznika" type="cmn:TBanka"/>
+                            <xs:element name="Banka_Poverioca" type="cmn:TBanka"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="Podaci_o_uplati">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="Opsti_deo">
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element name="Duznik" type="cmn:TLice"/>
-                                        <xs:element name="Svrha_placanja">
-                                            <xs:simpleType>
-                                                <xs:restriction base="xs:string">
-                                                  <xs:maxLength value="255"/>
-                                                  <xs:minLength value="1"/>
-                                                </xs:restriction>
-                                            </xs:simpleType>
-                                        </xs:element>
-                                        <xs:element name="Poverilac" type="cmn:TLice"/>
-                                        <xs:element name="Datum_naloga" type="xs:date"/>
-                                        <xs:element name="Datum_valute" type="xs:date"/>
-                                    </xs:sequence>
-                                </xs:complexType>
-                            </xs:element>
-                            <xs:element name="Uplata">
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element default="000-0000000000000-00"
-                                            name="Racun_duznika" type="cmn:TBroj_Bankarskog_Racuna"/>
-                                        <xs:element name="Model_zaduzenja" type="cmn:TModel"/>
-                                        <xs:element name="Poziv_na_broj_zaduzenja"
-                                            type="cmn:TPoziv_na_broj"/>
-                                        <xs:element default="000-0000000000000-00"
-                                            name="Racun_poverioca"
-                                            type="cmn:TBroj_Bankarskog_Racuna"/>
-                                        <xs:element name="Model_odobrenja" type="cmn:TModel"/>
-                                        <xs:element name="Poziv_na_broj_odobrenja"
-                                            type="cmn:TPoziv_na_broj"/>
-                                        <xs:element name="Iznos">
-                                            <xs:simpleType>
-                                                <xs:restriction base="xs:decimal">
-                                                  <xs:totalDigits value="15"/>
-                                                  <xs:fractionDigits value="2"/>
-                                                </xs:restriction>
-                                            </xs:simpleType>
-                                        </xs:element>
-                                        <xs:element name="Sifra_valute">
-                                            <xs:simpleType>
-                                                <xs:restriction base="xs:string">
-                                                  <xs:length value="3"/>
-                                                  <xs:pattern value="[A-Z]{3}|[0-9]{3}"/>
-                                                  <xs:enumeration value="EUR"/>
-                                                  <xs:enumeration value="RSD"/>
-                                                  <xs:enumeration value="GBP"/>
-                                                  <xs:enumeration value="CHF"/>
-                                                  <xs:enumeration value="HUF"/>
-                                                  <xs:enumeration value="JPY"/>
-                                                  <xs:enumeration value="TRY"/>
-                                                  <xs:enumeration value="USD"/>
-                                                  <xs:enumeration value="AUD"/>
-                                                  <xs:enumeration value="036"/>
-                                                  <xs:enumeration value="840"/>
-                                                  <xs:enumeration value="949"/>
-                                                  <xs:enumeration value="392"/>
-                                                  <xs:enumeration value="348"/>
-                                                  <xs:enumeration value="756"/>
-                                                  <xs:enumeration value="826"/>
-                                                  <xs:enumeration value="941"/>
-                                                  <xs:enumeration value="978"/>
-                                                </xs:restriction>
-                                            </xs:simpleType>
-                                        </xs:element>
-                                    </xs:sequence>
-                                </xs:complexType>
-                            </xs:element>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
+                <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
+                <xs:element ref="np:Uplata"/>
+                <xs:element name="Datum_valute" type="xs:date"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

@@ -17,11 +17,7 @@
                 <xs:element name="Podaci_o_odobrenju">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element default="AAAAAA00" name="SWIFT_kod_banke_poverioca"
-                                type="cmn:TSwift_kod_banke"/>
-                            <xs:element default="000-0000000000000-00"
-                                name="Obracunski_racun_banke_poverioca"
-                                type="cmn:TBroj_Bankarskog_Racuna"/>
+                            <xs:element name="Banka_poverioca" type="cmn:TBanka"/>
                             <xs:element name="ID_poruke_naloga">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
@@ -39,32 +35,7 @@
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
-                            <xs:element name="Sifra_valute">
-                                <xs:simpleType>
-                                    <xs:restriction base="xs:string">
-                                        <xs:length value="3"/>
-                                        <xs:pattern value="[A-Z]{3}|[0-9]{3}"/>
-                                        <xs:enumeration value="EUR"/>
-                                        <xs:enumeration value="RSD"/>
-                                        <xs:enumeration value="GBP"/>
-                                        <xs:enumeration value="CHF"/>
-                                        <xs:enumeration value="HUF"/>
-                                        <xs:enumeration value="JPY"/>
-                                        <xs:enumeration value="TRY"/>
-                                        <xs:enumeration value="USD"/>
-                                        <xs:enumeration value="AUD"/>
-                                        <xs:enumeration value="036"/>
-                                        <xs:enumeration value="840"/>
-                                        <xs:enumeration value="949"/>
-                                        <xs:enumeration value="392"/>
-                                        <xs:enumeration value="348"/>
-                                        <xs:enumeration value="756"/>
-                                        <xs:enumeration value="826"/>
-                                        <xs:enumeration value="941"/>
-                                        <xs:enumeration value="978"/>
-                                    </xs:restriction>
-                                </xs:simpleType>
-                            </xs:element>
+                            <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

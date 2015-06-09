@@ -2,8 +2,10 @@ package com.project.cbws;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Iterator;
 
 import com.project.mt102.Mt102;
+import com.project.nalog_za_placanje.Placanje;
 
 import crud.RESTGet;
 import crud.RESTPut;
@@ -20,7 +22,7 @@ public class CBUtil {
 			df.setParseBigDecimal(true);
 			 pareDuznika = (BigDecimal) df.parse( RESTGet.run("(//kod_banke[@id='"+SwiftDuznika+"']/stanje_racuna/text())"));
 			 parePoverioca = (BigDecimal) df.parse(RESTGet.run("(//kod_banke[@id='"+SwiftPoverioca+"']/stanje_racuna/text())"));
-			 if (pareDuznika.compareTo(limit)!=-1){
+			 if (pareDuznika.compareTo(limit.add(transakcija))!=-1){
 				 RESTPut.run("Racuni","//kod_banke[@id='"+SwiftDuznika+"']/stanje_racuna",(pareDuznika.subtract(transakcija).toString()));
 				 RESTPut.run("Racuni","//kod_banke[@id='"+SwiftPoverioca+"']/stanje_racuna",(parePoverioca.add(transakcija).toString()));
 			 }
@@ -34,8 +36,19 @@ public class CBUtil {
 	}
 	
 	public static boolean ClearingTransaction(Mt102 mt102) {
-		//mt102.get
-		return false;
+		 Iterator<Placanje> listaPlacanja = mt102.getPlacanje().iterator();
+		if(mt102.getPlacanje().isEmpty())
+			return false;
+		 
+		while(listaPlacanja.hasNext()){
+			Placanje placanje = listaPlacanja.next();
+			if(placanje.getUplata().getIznos().compareTo(new BigDecimal(250000))==1){
+				return false;
+			}
+			
+		}
+		return RTGSTransaction(mt102.getBankaDuznika().getSWIFTKod(), mt102.getBankaPoverioca().getSWIFTKod(), mt102.getUkupanIznos());
+		
 	}
 	
 	public static void main(String[] args) {

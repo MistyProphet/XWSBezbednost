@@ -30,19 +30,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Mt900 }
+     * Create an instance of {@link Mt900Clearing }
      * 
      */
-    public Mt900 createMt900() {
-        return new Mt900();
+    public Mt900Clearing createMt900Clearing() {
+        return new Mt900Clearing();
     }
 
     /**
-     * Create an instance of {@link Mt900 .PodaciOZaduzenju }
+     * Create an instance of {@link Mt900RTGS }
      * 
      */
-    public Mt900 .PodaciOZaduzenju createMt900PodaciOZaduzenju() {
-        return new Mt900 .PodaciOZaduzenju();
+    public Mt900RTGS createMt900RTGS() {
+        return new Mt900RTGS();
+    }
+
+    /**
+     * Create an instance of {@link Mt900Clearing.PodaciOZaduzenju }
+     * 
+     */
+    public Mt900Clearing.PodaciOZaduzenju createMt900ClearingPodaciOZaduzenju() {
+        return new Mt900Clearing.PodaciOZaduzenju();
+    }
+
+    /**
+     * Create an instance of {@link Mt900RTGS.PodaciOZaduzenju }
+     * 
+     */
+    public Mt900RTGS.PodaciOZaduzenju createMt900RTGSPodaciOZaduzenju() {
+        return new Mt900RTGS.PodaciOZaduzenju();
     }
 
 }

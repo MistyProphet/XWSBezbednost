@@ -1,6 +1,8 @@
 
 package com.project.common_types;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -45,9 +47,9 @@ public class TBankarskiRacunKlijenta extends Identifiable {
     @XmlElement(name = "Racun", required = true)
     protected TRacunKlijenta racun;
     @XmlElement(name = "Stanje")
-    protected double stanje;
+    protected BigDecimal stanje;
     @XmlElement(name = "Raspoloziva_sredstva")
-    protected double raspolozivaSredstva;
+    protected BigDecimal raspolozivaSredstva;
     @XmlElement(name = "Valuta", required = true)
     protected String valuta;
     @XmlAttribute(name = "id")
@@ -81,7 +83,7 @@ public class TBankarskiRacunKlijenta extends Identifiable {
      * Gets the value of the stanje property.
      * 
      */
-    public double getStanje() {
+    public BigDecimal getStanje() {
         return stanje;
     }
 
@@ -89,7 +91,7 @@ public class TBankarskiRacunKlijenta extends Identifiable {
      * Sets the value of the stanje property.
      * 
      */
-    public void setStanje(double value) {
+    public void setStanje(BigDecimal value) {
         this.stanje = value;
     }
 
@@ -97,7 +99,7 @@ public class TBankarskiRacunKlijenta extends Identifiable {
      * Gets the value of the raspolozivaSredstva property.
      * 
      */
-    public double getRaspolozivaSredstva() {
+    public BigDecimal getRaspolozivaSredstva() {
         return raspolozivaSredstva;
     }
 
@@ -105,7 +107,7 @@ public class TBankarskiRacunKlijenta extends Identifiable {
      * Sets the value of the raspolozivaSredstva property.
      * 
      */
-    public void setRaspolozivaSredstva(double value) {
+    public void setRaspolozivaSredstva(BigDecimal value) {
         this.raspolozivaSredstva = value;
     }
 

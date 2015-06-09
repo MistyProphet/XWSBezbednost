@@ -11,7 +11,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
-import com.project.dao.TBankaDaoLocal;
 import com.project.exceptions.WrongBankSWIFTCodeException;
 import com.project.exceptions.WrongOverallSumException;
 import com.project.mt102.Mt102;
@@ -20,9 +19,6 @@ import com.project.nalog_za_placanje.Placanje;
 import com.project.util.Util;
 
 public class Banka {
-	
-	@EJB
-	private TBankaDaoLocal bankaDao;
 	
 	private TBanka podaci_o_banci;
 	private ArrayList<TBankarskiRacunKlijenta> accounts;
@@ -153,10 +149,12 @@ public class Banka {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		/*
 		TBanka bankaPrimaoca = bankaDao.findById(idBanke);
 		if (naloziZaClearing.containsKey(bankaPrimaoca)) {
 			naloziZaClearing.get(bankaPrimaoca).add(nalog);
 		}
+		*/
 	}
 
 	

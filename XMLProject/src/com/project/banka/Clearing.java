@@ -31,28 +31,28 @@ public class Clearing {
 			try {
 				mt102.setDatum(Util.getXMLGregorianCalendarNow());
 				mt102.setDatumValute(Util.getXMLGregorianCalendarNow());
-				mt102.setBankaDuznika(podaci_o_banci);
+				//mt102.setBankaDuznika(podaci_o_banci);
 				//mt102.setBankaPoverioca(value);
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}
-			
+			/*
 			for (NalogZaPlacanje nalog : naloziZaClearing.get(banka)) {
 				mt102.getPlacanje().add(nalog.getPlacanje());
 			}
-			
+			*/
 		}
 	}
 
 	public void obradiClearingNalog(Mt102 mt102) {
-		
+		/*
 		for (Placanje placanje : mt102.getPlacanje()) {
 			String broj_rk_primaoca = placanje.getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
     		if(racun_primaoca != null){
     			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(new BigDecimal(racun_primaoca.getStanje())));
 		}
-
+*/
 	}
 	
 	public void addNalogZaClearing(NalogZaPlacanje nalog) throws JAXBException, IOException {
@@ -63,9 +63,11 @@ public class Clearing {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		/*
 		TBanka bankaPrimaoca = bankaDao.findById(idBanke);
 		if (naloziZaClearing.containsKey(bankaPrimaoca)) {
 			naloziZaClearing.get(bankaPrimaoca).add(nalog);
 		}
+		*/
 	}
 }

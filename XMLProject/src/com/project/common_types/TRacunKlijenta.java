@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.project.entities.Identifiable;
+
 
 /**
  * <p>Java class for TRacun_Klijenta complex type.
@@ -34,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
     "vlasnik",
     "brojRacuna"
 })
-public class TRacunKlijenta {
+public class TRacunKlijenta extends Identifiable{
 
     @XmlElement(name = "Vlasnik", required = true)
     protected String vlasnik;

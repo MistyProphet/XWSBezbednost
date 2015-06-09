@@ -124,5 +124,5 @@ public class ZahtevZaIzvod {
     public void setRedniBrojPreseka(long value) {
         this.redniBrojPreseka = value;
     }
-
+    
 }

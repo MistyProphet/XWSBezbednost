@@ -1,32 +1,33 @@
 package com.project.banka;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
+import com.project.common_types.TBankarskiRacunKlijentaService;
+import com.project.entities.Identifiable;
 import com.project.exceptions.WrongBankSWIFTCodeException;
 import com.project.exceptions.WrongOverallSumException;
-import com.project.misc.RESTUtil;
-import com.project.misc.RequestMethod;
 import com.project.mt102.Mt102;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
 import com.project.util.Util;
 
-public class Banka {
+public class Banka extends Identifiable {
 	
 	private TBanka podaci_o_banci;
 	private ArrayList<TBankarskiRacunKlijenta> accounts;
 	//Key - naziv banke za koju je namenjen niz naloga
 	private HashMap<String,ArrayList<NalogZaPlacanje>> naloziZaClearing;
 	private Integer broj_racuna_ID = 1;
+	private Long id; //Jedinstvena oznaka kod CB, ona sa kojom pocinju brojevi racuna
 	
 	public void init() {
 		podaci_o_banci = new TBanka();
@@ -34,7 +35,12 @@ public class Banka {
 		naloziZaClearing = new HashMap<String, ArrayList<NalogZaPlacanje>>();
 		//ucitavanje iz baze na osnovu swift koda
 		try {
-			InputStream result = RESTUtil.retrieveResource("", "TBankarskiRacunKlijenta", RequestMethod.GET);
+			//InputStream result = RESTUtil.retrieveResource("", "TBankarskiRacunKlijenta", RequestMethod.GET);
+			TBankarskiRacunKlijentaService servis = new TBankarskiRacunKlijentaService();
+			List<TBankarskiRacunKlijenta> result = servis.findByAll();
+			for(TBankarskiRacunKlijenta t: result){
+				accounts.add(t);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -162,6 +168,16 @@ public class Banka {
 			naloziZaClearing.get(bankaPrimaoca).add(nalog);
 		}
 		*/
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long value) {
+		this.id = value;
 	}
 
 	

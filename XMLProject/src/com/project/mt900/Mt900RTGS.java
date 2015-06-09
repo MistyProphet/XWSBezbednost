@@ -2,6 +2,7 @@
 package com.project.mt900;
 
 import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,7 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.project.common_types.TBanka;
+import com.project.entities.Identifiable;
 
 
 /**
@@ -73,7 +76,7 @@ import com.project.common_types.TBanka;
     "podaciOZaduzenju"
 })
 @XmlRootElement(name = "mt900RTGS")
-public class Mt900RTGS {
+public class Mt900RTGS extends Identifiable{
 
     @XmlElement(name = "ID_poruke", required = true)
     protected String idPoruke;
@@ -309,5 +312,15 @@ public class Mt900RTGS {
         }
 
     }
+    
+    @Override
+	public Long getId() {
+		return Long.parseLong(idPoruke);
+	}
+
+	@Override
+	public void setId(Long value) {
+		this.idPoruke = value.toString();
+	}
 
 }

@@ -4,6 +4,7 @@ package com.project.mt102;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,7 +12,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.project.common_types.TBanka;
+import com.project.entities.Identifiable;
 import com.project.nalog_za_placanje.Placanje;
 
 
@@ -68,7 +71,7 @@ import com.project.nalog_za_placanje.Placanje;
     "placanje"
 })
 @XmlRootElement(name = "mt102")
-public class Mt102 {
+public class Mt102 extends Identifiable{
 
     @XmlElement(name = "ID_poruke", required = true)
     protected String idPoruke;
@@ -285,5 +288,15 @@ public class Mt102 {
         }
         return this.placanje;
     }
+
+	@Override
+	public Long getId() {
+		return Long.parseLong(idPoruke);
+	}
+
+	@Override
+	public void setId(Long value) {
+		this.idPoruke = value.toString();
+	}
 
 }

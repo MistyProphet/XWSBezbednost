@@ -10,6 +10,12 @@
 		<class>com.project.common_types.TBanka</class>
 		<class>com.project.common_types.TBankarskiRacunKlijenta</class>
 		<class>com.project.common_types.TRacunKlijenta</class>
+		<class>com.project.mt102.Mt102</class>
+		<class>com.project.mt103.Mt103</class>
+		<class>com.project.mt900.Mt900Clearing</class>
+		<class>com.project.mt900.Mt900RTGS</class>
+		<class>com.project.mt910.Mt910</class>
+		<class>com.project.nalog_za_placanje.NalogZaPlacanje</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="create" />
 			<property name="hibernate.transaction.flush_before_completion"

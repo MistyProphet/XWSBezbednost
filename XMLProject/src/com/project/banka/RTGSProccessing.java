@@ -1,5 +1,6 @@
 package com.project.banka;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 
 import com.project.bankaws.BankaPortImpl;
@@ -8,6 +9,8 @@ import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
+import com.project.misc.RESTUtil;
+import com.project.misc.RequestMethod;
 import com.project.mt103.Mt103;
 import com.project.mt103.Mt103.PodaciOBankama;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
@@ -21,7 +24,7 @@ public class RTGSProccessing {
     	bankaPort = banka;
     }
 	
-	public void kreirajMT103(NalogZaPlacanje nalog) throws ReceiveNalogFault{
+	public Mt103 kreirajMT103(NalogZaPlacanje nalog) throws ReceiveNalogFault{
 		try{
 			Mt103 rtgsNalog = new Mt103();
 			rtgsNalog.setIDPoruke((mt103ID++).toString());
@@ -31,7 +34,9 @@ public class RTGSProccessing {
 			
 			PodaciOBankama pob = new PodaciOBankama();
 			String cbOznakaBankePoverioca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().substring(0, 2);
-			//Proveriti sa CB, dobiti banku na osnovu prve tri cifre racuna. To je jedinstvena oznaka banke kod CB
+			//Dobiti banku na osnovu prve tri cifre racuna. To je jedinstvena oznaka banke kod CB
+			InputStream result = RESTUtil.retrieveResource("", "TBanka", RequestMethod.GET);
+			//RESTGet.run("(//kod_banke[@id='"+SwiftDuznika+"']/stanje_racuna/text())")
 			TBanka bankaPoverioca = new TBanka();
 			///////////////////////////////
 			
@@ -55,6 +60,7 @@ public class RTGSProccessing {
 				//wrong-bank exception
 				throw new WrongBankException();
 			}
+			return rtgsNalog;
 		}catch(Exception e){
 			e.printStackTrace();
             throw new ReceiveNalogFault(e.getMessage());

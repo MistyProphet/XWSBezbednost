@@ -1,11 +1,11 @@
 package com.project.banka;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.ejb.EJB;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -13,6 +13,8 @@ import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.exceptions.WrongBankSWIFTCodeException;
 import com.project.exceptions.WrongOverallSumException;
+import com.project.misc.RESTUtil;
+import com.project.misc.RequestMethod;
 import com.project.mt102.Mt102;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
@@ -30,7 +32,12 @@ public class Banka {
 		podaci_o_banci = new TBanka();
 		accounts = new ArrayList<TBankarskiRacunKlijenta>();
 		naloziZaClearing = new HashMap<String, ArrayList<NalogZaPlacanje>>();
-		//ucitavanje iz baze na osnovu swift koda?
+		//ucitavanje iz baze na osnovu swift koda
+		try {
+			InputStream result = RESTUtil.retrieveResource("", "TBankarskiRacunKlijenta", RequestMethod.GET);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setPodaci_o_banci(TBanka podaci){

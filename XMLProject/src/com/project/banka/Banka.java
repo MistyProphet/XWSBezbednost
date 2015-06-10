@@ -6,33 +6,48 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TBankarskiRacunKlijentaService;
+import com.project.dao.TBankaDao;
+import com.project.dao.UplataDao;
 import com.project.entities.Identifiable;
+import com.project.exceptions.NonexistentAccountException;
 import com.project.exceptions.WrongBankSWIFTCodeException;
 import com.project.exceptions.WrongOverallSumException;
 import com.project.mt102.Mt102;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
+import com.project.presek.Presek;
 import com.project.util.Util;
+import com.project.zaglavlje_preseka.ZaglavljePreseka;
+import com.project.zahtev_za_izvod.ZahtevZaIzvod;
 
 public class Banka extends Identifiable {
+	
+	@EJB
+	private TBankaDao tBankaDao;
+	
+	@EJB
+	private UplataDao uplataDao;
+	
+	public static final int BROJ_STAVKI = 20;
 	
 	private TBanka podaci_o_banci;
 	private ArrayList<TBankarskiRacunKlijenta> accounts;
 	//Key - naziv banke za koju je namenjen niz naloga
-	private HashMap<String,ArrayList<NalogZaPlacanje>> naloziZaClearing;
+	private HashMap<TBanka,ArrayList<NalogZaPlacanje>> naloziZaClearing;
 	private Integer broj_racuna_ID = 1;
 	private Long id; //Jedinstvena oznaka kod CB, ona sa kojom pocinju brojevi racuna
 	
 	public void init() {
 		podaci_o_banci = new TBanka();
 		accounts = new ArrayList<TBankarskiRacunKlijenta>();
-		naloziZaClearing = new HashMap<String, ArrayList<NalogZaPlacanje>>();
+		naloziZaClearing = new HashMap<TBanka, ArrayList<NalogZaPlacanje>>();
 		//ucitavanje iz baze na osnovu swift koda
 		try {
 			//InputStream result = RESTUtil.retrieveResource("", "TBankarskiRacunKlijenta", RequestMethod.GET);
@@ -94,7 +109,7 @@ public class Banka extends Identifiable {
 		return null;
 	}
 
-	public HashMap<String, ArrayList<NalogZaPlacanje>> getNaloziZaClearing() {
+	public HashMap<TBanka, ArrayList<NalogZaPlacanje>> getNaloziZaClearing() {
 		return naloziZaClearing;
 	}
 
@@ -121,34 +136,42 @@ public class Banka extends Identifiable {
 		}
 	}
 	
-	public void formirajClearingNalog() {
+	public ArrayList<Mt102> formirajClearingNalog() {
 	
 		Mt102 mt102 = null;
-		for (String banka : naloziZaClearing.keySet()) {
+		BigDecimal sum = null;
+		ArrayList<Mt102> ret = new ArrayList<Mt102>();
+		for (TBanka banka : naloziZaClearing.keySet()) {
 			mt102 = new Mt102();
 			try {
 				mt102.setDatum(Util.getXMLGregorianCalendarNow());
 				mt102.setDatumValute(Util.getXMLGregorianCalendarNow());
 				mt102.setBankaDuznika(podaci_o_banci);
-				//mt102.setBankaPoverioca(value);
+				mt102.setBankaPoverioca(banka);
+				mt102.setSifraValute("RSD");
+				sum = new BigDecimal(0);
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}
 			
 			for (NalogZaPlacanje nalog : naloziZaClearing.get(banka)) {
 				mt102.getPlacanje().add(nalog.getPlacanje());
+				sum.add(nalog.getPlacanje().getUplata().getIznos());
 			}
-			
+			mt102.setUkupanIznos(sum);
 		}
+		return ret;
 	}
 
-	public void obradiClearingNalog(Mt102 mt102) {
+	public void obradiClearingNalog(Mt102 mt102) throws NonexistentAccountException {
 		
 		for (Placanje placanje : mt102.getPlacanje()) {
 			String broj_rk_primaoca = placanje.getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
     		if(racun_primaoca != null){
     			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
+    		} else {
+    			throw new NonexistentAccountException();
     		}
 		}
 
@@ -162,12 +185,12 @@ public class Banka extends Identifiable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		/*
-		TBanka bankaPrimaoca = bankaDao.findById(idBanke);
+		
+		TBanka bankaPrimaoca = tBankaDao.findById(idBanke);
 		if (naloziZaClearing.containsKey(bankaPrimaoca)) {
 			naloziZaClearing.get(bankaPrimaoca).add(nalog);
 		}
-		*/
+	
 	}
 
 	@Override
@@ -178,6 +201,15 @@ public class Banka extends Identifiable {
 	@Override
 	public void setId(Long value) {
 		this.id = value;
+	}
+
+	public Presek formirajPresek(ZahtevZaIzvod zahtev) {
+		Presek presek = new Presek();
+		ArrayList<NalogZaPlacanje> naloziZaPlacanje = uplataDao.getPresek(zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka(), zahtev.getDatum());
+		ZaglavljePreseka zaglavlje = new ZaglavljePreseka();
+
+		return null;
+		
 	}
 
 	

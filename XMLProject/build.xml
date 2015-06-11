@@ -127,6 +127,7 @@
 				<include name="spring-*.jar"/>
 			</lib>
 			<webinf dir="${webinf.dir}">
+				<include name="scheme/**"/>
 				<include name="wsdl/**"/>
 				<include name="cxf-servlet.xml"/>
 			</webinf>

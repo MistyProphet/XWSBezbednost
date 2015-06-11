@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -35,6 +36,7 @@ import com.project.util.Util;
  * Generated source version: 2.6.5
  * 
  */
+@Stateless
 
 @javax.jws.WebService(
                       serviceName = "BankaService",
@@ -234,6 +236,7 @@ public class BankaPortImpl implements BankaPort {
     	pod.setSifraValute("RSD");
     	test.setIDPoruke("CB999");
     	test.setPodaciOZaduzenju(pod);
+    	t.setId(Long.parseLong("1234"));
     	Mt900RTGSService r = new Mt900RTGSService();
     	r.create(test);
     }

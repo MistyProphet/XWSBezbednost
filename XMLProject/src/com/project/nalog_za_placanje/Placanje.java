@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.project.entities.Identifiable;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -43,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
     "uplata"
 })
 @XmlRootElement(name = "Placanje")
-public class Placanje {
+public class Placanje extends Identifiable{
 
     @XmlElement(name = "ID_poruke", required = true)
     protected String idPoruke;
@@ -123,5 +125,15 @@ public class Placanje {
     public void setUplata(Uplata value) {
         this.uplata = value;
     }
+    
+    @Override
+	public Long getId() {
+		return Long.parseLong(idPoruke);
+	}
+
+	@Override
+	public void setId(Long value) {
+		this.idPoruke = value.toString();
+	}
 
 }

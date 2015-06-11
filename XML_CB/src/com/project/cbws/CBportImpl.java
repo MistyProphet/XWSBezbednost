@@ -114,13 +114,13 @@ public class CBportImpl implements CBport {
 
 			Mt910 mt910 = new Mt910(mt103);
 			// bankaPort.receiveMT910(mt910);
-			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
-					"mt910.xsd");
+		//	RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
+		//			"mt910.xsd");
 			// bankaPort.receiveMT103(mt103);
 			Mt900RTGS mt900 = new Mt900RTGS(mt103);
 			mt900.setIDPoruke(("1"));
-			RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
-					"mt900.xsd");
+	//		RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
+		//			"mt900.xsd");
 			return mt900;
 
 		} catch (ReceiveMT103Fault e) {
@@ -132,6 +132,7 @@ public class CBportImpl implements CBport {
 	}
 
 	public static void main(String[] args) {
+
 
 		Mt103 request = new Mt103();
 		request.setIDPoruke("1");
@@ -201,16 +202,21 @@ public class CBportImpl implements CBport {
 			mt102.getPlacanje().get(0).getUplata().setDatumNaloga(now);
 			mt102.getPlacanje().get(1).getUplata().setDatumNaloga(now);
 			mt102.setDatumValute(now);
+			request.setDatumValute(now);
 		} catch (DatatypeConfigurationException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		mt102.setSifraValute("RSD");
+		request.setSifraValute("RSD");
 		CBportImpl b = new CBportImpl();
 		try {
-			// b.receiveMT103CB(request);
+			 b.receiveMT103CB(request);
 			b.receiveMT102CB(mt102);
 		} catch (ReceiveMT102Fault e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ReceiveMT103Fault e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

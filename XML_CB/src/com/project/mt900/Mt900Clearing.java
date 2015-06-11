@@ -98,6 +98,7 @@ public class Mt900Clearing {
     }
 
     public Mt900Clearing (Mt103 mt103){
+    	this.setIDPoruke(mt103.getIDPoruke());
     	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
 		zaduzenje.setObracunskiRacunBankeDuznika(mt103.getPodaciOBankama().getBankaDuznika().getBrojRacunaBanke());
@@ -113,6 +114,7 @@ public class Mt900Clearing {
 	
 	}
 	public Mt900Clearing(Mt102 mt102) {
+		this.setIDPoruke(mt102.getIDPoruke());
 		PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
 		zaduzenje.setObracunskiRacunBankeDuznika(mt102.getBankaDuznika().getBrojRacunaBanke());

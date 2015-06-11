@@ -286,4 +286,9 @@ public class Mt102 {
         return this.placanje;
     }
 
+	public void setPlacanje(List<Placanje> placanje) {
+		this.placanje = placanje;
+	}
+
+
 }

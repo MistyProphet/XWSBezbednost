@@ -11,7 +11,8 @@
                 <xs:element name="ID_poruke">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
-                            <xs:length value="50"/>
+                          <xs:minLength value="1"/>
+                            <xs:maxLength value="50"/>
                             <xs:whiteSpace value="preserve"/>
                         </xs:restriction>
                     </xs:simpleType>

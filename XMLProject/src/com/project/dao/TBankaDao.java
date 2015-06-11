@@ -7,7 +7,7 @@ import com.project.common_types.TBanka;
 
 @Stateless
 @Local(TBankaDaoLocal.class)
-public class TBankaDao extends GenericDao<TBanka, Long> implements TBankaDaoLocal{
+public class TBankaDao extends GenericDao<TBanka, Long> implements TBankaDaoLocal {
 
 	public static final String contextPath = "com.project.common_types";
 	

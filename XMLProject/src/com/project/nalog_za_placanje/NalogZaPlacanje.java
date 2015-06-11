@@ -116,11 +116,11 @@ public class NalogZaPlacanje extends Identifiable{
     
     @Override
 	public Long getId() {
-		return Long.parseLong(placanje.getIDPoruke());
+		return placanje.getId();
 	}
 
 	@Override
 	public void setId(Long value) {
-		this.placanje.setIDPoruke(value.toString());
+		this.placanje.setId(value);
 	}
 }

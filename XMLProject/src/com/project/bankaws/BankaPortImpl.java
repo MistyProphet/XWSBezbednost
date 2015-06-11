@@ -61,8 +61,7 @@ public class BankaPortImpl implements BankaPort {
     /* (non-Javadoc)
      * @see com.project.bankaws.BankaPort#odradiClearing(*
      */
-    public com.project.common_types.Status odradiClearing() throws ClearingFault    { 
-        LOG.info("Executing operation odradiClearing");
+    public com.project.common_types.Status odradiClearing() throws ClearingFault { 
         try {
             com.project.common_types.Status _return = new com.project.common_types.Status();
             return _return;
@@ -94,7 +93,7 @@ public class BankaPortImpl implements BankaPort {
      */
     public com.project.common_types.Status receiveMT102(com.project.mt102.Mt102 mt102) throws ReceiveMT102Fault    { 
         LOG.info("Executing operation receiveMT102");
-        current_bank.obradiClearingNalog(mt102);
+        //current_bank.obradiClearingNalog(mt102);
         System.out.println(mt102);
         try {
             com.project.common_types.Status _return = new com.project.common_types.Status();
@@ -112,6 +111,7 @@ public class BankaPortImpl implements BankaPort {
     public com.project.presek.Presek sendPresek(com.project.zahtev_za_izvod.ZahtevZaIzvod zahtev) throws SendPresekFault    { 
         LOG.info("Executing operation sendPresek");
         System.out.println(zahtev);
+        current_bank.formirajPresek(zahtev);
         try {
             com.project.presek.Presek _return = null;
             return _return;
@@ -163,6 +163,7 @@ public class BankaPortImpl implements BankaPort {
     					//dodajemo primaocu
     					racun_primaoca.setStanje(racun_primaoca.getStanje().add(iznos));
     					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(iznos));
+    					
     					//Status da je poruka obradjena bez greske
     	    	    	_return.setStatusCode(1);
     	    	    	_return.setStatusText("Your payment order has been received and proccessed.");

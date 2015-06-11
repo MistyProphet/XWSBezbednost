@@ -1,6 +1,7 @@
 
 package com.project.common_types;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,7 +43,7 @@ import com.project.entities.Identifiable;
     "raspolozivaSredstva",
     "valuta"
 })
-public class TBankarskiRacunKlijenta extends Identifiable {
+public class TBankarskiRacunKlijenta extends Identifiable implements Serializable {
 
     @XmlElement(name = "Racun", required = true)
     protected TRacunKlijenta racun;

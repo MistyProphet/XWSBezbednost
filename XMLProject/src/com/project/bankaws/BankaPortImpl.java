@@ -128,16 +128,17 @@ public class BankaPortImpl implements BankaPort {
     /* (non-Javadoc)
      * @see com.project.bankaws.BankaPort#receiveMT103(com.project.mt103.Mt103  mt103 )*
      */
-    public com.project.common_types.Status receiveMT103(com.project.mt103.Mt103 mt103) throws ReceiveMT103Fault    { 
-        LOG.info("Executing operation receiveMT103");
-        
-        System.out.println(mt103);
+    public com.project.common_types.Status receiveMT103(com.project.mt103.Mt103 mt103) throws ReceiveMT103Fault   { 
+
         try {
+            LOG.info("Executing operation receiveMT103");
+            current_bank.obradiRTGSNalog(mt103);
+            System.out.println(mt103);
             com.project.common_types.Status _return = new com.project.common_types.Status();
             return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
-            throw new RuntimeException(ex);
+            throw new ReceiveMT103Fault(ex.getMessage());
         }
         //throw new ReceiveMT103Fault("receiveMT103fault...");
     }

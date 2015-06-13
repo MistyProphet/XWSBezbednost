@@ -1,5 +1,6 @@
 package com.project.banka;
 
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,12 +16,12 @@ import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TBankarskiRacunKlijentaService;
 import com.project.dao.TBankaDao;
 import com.project.dao.TransakcijaDao;
-import com.project.dao.UplataDao;
 import com.project.entities.Identifiable;
 import com.project.exceptions.NonexistentAccountException;
 import com.project.exceptions.WrongBankSWIFTCodeException;
 import com.project.exceptions.WrongOverallSumException;
 import com.project.mt102.Mt102;
+import com.project.mt103.Mt103;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
 import com.project.presek.Presek;
@@ -167,19 +168,52 @@ public class Banka extends Identifiable {
 	}
 
 	public void obradiClearingNalog(Mt102 mt102) throws NonexistentAccountException {
-		//Transakcija transakcija = generisiTransakcijuUplate(mt102.)
+		NalogZaPlacanje nalog = null;
+		Transakcija transakcija = null;
+				
 		for (Placanje placanje : mt102.getPlacanje()) {
 			String broj_rk_primaoca = placanje.getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
+    		nalog = new NalogZaPlacanje();
+    		nalog.setPlacanje(placanje);
+    		try {
+				nalog.setDatumValute(Util.getXMLGregorianCalendarNow());
+			} catch (DatatypeConfigurationException e) {
+				e.printStackTrace();
+			}
+    		transakcija = generisiTransakcijuUplate(nalog);
 
     		if(racun_primaoca != null){
-    			
+    			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
     			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
+    			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
     		} else {
     			throw new NonexistentAccountException();
     		}
 		}
+	}
+	
 
+	public void obradiRTGSNalog(Mt103 mt103) throws NonexistentAccountException {
+		NalogZaPlacanje nalog = new NalogZaPlacanje();
+		Placanje placanje = new Placanje();
+		placanje.setSifraValute(mt103.getSifraValute());
+		placanje.setUplata(mt103.getUplata());
+		nalog.setPlacanje(placanje);
+		nalog.setDatumValute(mt103.getDatumValute());
+		
+		Transakcija transakcija = generisiTransakcijuUplate(nalog);
+		
+		String broj_rk_primaoca = mt103.getUplata().getRacunPrimaoca().getBrojRacuna();
+		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
+		
+		if(racun_primaoca != null){
+			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
+			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
+			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
+		} else {
+			throw new NonexistentAccountException();
+		}		
 	}
 	
 	public void addNalogZaClearing(NalogZaPlacanje nalog) throws JAXBException, IOException {

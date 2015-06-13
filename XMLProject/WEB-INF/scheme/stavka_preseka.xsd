@@ -22,4 +22,15 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:element name="Transakcija">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="sp:Stavka_preseka"/>
+                <xs:element name="stanje_pre_transakcije" type="xs:double"/>
+                <xs:element name="stanje_posle_transakcije" type="xs:double"/>
+                <xs:element name="racun_klijenta" type="cmn:TBankarski_Racun_Klijenta"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:long"/>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>

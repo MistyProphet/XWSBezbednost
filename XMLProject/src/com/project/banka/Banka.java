@@ -14,6 +14,7 @@ import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TBankarskiRacunKlijentaService;
 import com.project.dao.TBankaDao;
+import com.project.dao.TransakcijaDao;
 import com.project.dao.UplataDao;
 import com.project.entities.Identifiable;
 import com.project.exceptions.NonexistentAccountException;
@@ -23,6 +24,8 @@ import com.project.mt102.Mt102;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
 import com.project.presek.Presek;
+import com.project.stavka_preseka.StavkaPreseka;
+import com.project.stavka_preseka.Transakcija;
 import com.project.util.Util;
 import com.project.zaglavlje_preseka.ZaglavljePreseka;
 import com.project.zahtev_za_izvod.ZahtevZaIzvod;
@@ -33,7 +36,7 @@ public class Banka extends Identifiable {
 	private TBankaDao tBankaDao;
 	
 	@EJB
-	private UplataDao uplataDao;
+	private TransakcijaDao transakcijaDao;
 	
 	public static final int BROJ_STAVKI = 20;
 	
@@ -164,11 +167,13 @@ public class Banka extends Identifiable {
 	}
 
 	public void obradiClearingNalog(Mt102 mt102) throws NonexistentAccountException {
-		
+		//Transakcija transakcija = generisiTransakcijuUplate(mt102.)
 		for (Placanje placanje : mt102.getPlacanje()) {
 			String broj_rk_primaoca = placanje.getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
+
     		if(racun_primaoca != null){
+    			
     			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
     		} else {
     			throw new NonexistentAccountException();
@@ -203,14 +208,37 @@ public class Banka extends Identifiable {
 		this.id = value;
 	}
 
-	public Presek formirajPresek(ZahtevZaIzvod zahtev) {
-		Presek presek = new Presek();
-		ArrayList<NalogZaPlacanje> naloziZaPlacanje = uplataDao.getPresek(zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka(), zahtev.getDatum());
-		ZaglavljePreseka zaglavlje = new ZaglavljePreseka();
-
-		return null;
-		
+	public Presek formirajPresek(ZahtevZaIzvod zahtev) throws IOException, JAXBException {
+		return transakcijaDao.getPresek( zahtev.getDatum(), zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka());		
 	}
+	
+    public Transakcija generisiTransakcijuUplate(NalogZaPlacanje nalog) {
+		Transakcija transakcija = new Transakcija();
+		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
+		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
+		transakcija.setRacunKlijenta(racun_primaoca);
+		transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
+		StavkaPreseka stavkaPreseka = new StavkaPreseka();
+		stavkaPreseka.setDatumValute(nalog.getDatumValute());
+		stavkaPreseka.setSifraValute(nalog.getPlacanje().getSifraValute());
+		stavkaPreseka.setSmer("U");
+		stavkaPreseka.setUplata(nalog.getPlacanje().getUplata());
+		return transakcija;
+    }
+    
+    public Transakcija generisiTransakcijuIsplate(NalogZaPlacanje nalog) {
+		Transakcija transakcija = new Transakcija();
+		String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
+		TBankarskiRacunKlijenta racun_duznika = getSpecificAccount(broj_rk_duznika);
+		transakcija.setRacunKlijenta(racun_duznika);
+		transakcija.setStanjePreTransakcije(racun_duznika.getStanje());
+		StavkaPreseka stavkaPreseka = new StavkaPreseka();
+		stavkaPreseka.setDatumValute(nalog.getDatumValute());
+		stavkaPreseka.setSifraValute(nalog.getPlacanje().getSifraValute());
+		stavkaPreseka.setSmer("I");
+		stavkaPreseka.setUplata(nalog.getPlacanje().getUplata());
+		return transakcija;
+    }
 
 	
 }

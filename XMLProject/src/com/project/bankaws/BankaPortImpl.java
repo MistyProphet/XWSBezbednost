@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -26,6 +27,8 @@ import com.project.mt900.Mt900RTGS;
 import com.project.mt900.Mt900RTGS.PodaciOZaduzenju;
 import com.project.mt900.Mt900RTGSService;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
+import com.project.stavka_preseka.StavkaPreseka;
+import com.project.stavka_preseka.Transakcija;
 import com.project.util.CBport;
 import com.project.util.Util;
 
@@ -35,6 +38,7 @@ import com.project.util.Util;
  * Generated source version: 2.6.5
  * 
  */
+@Stateless
 
 @javax.jws.WebService(
                       serviceName = "BankaService",
@@ -91,14 +95,14 @@ public class BankaPortImpl implements BankaPort {
      */
     public com.project.common_types.Status receiveMT102(com.project.mt102.Mt102 mt102) throws ReceiveMT102Fault    { 
         LOG.info("Executing operation receiveMT102");
-        //current_bank.obradiClearingNalog(mt102);
-        System.out.println(mt102);
         try {
-            com.project.common_types.Status _return = new com.project.common_types.Status();
-            return _return;
+	        current_bank.obradiClearingNalog(mt102);
+	        System.out.println(mt102);
+	        com.project.common_types.Status _return = new com.project.common_types.Status();
+	        return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
-            throw new RuntimeException(ex);
+            throw new ReceiveMT102Fault(ex.getMessage());
         }
         //throw new ReceiveMT102Fault("receiveMT102fault...");
     }
@@ -109,13 +113,14 @@ public class BankaPortImpl implements BankaPort {
     public com.project.presek.Presek sendPresek(com.project.zahtev_za_izvod.ZahtevZaIzvod zahtev) throws SendPresekFault    { 
         LOG.info("Executing operation sendPresek");
         System.out.println(zahtev);
-        current_bank.formirajPresek(zahtev);
+
         try {
+            current_bank.formirajPresek(zahtev);
             com.project.presek.Presek _return = null;
             return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
-            throw new RuntimeException(ex);
+            throw new SendPresekFault(ex.getMessage());
         }
         //throw new SendPresekFault("sendPresekFault...");
     }
@@ -125,6 +130,7 @@ public class BankaPortImpl implements BankaPort {
      */
     public com.project.common_types.Status receiveMT103(com.project.mt103.Mt103 mt103) throws ReceiveMT103Fault    { 
         LOG.info("Executing operation receiveMT103");
+        
         System.out.println(mt103);
         try {
             com.project.common_types.Status _return = new com.project.common_types.Status();
@@ -151,16 +157,24 @@ public class BankaPortImpl implements BankaPort {
     		TBankarskiRacunKlijenta racun_primaoca = current_bank.getSpecificAccount(broj_rk_primaoca);
     		if(racun_primaoca != null){
     			//ako jeste, prebaciti odmah pare
+    			Transakcija transakcijaPrimalac = current_bank.generisiTransakcijuUplate(nalog);
     			String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
     			TBankarskiRacunKlijenta racun_duznika = current_bank.getSpecificAccount(broj_rk_duznika);
     			if(racun_duznika != null){
     				BigDecimal iznos = nalog.getPlacanje().getUplata().getIznos();
+    				/* Generisanje podataka o transakciji*/
+					Transakcija transakcijaDuznik = current_bank.generisiTransakcijuIsplate(nalog);
+					
     				if(racun_duznika.getRaspolozivaSredstva().subtract(iznos).compareTo(new BigDecimal(0))>=0){
     					//duznik ima dovoljno para, skidamo pare
+    					transakcijaDuznik.setStanjePreTransakcije(racun_duznika.getStanje());
     					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
+    					transakcijaDuznik.setStanjePosleTransakcije(racun_duznika.getStanje());
     					//dodajemo primaocu
+    					transakcijaPrimalac.setStanjePreTransakcije(racun_primaoca.getStanje());
     					racun_primaoca.setStanje(racun_primaoca.getStanje().add(iznos));
     					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(iznos));
+    					transakcijaPrimalac.setStanjePosleTransakcije(racun_primaoca.getStanje());
     					
     					//Status da je poruka obradjena bez greske
     	    	    	_return.setStatusCode(1);
@@ -235,6 +249,7 @@ public class BankaPortImpl implements BankaPort {
     	pod.setSifraValute("RSD");
     	test.setIDPoruke("CB999");
     	test.setPodaciOZaduzenju(pod);
+    	t.setId(Long.parseLong("1234"));
     	Mt900RTGSService r = new Mt900RTGSService();
     	r.create(test);
     }

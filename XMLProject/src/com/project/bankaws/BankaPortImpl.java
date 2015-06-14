@@ -172,9 +172,41 @@ public class BankaPortImpl implements BankaPort {
     		//provera da li je racun primaoca u istoj banci
     		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = current_bank.getSpecificAccount(broj_rk_primaoca);
-    		System.out.println(nalog.getPlacanje().getUplata().getIznos());
-    		System.out.println(nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)));
-        	if(!nalog.isHitno() || (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == 1)){
+    		if(racun_primaoca != null){
+    			//ako jeste, prebaciti odmah pare
+    			Transakcija transakcijaPrimalac = current_bank.generisiTransakcijuUplate(nalog);
+    			String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
+    			TBankarskiRacunKlijenta racun_duznika = current_bank.getSpecificAccount(broj_rk_duznika);
+    			if(racun_duznika != null){
+    				BigDecimal iznos = nalog.getPlacanje().getUplata().getIznos();
+    				/* Generisanje podataka o transakciji*/
+					Transakcija transakcijaDuznik = current_bank.generisiTransakcijuIsplate(nalog);
+					
+    				if(racun_duznika.getRaspolozivaSredstva().subtract(iznos).compareTo(new BigDecimal(0))>=0){
+    					//duznik ima dovoljno para, skidamo pare
+    					transakcijaDuznik.setStanjePreTransakcije(racun_duznika.getStanje());
+    					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
+    					transakcijaDuznik.setStanjePosleTransakcije(racun_duznika.getStanje());
+    					//dodajemo primaocu
+    					transakcijaPrimalac.setStanjePreTransakcije(racun_primaoca.getStanje());
+    					racun_primaoca.setStanje(racun_primaoca.getStanje().add(iznos));
+    					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(iznos));
+    					transakcijaPrimalac.setStanjePosleTransakcije(racun_primaoca.getStanje());
+    					
+    					//Status da je poruka obradjena bez greske
+    	    	    	_return.setStatusCode(1);
+    	    	    	_return.setStatusText("Your payment order has been received and proccessed.");
+    	    	    	return _return;
+    				} else {
+    					//no-money exception
+    					throw new NoMoneyException();
+    				}
+    			} else {
+    				//wrong-bank exception
+    				throw new WrongBankException();
+    			}
+    		}
+        	if(!nalog.isHitno() || (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == -1)){
         		current_bank.addNalogZaClearing(nalog);
         	} else {
         		//RTGS

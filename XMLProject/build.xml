@@ -128,6 +128,7 @@
 			</lib>
 			<webinf dir="${webinf.dir}">
 				<include name="wsdl/**"/>
+				<include name="scheme/**"/>
 				<include name="cxf-servlet.xml"/>
 			</webinf>
 		</war>

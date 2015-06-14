@@ -5,17 +5,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import javax.ejb.EJB;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
-import com.project.common_types.TBankarskiRacunKlijentaService;
-import com.project.dao.TBankaDao;
-import com.project.dao.TransakcijaDao;
 import com.project.entities.Identifiable;
 import com.project.exceptions.NonexistentAccountException;
 import com.project.exceptions.WrongBankSWIFTCodeException;
@@ -28,16 +23,10 @@ import com.project.presek.Presek;
 import com.project.stavka_preseka.StavkaPreseka;
 import com.project.stavka_preseka.Transakcija;
 import com.project.util.Util;
-import com.project.zaglavlje_preseka.ZaglavljePreseka;
 import com.project.zahtev_za_izvod.ZahtevZaIzvod;
 
 public class Banka extends Identifiable {
 	
-	@EJB
-	private TBankaDao tBankaDao;
-	
-	@EJB
-	private TransakcijaDao transakcijaDao;
 	
 	public static final int BROJ_STAVKI = 20;
 	
@@ -55,11 +44,11 @@ public class Banka extends Identifiable {
 		//ucitavanje iz baze na osnovu swift koda
 		try {
 			//InputStream result = RESTUtil.retrieveResource("", "TBankarskiRacunKlijenta", RequestMethod.GET);
-			TBankarskiRacunKlijentaService servis = new TBankarskiRacunKlijentaService();
-			List<TBankarskiRacunKlijenta> result = servis.findByAll();
-			for(TBankarskiRacunKlijenta t: result){
-				accounts.add(t);
-			}
+			//TBankarskiRacunKlijentaService servis = new TBankarskiRacunKlijentaService();
+			//List<TBankarskiRacunKlijenta> result = servis.findByAll();
+			//for(TBankarskiRacunKlijenta t: result){
+				//accounts.add(t);
+			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -225,10 +214,10 @@ public class Banka extends Identifiable {
 			ex.printStackTrace();
 		}
 		
-		TBanka bankaPrimaoca = tBankaDao.findById(idBanke);
-		if (naloziZaClearing.containsKey(bankaPrimaoca)) {
-			naloziZaClearing.get(bankaPrimaoca).add(nalog);
-		}
+		//TBanka bankaPrimaoca = tBankaDao.findById(idBanke);
+		//if (naloziZaClearing.containsKey(bankaPrimaoca)) {
+		//	naloziZaClearing.get(bankaPrimaoca).add(nalog);
+		//}
 	
 	}
 
@@ -243,7 +232,8 @@ public class Banka extends Identifiable {
 	}
 
 	public Presek formirajPresek(ZahtevZaIzvod zahtev) throws IOException, JAXBException {
-		return transakcijaDao.getPresek( zahtev.getDatum(), zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka());		
+		return null;
+		//return transakcijaDao.getPresek( zahtev.getDatum(), zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka());		
 	}
 	
     public Transakcija generisiTransakcijuUplate(NalogZaPlacanje nalog) {

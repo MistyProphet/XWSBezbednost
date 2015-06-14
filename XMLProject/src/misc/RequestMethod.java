@@ -1,5 +1,12 @@
-package com.project.xmldb;
+package misc;
 
+
+/**
+ * Klasa sadrzi set podrzanih HTTP metoda.
+ * 
+ * @author Igor Cverdelj-Fogarasi
+ *
+ */
 public class RequestMethod {
 
 	public static final String PUT = "PUT";

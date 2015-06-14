@@ -15,6 +15,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
+import misc.RESTUtil;
+
 import com.project.banka.Banka;
 import com.project.banka.RTGSProccessing;
 import com.project.common_types.TBanka;
@@ -22,12 +24,9 @@ import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
 import com.project.mt103.Mt103;
-import com.project.mt103.Mt103Service;
 import com.project.mt900.Mt900RTGS;
 import com.project.mt900.Mt900RTGS.PodaciOZaduzenju;
-import com.project.mt900.Mt900RTGSService;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
-import com.project.stavka_preseka.StavkaPreseka;
 import com.project.stavka_preseka.Transakcija;
 import com.project.util.CBport;
 import com.project.util.Util;
@@ -196,8 +195,8 @@ public class BankaPortImpl implements BankaPort {
         		//RTGS
         		Mt103 rtgsNalog = rtgsObrada.kreirajMT103(nalog);
         		//spustanje mt103 u bazu
-        		Mt103Service servis = new Mt103Service();
-        		servis.create(rtgsNalog);
+        		//Mt103Service servis = new Mt103Service();
+        		//servis.create(rtgsNalog);
         		//slanje MT103
         		URL wsdl = new URL("http://localhost:8080/XML_CB/services/Banka?wsdl");
     	    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
@@ -208,8 +207,8 @@ public class BankaPortImpl implements BankaPort {
     	        Mt900RTGS rtgsResponse = centralnaBanka.recieveMT103CB(rtgsNalog);
     	        
     	        //Spustanje odgovora u bazu
-    	        Mt900RTGSService tempServis = new Mt900RTGSService();
-    	        tempServis.create(rtgsResponse);
+    	        //Mt900RTGSService tempServis = new Mt900RTGSService();
+    	        //tempServis.create(rtgsResponse);
     	        
         		//Status klijentu da je poruka obradjena bez greske
     	    	_return.setStatusCode(1);
@@ -248,11 +247,12 @@ public class BankaPortImpl implements BankaPort {
         BigDecimal b = new BigDecimal(c);
     	pod.setIznos(b);
     	pod.setSifraValute("RSD");
-    	test.setIDPoruke("CB999");
+    	test.setIDPoruke("1");
     	test.setPodaciOZaduzenju(pod);
     	t.setId(Long.parseLong("1234"));
-    	Mt900RTGSService r = new Mt900RTGSService();
-    	r.create(test);
+    	//Mt900RTGSService r = new Mt900RTGSService();
+    	//r.create(test);
+    	RESTUtil.objectToDB("Poruke/MT900", test.getIDPoruke(), test);
     }
 
 }

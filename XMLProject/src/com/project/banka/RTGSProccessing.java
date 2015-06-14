@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import com.project.bankaws.BankaPortImpl;
 import com.project.bankaws.ReceiveNalogFault;
-import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
@@ -32,11 +31,11 @@ public class RTGSProccessing {
 			PodaciOBankama pob = new PodaciOBankama();
 			//Dobiti banku na osnovu prve tri cifre racuna. To je jedinstvena oznaka banke kod CB
 			String cbOznakaBankePoverioca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().substring(0, 2);
-			BankaService servis = new BankaService();
-			Banka temp = servis.findById(cbOznakaBankePoverioca);
-			TBanka bankaPoverioca = temp.getPodaci_o_banci();
+			//BankaService servis = new BankaService();
+			//Banka temp = servis.findById(cbOznakaBankePoverioca);
+			//TBanka bankaPoverioca = temp.getPodaci_o_banci();
 			pob.setBankaDuznika(bankaPort.current_bank.getPodaci_o_banci());
-			pob.setBankaPoverioca(bankaPoverioca);
+			//pob.setBankaPoverioca(bankaPoverioca);
 			rtgsNalog.setPodaciOBankama(pob);
 			
 			//rezervisati sredstva klijenta (raspoloziva sredstva)

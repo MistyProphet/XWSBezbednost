@@ -76,6 +76,7 @@ public class BankaPortImpl implements BankaPort {
     private static int ID_Instance_Banke = 1;
     public Banka current_bank;
     private RTGSProccessing rtgsObrada = null;
+    private String checkNalogEx = "";
     
     public void init() {
     	current_bank = new Banka();
@@ -188,7 +189,10 @@ public class BankaPortImpl implements BankaPort {
         com.project.common_types.Status _return = new com.project.common_types.Status();
         try {
         	//proveriti validnost naloga
-    		checkNalog(nalog);
+    		if(!checkNalog(nalog)){
+                throw new ReceiveNalogFault("Invoice validation failed. Reason: "+
+                		checkNalogEx);
+    		}
     		RESTUtil.objectToDB("BankaPoruke/Nalozi", nalog.getId().toString(), nalog);
     		//provera da li je racun primaoca u istoj banci
     		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
@@ -332,7 +336,8 @@ public class BankaPortImpl implements BankaPort {
 	    	}
 	    	
 	    	if(!filled){
-		    	System.out.println("One of the fields was empty.");
+				checkNalogEx = "One of the fields was empty.";
+		    	System.out.println(checkNalogEx);
 		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
@@ -363,7 +368,8 @@ public class BankaPortImpl implements BankaPort {
 				}
 			}
 			if(!found){
-		    	System.out.println("Recipient's bank does not exist.");
+				checkNalogEx = "Recipient's bank does not exist.";
+		    	System.out.println(checkNalogEx);
 		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
@@ -373,10 +379,12 @@ public class BankaPortImpl implements BankaPort {
 	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
 	    	writer.write((new String()).getBytes());
 	    	writer.close();
+	    	checkNalogEx = "";
 	    	return true;
     	} catch (Exception e) {
 	    	System.out.println("Xml is NOT valid");
 	    	System.out.println("Reason: " + e.getLocalizedMessage());
+			checkNalogEx = e.getLocalizedMessage();
 	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
 	    	writer.write((new String()).getBytes());
 	    	writer.close();

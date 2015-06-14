@@ -8,6 +8,7 @@ package com.project.bankaws;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -15,19 +16,21 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
+import misc.RESTUtil;
+
 import com.project.banka.Banka;
 import com.project.banka.RTGSProccessing;
+import com.project.common_types.Status;
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
+import com.project.common_types.TRacunKlijenta;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
 import com.project.mt103.Mt103;
-import com.project.mt103.Mt103Service;
 import com.project.mt900.Mt900RTGS;
-import com.project.mt900.Mt900RTGS.PodaciOZaduzenju;
-import com.project.mt900.Mt900RTGSService;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
-import com.project.stavka_preseka.StavkaPreseka;
+import com.project.nalog_za_placanje.Placanje;
+import com.project.nalog_za_placanje.Uplata;
 import com.project.stavka_preseka.Transakcija;
 import com.project.util.CBport;
 import com.project.util.Util;
@@ -50,14 +53,27 @@ import com.project.util.Util;
 public class BankaPortImpl implements BankaPort {
 
     private static final Logger LOG = Logger.getLogger(BankaPortImpl.class.getName());
+    private static int ID_Instance_Banke = 1;
     public Banka current_bank;
     private RTGSProccessing rtgsObrada = null;
     
     public void init() {
-    	current_bank = new Banka(); //Ovo promeniti na specificnu banku?
-    	//Podesiti swift kod
+    	current_bank = new Banka();
+    	String propFile = "deploy"+ID_Instance_Banke;
+    	String s = ResourceBundle.getBundle(propFile).getString("swift.code");
+    	Long i = Long.parseLong(Integer.toString(ID_Instance_Banke));
+    	TBanka podaci = new TBanka();
+    	podaci.setSWIFTKod(s);
+    	podaci.setId(current_bank.getId());
+    	podaci.setBrojRacunaBanke(ResourceBundle.getBundle(propFile).getString("account.number"));
+    	podaci.setNazivBanke(ResourceBundle.getBundle(propFile).getString("bank.name"));
+    	current_bank.setPodaci_o_banci(podaci);
+    	current_bank.setSWIFTCode(s);
+    	current_bank.setId(i);
+    	
     	current_bank.init();
     	rtgsObrada = new RTGSProccessing(this);
+    	ID_Instance_Banke++;
     }
     
     /* (non-Javadoc)
@@ -128,16 +144,17 @@ public class BankaPortImpl implements BankaPort {
     /* (non-Javadoc)
      * @see com.project.bankaws.BankaPort#receiveMT103(com.project.mt103.Mt103  mt103 )*
      */
-    public com.project.common_types.Status receiveMT103(com.project.mt103.Mt103 mt103) throws ReceiveMT103Fault    { 
-        LOG.info("Executing operation receiveMT103");
-        
-        System.out.println(mt103);
+    public com.project.common_types.Status receiveMT103(com.project.mt103.Mt103 mt103) throws ReceiveMT103Fault   { 
+
         try {
+            LOG.info("Executing operation receiveMT103");
+            current_bank.obradiRTGSNalog(mt103);
+            System.out.println(mt103);
             com.project.common_types.Status _return = new com.project.common_types.Status();
             return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
-            throw new RuntimeException(ex);
+            throw new ReceiveMT103Fault(ex.getMessage());
         }
         //throw new ReceiveMT103Fault("receiveMT103fault...");
     }
@@ -195,8 +212,7 @@ public class BankaPortImpl implements BankaPort {
         		//RTGS
         		Mt103 rtgsNalog = rtgsObrada.kreirajMT103(nalog);
         		//spustanje mt103 u bazu
-        		Mt103Service servis = new Mt103Service();
-        		servis.create(rtgsNalog);
+        		RESTUtil.objectToDB("BankaPoruke/MT103", rtgsNalog.getId().toString(), rtgsNalog);
         		//slanje MT103
         		URL wsdl = new URL("http://localhost:8080/XML_CB/services/Banka?wsdl");
     	    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
@@ -207,8 +223,7 @@ public class BankaPortImpl implements BankaPort {
     	        Mt900RTGS rtgsResponse = centralnaBanka.recieveMT103CB(rtgsNalog);
     	        
     	        //Spustanje odgovora u bazu
-    	        Mt900RTGSService tempServis = new Mt900RTGSService();
-    	        tempServis.create(rtgsResponse);
+        		RESTUtil.objectToDB("BankaPoruke/MT900rtgs", rtgsResponse.getId().toString(), rtgsResponse);
     	        
         		//Status klijentu da je poruka obradjena bez greske
     	    	_return.setStatusCode(1);
@@ -228,6 +243,7 @@ public class BankaPortImpl implements BankaPort {
     }
     
     public static void main(String[] args) {
+    	/*
     	//test area
     	Mt900RTGS test = new Mt900RTGS();
     	PodaciOZaduzenju pod = new PodaciOZaduzenju();
@@ -247,11 +263,59 @@ public class BankaPortImpl implements BankaPort {
         BigDecimal b = new BigDecimal(c);
     	pod.setIznos(b);
     	pod.setSifraValute("RSD");
-    	test.setIDPoruke("CB999");
+    	test.setIDPoruke("1");
     	test.setPodaciOZaduzenju(pod);
     	t.setId(Long.parseLong("1234"));
-    	Mt900RTGSService r = new Mt900RTGSService();
-    	r.create(test);
+    	//Mt900RTGSService r = new Mt900RTGSService();
+    	//r.create(test);
+    	RESTUtil.objectToDB("Poruke/MT900", test.getIDPoruke(), test);*/
+    	BankaPortImpl b = new BankaPortImpl();
+    	b.init();
+    	NalogZaPlacanje novi = new NalogZaPlacanje();
+    	try {
+			novi.setDatumValute(Util.getXMLGregorianCalendarNow());
+		} catch (DatatypeConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	novi.setHitno(true);
+    	novi.setId(Long.parseLong("1"));
+    	Placanje p = new Placanje();
+    	p.setId(Long.parseLong("1"));
+    	p.setSifraValute("RSD");
+    	Uplata u = new Uplata();
+    	try {
+			u.setDatumNaloga(Util.getXMLGregorianCalendarNow());
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	u.setIznos(BigDecimal.valueOf(350.0));
+    	u.setModelOdobrenja(123);
+    	u.setModelZaduzenja(123);
+    	u.setPozivNaBrojOdobrenja("12335");
+    	u.setPozivNaBrojZaduzenja("12345");
+    	TRacunKlijenta t1 = new TRacunKlijenta();
+    	t1.setBrojRacuna("001-0000000000001-00");
+    	t1.setId(Long.parseLong("1"));
+    	t1.setVlasnik("Pera Peric");
+    	u.setRacunDuznika(t1);
+    	TRacunKlijenta t2 = new TRacunKlijenta();
+    	t2.setBrojRacuna("001-0000000000002-00");
+    	t2.setId(Long.parseLong("2"));
+    	t2.setVlasnik("Mika Mikic");
+    	u.setRacunPrimaoca(t2);
+    	u.setSvrhaPlacanja("Eto 'nako");
+    	p.setUplata(u);
+    	novi.setPlacanje(p);
+    	Status s;
+		try {
+			s = b.receiveNalog(novi);
+	    	System.out.println(s.getStatusText());
+		} catch (ReceiveNalogFault e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    xmlns:cmn="http://www.project.com/common_types"
+    xmlns:rk="http://www.project.com/racuni_klijenata">
+
+    <xs:import namespace="http://www.project.com/common_types"
+        schemaLocation="common_types.xsd"/>
+    <xs:element name="Racuni">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="Racun"
+                    type="cmn:TBankarski_Racun_Klijenta"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

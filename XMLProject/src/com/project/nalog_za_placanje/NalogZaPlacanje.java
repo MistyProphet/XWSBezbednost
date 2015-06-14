@@ -121,6 +121,9 @@ public class NalogZaPlacanje extends Identifiable{
 
 	@Override
 	public void setId(Long value) {
+		if(placanje == null){
+			placanje = new Placanje();
+		}
 		this.placanje.setId(value);
 	}
 }

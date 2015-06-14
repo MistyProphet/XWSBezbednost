@@ -1,13 +1,23 @@
 package com.project.banka;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
+
+import misc.RESTUtil;
+import misc.RequestMethod;
 
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
@@ -20,6 +30,7 @@ import com.project.mt103.Mt103;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
 import com.project.presek.Presek;
+import com.project.racuni.Racuni;
 import com.project.stavka_preseka.StavkaPreseka;
 import com.project.stavka_preseka.Transakcija;
 import com.project.util.Util;
@@ -38,23 +49,37 @@ public class Banka extends Identifiable {
 	private Long id; //Jedinstvena oznaka kod CB, ona sa kojom pocinju brojevi racuna
 	
 	public void init() {
-		podaci_o_banci = new TBanka();
 		accounts = new ArrayList<TBankarskiRacunKlijenta>();
 		naloziZaClearing = new HashMap<TBanka, ArrayList<NalogZaPlacanje>>();
-		//ucitavanje iz baze na osnovu swift koda
+		//Ucitavanje racuna iz baze na osnovu swift koda
 		try {
-			//InputStream result = RESTUtil.retrieveResource("", "TBankarskiRacunKlijenta", RequestMethod.GET);
-			//TBankarskiRacunKlijentaService servis = new TBankarskiRacunKlijentaService();
-			//List<TBankarskiRacunKlijenta> result = servis.findByAll();
-			//for(TBankarskiRacunKlijenta t: result){
-				//accounts.add(t);
-			//}
+			InputStream in = RESTUtil.retrieveResource("//Racuni", "BankaRacuni/00"+id, RequestMethod.GET);
+			JAXBContext context = JAXBContext.newInstance(Racuni.class, Racuni.class);
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Marshaller marshaller = context.createMarshaller();
+			// set optional properties
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			String xml = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			for (String line; (line = br.readLine()) != null;) {
+				xml=xml+line+"\n";
+			}
+			StringReader reader = new StringReader(xml);
+			Racuni rac = (Racuni) unmarshaller.unmarshal(reader);
+
+			for(TBankarskiRacunKlijenta k: rac.getRacun()){
+				accounts.add(k);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void setPodaci_o_banci(TBanka podaci){
+		if(podaci_o_banci == null){
+			podaci_o_banci = new TBanka();
+		}
 		podaci_o_banci.setId(podaci.getId());
 		podaci_o_banci.setBrojRacunaBanke(podaci.getBrojRacunaBanke());
 		podaci_o_banci.setNazivBanke(podaci.getNazivBanke());

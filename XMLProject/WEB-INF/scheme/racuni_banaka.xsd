@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    xmlns:cmn="http://www.project.com/common_types">
+
+    <xs:import namespace="http://www.project.com/common_types" schemaLocation="common_types.xsd"/>
+    <xs:element name="racuni_banaka">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="kod_banke" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="racun_banke" type="cmn:TBroj_Racuna_Banke"/>
+                            <xs:element name="id">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:pattern value="[A-Z0-9]{3}"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="naziv" type="xs:string"/>
+                        </xs:sequence>
+                        <xs:attribute name="swift">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:pattern value="[A-Z]{6}[0-9]{2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -43,16 +43,21 @@ public class RESTUtil {
 		dropSchema("Poruke");
 		dropSchema("Banke");
 		dropSchema("BankaPoruke");
+		dropSchema("BankaRacuni");
 		
 		/* Test CRUD operacija */
 		createSchema("Banke");
 		createSchema("BankaPoruke");
+		createSchema("BankaRacuni");
 		createResource("Banke", "Podaci", new FileInputStream(new File(file, "banke.xml")));
 		createResource("BankaPoruke", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
 		createResource("BankaPoruke", "MT103", new FileInputStream(new File(file, "MT103.xml")));
 		createResource("BankaPoruke", "MT102", new FileInputStream(new File(file, "MT102.xml")));
-		createResource("BankaPoruke", "MT900", new FileInputStream(new File(file, "MT900.xml")));
+		createResource("BankaPoruke", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
+		createResource("BankaPoruke", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("BankaPoruke", "MT910", new FileInputStream(new File(file, "MT910.xml")));
+		createResource("BankaRacuni", "001", new FileInputStream(new File(file, "klijenti1.xml")));
+		createResource("BankaRacuni", "002", new FileInputStream(new File(file, "klijenti2.xml")));
 		
 	/*	printStream(retrieveResource("(//city/name)[position()= 10 to 15]", "factbook", RequestMethod.GET));
 		

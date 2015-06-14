@@ -28,6 +28,7 @@
                 <xs:element name="Sifra_valute" type="cmn:TOznaka_Valute"> </xs:element>
                 <xs:element ref="np:Uplata"/>
             </xs:sequence>
+            <xs:attribute name="id" type="xs:long"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="Uplata">

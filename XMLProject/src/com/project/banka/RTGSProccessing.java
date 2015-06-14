@@ -24,6 +24,7 @@ import com.project.exceptions.WrongBankException;
 import com.project.mt103.Mt103;
 import com.project.mt103.Mt103.PodaciOBankama;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
+import com.project.racuni.Racuni;
 import com.project.util.Util;
 
 public class RTGSProccessing {
@@ -44,7 +45,7 @@ public class RTGSProccessing {
 			
 			PodaciOBankama pob = new PodaciOBankama();
 			//Dobiti banku na osnovu prve tri cifre racuna. To je jedinstvena oznaka banke kod CB
-			String cbOznakaBankePoverioca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().substring(0, 2);
+			String cbOznakaBankePoverioca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().substring(0, 3);
 			
 			InputStream in = RESTUtil.retrieveResource("//racuni_banaka", "Banke/Podaci", RequestMethod.GET);
 			JAXBContext context = JAXBContext.newInstance(RacuniBanaka.class, RacuniBanaka.class);
@@ -83,6 +84,27 @@ public class RTGSProccessing {
 				if(!(racun_duznika.getRaspolozivaSredstva().compareTo(iznos) == -1)){
 					//duznik ima dovoljno para, skidamo pare
 	    			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
+	    			
+	    			InputStream in1 = RESTUtil.retrieveResource("//Racuni", "BankaRacuni/00"+bankaPort.current_bank.getId(), RequestMethod.GET);
+	    			JAXBContext context1 = JAXBContext.newInstance(Racuni.class, Racuni.class);
+	    			Unmarshaller unmarshaller1 = context1.createUnmarshaller();
+	    			Marshaller marshaller1 = context1.createMarshaller();
+	    			// set optional properties
+	    			marshaller1.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+	    			String xml1 = "";
+	    			BufferedReader br1 = new BufferedReader(new InputStreamReader(in1));
+	    			for (String line; (line = br1.readLine()) != null;) {
+	    				xml1=xml1+line+"\n";
+	    			}
+	    			StringReader reader1 = new StringReader(xml1);
+	    			Racuni rac1 = (Racuni) unmarshaller1.unmarshal(reader1);
+
+	    			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
+	    				//accounts.add(k);
+	    				//Ovde uraditi update stanja na racunima, pa baciti u bazu ponovo
+	    			}
+	    			
 				} else {
 					//no-money exception
 					throw new NoMoneyException();

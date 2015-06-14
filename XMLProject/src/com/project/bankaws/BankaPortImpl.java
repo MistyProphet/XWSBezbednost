@@ -6,21 +6,41 @@
 
 package com.project.bankaws;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import javax.xml.ws.Service;
 
 import misc.RESTUtil;
+import misc.RequestMethod;
+
+import org.apache.commons.io.IOUtils;
 
 import com.project.banka.Banka;
 import com.project.banka.RTGSProccessing;
-import com.project.common_types.Status;
+import com.project.banke_racuni.RacuniBanaka;
+import com.project.banke_racuni.RacuniBanaka.KodBanke;
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TRacunKlijenta;
@@ -169,6 +189,7 @@ public class BankaPortImpl implements BankaPort {
         try {
         	//proveriti validnost naloga
     		checkNalog(nalog);
+    		RESTUtil.objectToDB("BankaPoruke/Nalozi", nalog.getId().toString(), nalog);
     		//provera da li je racun primaoca u istoj banci
     		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = current_bank.getSpecificAccount(broj_rk_primaoca);
@@ -236,41 +257,139 @@ public class BankaPortImpl implements BankaPort {
         }
     }
     
-    public void checkNalog(NalogZaPlacanje nalog) throws Exception {
-    	//da li su validni formati racuna
-    	//da li postoji ta druga banka
-    	//da li su sva polja ispunjena
+    public boolean checkNalog(NalogZaPlacanje nalog) throws Exception {
+    	try {
+    		//Validacija po semi
+    		//Upisujemo u privremeni fajl, kako bi mogli da radimo validaciju nad xml fajlom, a ne java objektom
+	    	File schemaFile = new File("WEB-INF/scheme/nalog_za_placanje.xsd");
+			JAXBContext context1 = JAXBContext.newInstance(nalog.getClass());
+			Marshaller marshaller1 = context1.createMarshaller();
+			marshaller1.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            OutputStream os = new FileOutputStream("src/resource/test.xml" );
+            marshaller1.marshal( nalog, os );
+			IOUtils.closeQuietly(os);
+				
+				
+	    	Source xmlFile = new StreamSource(new File("src/resource/test.xml"));
+	    	SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	    	Schema schema = schemaFactory.newSchema(schemaFile);
+	    	Validator validator = schema.newValidator();
+	    	validator.validate(xmlFile);
+	    	
+	    	//Provera da li su sva polja ispunjena
+	    	boolean filled = true;
+	    	if(nalog.getDatumValute() == null){
+	    		filled = false;
+	    	}
+	    	if(nalog.getId() == null){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getId() == null){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getSifraValute() == null){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getDatumNaloga() == null){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getIznos() == null || nalog.getPlacanje().getUplata().getIznos().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getPozivNaBrojOdobrenja() == null || 
+	    			nalog.getPlacanje().getUplata().getPozivNaBrojOdobrenja().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getPozivNaBrojZaduzenja()== null || 
+	    			nalog.getPlacanje().getUplata().getPozivNaBrojZaduzenja().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getSvrhaPlacanja() == null || 
+	    			nalog.getPlacanje().getUplata().getSvrhaPlacanja().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna() == null || 
+	    			nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna() == null || 
+	    			nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getRacunDuznika().getVlasnik() == null || 
+	    			nalog.getPlacanje().getUplata().getRacunDuznika().getVlasnik().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getRacunPrimaoca().getVlasnik() == null || 
+	    			nalog.getPlacanje().getUplata().getRacunPrimaoca().getVlasnik().equals("")){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getRacunDuznika().getId() == null){
+	    		filled = false;
+	    	}
+	    	if(nalog.getPlacanje().getUplata().getRacunPrimaoca().getId() == null){
+	    		filled = false;
+	    	}
+	    	
+	    	if(!filled){
+		    	System.out.println("One of the fields was empty.");
+		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	writer.write((new String()).getBytes());
+		    	writer.close();
+				return false;
+			}
+	    	
+	    	//Provera da li ta druga banka postoji
+	    	String cbOznakaBankePoverioca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().substring(0, 3);
+	    	InputStream in = RESTUtil.retrieveResource("//racuni_banaka", "Banke/Podaci", RequestMethod.GET);
+			JAXBContext context = JAXBContext.newInstance(RacuniBanaka.class, RacuniBanaka.class);
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			String xml = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			for (String line; (line = br.readLine()) != null;) {
+				xml=xml+line+"\n";
+			}
+			StringReader reader = new StringReader(xml);
+			RacuniBanaka rac = (RacuniBanaka) unmarshaller.unmarshal(reader);
+			
+			boolean found = false;
+			for(KodBanke k: rac.getKodBanke()){
+				if(k.getId().equals(cbOznakaBankePoverioca)){
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+		    	System.out.println("Recipient's bank does not exist.");
+		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	writer.write((new String()).getBytes());
+		    	writer.close();
+				return false;
+			}
+
+	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	writer.write((new String()).getBytes());
+	    	writer.close();
+	    	return true;
+    	} catch (Exception e) {
+	    	System.out.println("Xml is NOT valid");
+	    	System.out.println("Reason: " + e.getLocalizedMessage());
+	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	writer.write((new String()).getBytes());
+	    	writer.close();
+	    	return false;
+    	}
     }
     
     public static void main(String[] args) {
-    	/*
     	//test area
-    	Mt900RTGS test = new Mt900RTGS();
-    	PodaciOZaduzenju pod = new PodaciOZaduzenju();
-    	TBanka t = new TBanka();
-    	t.setBrojRacunaBanke("123456789112345678");
-    	t.setNazivBanke("ABC");
-    	t.setSWIFTKod("33334568");
-    	pod.setBankaDuznika(t);
-    	try {
-			pod.setDatumValute(Util.getXMLGregorianCalendarNow());
-		} catch (DatatypeConfigurationException e) {
-			e.printStackTrace();
-			e.getCause().printStackTrace();
-		}
-    	pod.setIDPorukeNaloga("");
-    	double c=5000.0;
-        BigDecimal b = new BigDecimal(c);
-    	pod.setIznos(b);
-    	pod.setSifraValute("RSD");
-    	test.setIDPoruke("1");
-    	test.setPodaciOZaduzenju(pod);
-    	t.setId(Long.parseLong("1234"));
-    	//Mt900RTGSService r = new Mt900RTGSService();
-    	//r.create(test);
-    	RESTUtil.objectToDB("Poruke/MT900", test.getIDPoruke(), test);*/
+    	
     	BankaPortImpl b = new BankaPortImpl();
     	b.init();
+    	
     	NalogZaPlacanje novi = new NalogZaPlacanje();
     	try {
 			novi.setDatumValute(Util.getXMLGregorianCalendarNow());
@@ -282,6 +401,7 @@ public class BankaPortImpl implements BankaPort {
     	novi.setId(Long.parseLong("1"));
     	Placanje p = new Placanje();
     	p.setId(Long.parseLong("1"));
+    	p.setIDPoruke("1");
     	p.setSifraValute("RSD");
     	Uplata u = new Uplata();
     	try {
@@ -291,10 +411,10 @@ public class BankaPortImpl implements BankaPort {
 			e.printStackTrace();
 		}
     	u.setIznos(BigDecimal.valueOf(350.0));
-    	u.setModelOdobrenja(123);
-    	u.setModelZaduzenja(123);
-    	u.setPozivNaBrojOdobrenja("12335");
-    	u.setPozivNaBrojZaduzenja("12345");
+    	u.setModelOdobrenja(12);
+    	u.setModelZaduzenja(12);
+    	u.setPozivNaBrojOdobrenja("12335678912345678912");
+    	u.setPozivNaBrojZaduzenja("12335678912345678912");
     	TRacunKlijenta t1 = new TRacunKlijenta();
     	t1.setBrojRacuna("001-0000000000001-00");
     	t1.setId(Long.parseLong("1"));
@@ -308,11 +428,12 @@ public class BankaPortImpl implements BankaPort {
     	u.setSvrhaPlacanja("Eto 'nako");
     	p.setUplata(u);
     	novi.setPlacanje(p);
-    	Status s;
+    	//Status s;
 		try {
-			s = b.receiveNalog(novi);
-	    	System.out.println(s.getStatusText());
-		} catch (ReceiveNalogFault e) {
+			//s = b.receiveNalog(novi);
+	    	//System.out.println(s.getStatusText());
+			System.out.println(b.checkNalog(novi));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

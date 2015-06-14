@@ -140,29 +140,29 @@ public class RESTUtil {
 		try {
 			context = JAXBContext.newInstance(o.getClass());
 		
-		Marshaller marshaller = context.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-		URL url = new URL(REST_URL + schemaName + "/" + resourceId);
-		
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod(RequestMethod.PUT);
-		conn.setDoOutput(true);
-
-		String userpass = "admin:admin";
-		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
-		conn.setRequestProperty ("Authorization", basicAuth);
-		conn.connect();
-		
-		OutputStream out = conn.getOutputStream();
-		marshaller.marshal(o, out);
-		
-		System.out.println(out.toString());
-		IOUtils.closeQuietly(out);
-		IOUtils.closeQuietly(out);
-		
-		RESTUtil.printResponse(conn);
-		conn.disconnect();
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	
+			URL url = new URL(REST_URL + schemaName + "/" + resourceId);
+			
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(RequestMethod.PUT);
+			conn.setDoOutput(true);
+	
+			String userpass = "admin:admin";
+			String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+			conn.setRequestProperty ("Authorization", basicAuth);
+			conn.connect();
+			
+			OutputStream out = conn.getOutputStream();
+			marshaller.marshal(o, out);
+			
+			System.out.println(out.toString());
+			IOUtils.closeQuietly(out);
+			IOUtils.closeQuietly(out);
+			
+			RESTUtil.printResponse(conn);
+			conn.disconnect();
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

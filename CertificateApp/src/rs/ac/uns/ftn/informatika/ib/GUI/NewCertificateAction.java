@@ -21,6 +21,7 @@ import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -117,20 +118,21 @@ public class NewCertificateAction implements ActionListener{
 		try {
 			cert.verify(keyPair.getPublic());
 		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(certificateForm, "Wrong password");
+			System.exit(0);
+			
 		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(certificateForm, "Wrong password");
+			System.exit(0);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(certificateForm, "Wrong password");
+			System.exit(0);
 		} catch (NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(certificateForm, "Wrong password");
+			System.exit(0);
 		} catch (SignatureException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(certificateForm, "Wrong password");
+			System.exit(0);
 		}
 		System.out.println("VALIDACIJA USPESNA....");
 		

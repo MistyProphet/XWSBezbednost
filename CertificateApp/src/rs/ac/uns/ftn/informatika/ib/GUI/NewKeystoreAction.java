@@ -40,7 +40,8 @@ this.ksPassword = ksPassword;
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		this.password = setPasswordForm.getPassword().getText();	
-		
+		if(!setPasswordForm.getPassword().getText().equals(setPasswordForm.getPassword2().getText()))
+			return;
 		KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
 		keyStoreWriter.loadKeyStore(null,null);
 		keyStoreWriter.write(alias, keyPair.getPrivate(), password.toCharArray(), certificate);

@@ -8,33 +8,25 @@ import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.Enumeration;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import rs.ac.uns.ftn.informatika.ib.security.KeyStoreReader;
-import rs.ac.uns.ftn.informatika.ib.security.KeyStoreWriter;
 
 public class SelectCAForm extends JFrame {
 
@@ -111,18 +103,24 @@ public String getPass() {
 		
 
 		} catch (KeyStoreException | NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			JOptionPane.showMessageDialog(frame, "Wrong Keystore password");
+		
+		} catch (FileNotFoundException e1) {
+			JOptionPane.showMessageDialog(frame, "File not found");
+			System.exit(0);
+			
+		} catch (NoSuchAlgorithmException e1) {
+			JOptionPane.showMessageDialog(frame, "Wrong Keystore password");
+			System.exit(0);
+			
+		} catch (CertificateException e1) {
+			JOptionPane.showMessageDialog(frame, "Wrong Keystore password");
+			System.exit(0);
+		
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(frame, "Wrong Keystore password");
+			System.exit(0);
+		} 
 		JPanel namePanel112 = new JPanel(new BorderLayout());
 		JButton ok = new JButton();
 		ok.setText("OK");
@@ -130,15 +128,24 @@ public String getPass() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(frame.getTable().getSelectedRow()!=-1)
+				{
 				frame.setVisible(false);
 				CertificateForm certificateForm = new CertificateForm(frame);
-			}
+			}}
 		});
 		namePanel112.setMaximumSize(new Dimension(140, 50));
 		
 		content.add(namePanel2);
 		JButton cancel = new JButton();
-
+cancel.addActionListener(new ActionListener() {
+	
+	@Override
+	public void actionPerformed(ActionEvent paramActionEvent) {
+		System.exit(0);
+		
+	}
+});
 		cancel.setText("Cancel");
 		namePanel112.add(ok, BorderLayout.WEST);
 		namePanel112.add(cancel, BorderLayout.CENTER);

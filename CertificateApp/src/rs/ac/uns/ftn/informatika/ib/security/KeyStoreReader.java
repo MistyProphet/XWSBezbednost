@@ -15,6 +15,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.swing.JOptionPane;
+
 /**
  * 
  * Cita is keystore fajla
@@ -52,19 +54,26 @@ public class KeyStoreReader {
 			
 
 		} catch (KeyStoreException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (NoSuchProviderException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (CertificateException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (UnrecoverableKeyException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		}
 
 	}
@@ -89,17 +98,23 @@ public class KeyStoreReader {
 			
 
 		} catch (KeyStoreException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (NoSuchProviderException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (CertificateException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		}
 		return null;
 
@@ -120,11 +135,14 @@ public class KeyStoreReader {
 			
 
 		} catch (KeyStoreException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (UnrecoverableKeyException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		}
 		return null;
 

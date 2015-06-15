@@ -16,6 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 
@@ -41,13 +43,17 @@ public class KeyStoreWriter {
 				keyStore.load(null, password);
 		
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (CertificateException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		}
 	}
 	

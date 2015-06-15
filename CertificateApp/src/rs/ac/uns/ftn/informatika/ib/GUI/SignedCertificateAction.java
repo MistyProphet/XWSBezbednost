@@ -30,6 +30,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -71,8 +72,8 @@ public class SignedCertificateAction extends NewCertificateAction {
 		try {
 			this.parentCertificate = (X509Certificate)frame.getKs().getCertificate((String)frame.getModel().getValueAt(frame.getTable().getSelectedRow(),1));
 		} catch (KeyStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Wrong password");
+			System.exit(0);
 		}
 	}
 

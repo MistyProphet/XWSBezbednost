@@ -10,26 +10,30 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 
 import rs.ac.uns.ftn.informatika.ib.security.KeyStoreReader;
 import rs.ac.uns.ftn.informatika.ib.security.KeyStoreWriter;
 
-public class WriteInKeystoreAction  implements Action {
+public class WriteInKeystoreAction implements Action {
 
-	X509Certificate certificate=  null;
+	X509Certificate certificate = null;
 	String password = null;
 	String alias = null;
 	File saveAs;
 	SetPasswordForm setPasswordForm;
 	String ksPassword;
-KeyPair keyPair;
-	public WriteInKeystoreAction(SetPasswordForm setPasswordForm, X509Certificate newCertificate,  String alias, File saveAs, String ksPassword, NewCertificateAction newCertificateAction) {
-this.keyPair = newCertificateAction.getKeyPair();
-	this.certificate = newCertificate;
-	this.setPasswordForm = setPasswordForm;
-	this.alias = alias;
-	this.saveAs = saveAs;
-	this.ksPassword = ksPassword;
+	KeyPair keyPair;
+
+	public WriteInKeystoreAction(SetPasswordForm setPasswordForm,
+			X509Certificate newCertificate, String alias, File saveAs,
+			String ksPassword, NewCertificateAction newCertificateAction) {
+		this.keyPair = newCertificateAction.getKeyPair();
+		this.certificate = newCertificate;
+		this.setPasswordForm = setPasswordForm;
+		this.alias = alias;
+		this.saveAs = saveAs;
+		this.ksPassword = ksPassword;
 
 	}
 
@@ -37,21 +41,24 @@ this.keyPair = newCertificateAction.getKeyPair();
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		this.password = setPasswordForm.getPassword().getText();
-		
-		
-		KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
-		keyStoreWriter.loadKeyStore(saveAs.getAbsolutePath(),ksPassword.toCharArray());
-		keyStoreWriter.write(alias,keyPair.getPrivate(),password.toCharArray(), certificate);
-		keyStoreWriter.saveKeyStore(saveAs.getAbsolutePath(),ksPassword.toCharArray());
-		
+if(!setPasswordForm.getPassword().getText().equals(setPasswordForm.getPassword2().getText()))
+		return;
+	KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
+		keyStoreWriter.loadKeyStore(saveAs.getAbsolutePath(),
+				ksPassword.toCharArray());
+		keyStoreWriter.write(alias, keyPair.getPrivate(),
+				password.toCharArray(), certificate);
+		keyStoreWriter.saveKeyStore(saveAs.getAbsolutePath(),
+				ksPassword.toCharArray());
+
 		System.out.println("Upisan u keyStore");
 		System.exit(0);
-			}
+	}
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -69,36 +76,38 @@ this.keyPair = newCertificateAction.getKeyPair();
 	@Override
 	public void putValue(String key, Object value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setEnabled(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
+
 	public KeyPair generateKeyPair() {
 		try {
-			//generator para kljuceva
-			KeyPairGenerator   keyGen = KeyPairGenerator.getInstance("RSA");
-			//inicijalizacija generatora, 1024 bitni kljuc
+			// generator para kljuceva
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+			// inicijalizacija generatora, 1024 bitni kljuc
 			keyGen.initialize(1024);
-			
-			//generise par kljuceva
+
+			// generise par kljuceva
 			KeyPair pair = keyGen.generateKeyPair();
-			
+
 			return pair;
-			
-        } catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+
+		} catch (NoSuchAlgorithmException e) {
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 			return null;
 		}
 	}
-	
+
 }

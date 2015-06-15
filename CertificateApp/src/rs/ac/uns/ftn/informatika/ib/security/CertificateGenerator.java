@@ -18,6 +18,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -101,7 +103,8 @@ public class CertificateGenerator {
 			return pair;
 			
         } catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+        	JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 			return null;
 		}
 	}
@@ -228,7 +231,8 @@ public class CertificateGenerator {
 			System.out.println("drugi korisnik upisan u keyStore 2");
 			
 		} catch (ParseException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wrong password");
+			System.exit(0);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (CertificateException e) {

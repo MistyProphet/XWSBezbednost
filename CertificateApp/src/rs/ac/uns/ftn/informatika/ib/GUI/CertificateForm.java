@@ -67,7 +67,8 @@ public class CertificateForm extends JFrame {
 		JPanel namePanel2 = new JPanel(new BorderLayout());
 		JLabel validitylbl = new JLabel("Validity (days)");
 		validity = new JTextField();
-
+		validity.setText("256");
+		validity.setEditable(false);
 		namePanel2.setMaximumSize(new Dimension(230, 50));
 		namePanel2.add(validitylbl, BorderLayout.WEST);
 		namePanel2.add(validity, BorderLayout.CENTER);
@@ -216,6 +217,13 @@ public class CertificateForm extends JFrame {
 		JButton cancel = new JButton();
 
 		cancel.setText("Cancel");
+		cancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				System.exit(0);
+			}
+		});
 		namePanel112.add(ok, BorderLayout.WEST);
 		namePanel112.add(cancel, BorderLayout.CENTER);
 		content.add(namePanel112);

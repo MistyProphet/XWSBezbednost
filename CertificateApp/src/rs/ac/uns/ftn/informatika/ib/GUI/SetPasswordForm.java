@@ -16,6 +16,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -28,6 +29,7 @@ public class SetPasswordForm {
 
 	private JFrame frame;
 	private JTextField password;
+	private JTextField password2;
 
 	public SetPasswordForm(X509Certificate newCertificate, String alias, File saveAs, CertificateForm certificateForm, NewCertificateAction newCertificateAction) {
 		frame = new JFrame();
@@ -50,7 +52,7 @@ public class SetPasswordForm {
 		frame.add(panel2);
 		panel2.setLayout(flow2);
 		JLabel lbl2 = new JLabel("Repeat Password");
-		JTextField password2 = new JTextField();
+		 password2 = new JTextField();
 		password2.setPreferredSize(new Dimension(150,30));
 		
 		JButton ok = new JButton();
@@ -73,6 +75,12 @@ public class SetPasswordForm {
 		frame.setVisible(true);
 
 	}
+	public JTextField getPassword2() {
+		return password2;
+	}
+	public void setPassword2(JTextField password2) {
+		this.password2 = password2;
+	}
 	public JTextField getPassword() {
 		return password;
 	}
@@ -89,7 +97,8 @@ public class SetPasswordForm {
 			return pair;
 			
         } catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+        	JOptionPane.showMessageDialog(frame, "Wrong password");
+			System.exit(0);
 			return null;
 		}
 	}

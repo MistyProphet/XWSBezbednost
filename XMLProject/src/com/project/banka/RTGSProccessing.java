@@ -100,9 +100,16 @@ public class RTGSProccessing {
 	    			StringReader reader1 = new StringReader(xml1);
 	    			Racuni rac1 = (Racuni) unmarshaller1.unmarshal(reader1);
 
+    				//Ovde uraditi update raspolozivog stanja na racunima, pa baciti u bazu ponovo
 	    			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
-	    				//accounts.add(k);
-	    				//Ovde uraditi update stanja na racunima, pa baciti u bazu ponovo
+	    				//Nasli smo koji je racun u pitanju
+	    				if(k.getRacun().getBrojRacuna().equals(racun_duznika.getRacun().getBrojRacuna())){
+	    					//skidamo mu novac
+	    					k.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva());
+	    					//vracamo u bazu izmenjena raspoloziva sredstva
+	    					RESTUtil.doMarshall("BankaRacuni/00"+bankaPort.current_bank.getId(), rac1);
+	    					break;
+	    				}
 	    			}
 	    			
 				} else {

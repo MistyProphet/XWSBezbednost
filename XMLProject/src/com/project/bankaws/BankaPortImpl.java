@@ -45,6 +45,7 @@ import com.project.mt900.Mt900RTGS;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
 import com.project.nalog_za_placanje.Uplata;
+import com.project.racuni.Racuni;
 import com.project.stavka_preseka.Transakcija;
 import com.project.util.CBport;
 import com.project.util.Util;
@@ -204,6 +205,7 @@ public class BankaPortImpl implements BankaPort {
     				if(racun_duznika.getRaspolozivaSredstva().subtract(iznos).compareTo(new BigDecimal(0))>=0){
     					//duznik ima dovoljno para, skidamo pare
     					transakcijaDuznik.setStanjePreTransakcije(racun_duznika.getStanje());
+    					racun_duznika.setStanje(racun_duznika.getStanje().subtract(iznos));
     					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
     					transakcijaDuznik.setStanjePosleTransakcije(racun_duznika.getStanje());
     					//dodajemo primaocu
@@ -211,6 +213,27 @@ public class BankaPortImpl implements BankaPort {
     					racun_primaoca.setStanje(racun_primaoca.getStanje().add(iznos));
     					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(iznos));
     					transakcijaPrimalac.setStanjePosleTransakcije(racun_primaoca.getStanje());
+    					
+    					Racuni rac1 = new Racuni();
+    					//Spustamo izmenjena stanja na racunima u bazu
+    					rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "BankaRacuni/00"+current_bank.getId(), rac1);
+    					
+    					//Ovde uraditi update stanja na racunima, pa baciti u bazu ponovo
+    	    			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
+    	    				//Nasli smo koji je racun u pitanju
+    	    				if(k.getRacun().getBrojRacuna().equals(racun_duznika.getRacun().getBrojRacuna())){
+    	    					//skidamo mu novac
+    	    					k.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva());
+    	    					k.setStanje(racun_duznika.getStanje());
+    	    				}else if(k.getRacun().getBrojRacuna().equals(racun_primaoca.getRacun().getBrojRacuna())){
+    	    					//dodajemo mu novac
+    	    					k.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva());
+    	    					k.setStanje(racun_primaoca.getStanje());
+    	    				}
+    	    			}
+    	    			
+    					//vracamo u bazu izmenjena raspoloziva sredstva
+    					RESTUtil.doMarshall("BankaRacuni/00"+current_bank.getId(), rac1);
     					
     					//Status da je poruka obradjena bez greske
     	    	    	_return.setStatusCode(1);
@@ -424,7 +447,9 @@ public class BankaPortImpl implements BankaPort {
 		try {
 			//s = b.receiveNalog(novi);
 	    	//System.out.println(s.getStatusText());
-			System.out.println(b.checkNalog(novi));
+			//System.out.println(b.checkNalog(novi));
+			b.receiveNalog(novi);
+			System.out.println("Done.");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -324,4 +324,33 @@ public class RESTUtil<T> {
 		}
 	}
 	
+	public static boolean doMarshall(String schemaName, Object o){
+		try{
+			JAXBContext context = JAXBContext.newInstance(o.getClass());
+		    Marshaller m = context.createMarshaller();
+		    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		    
+			URL url = new URL(REST_URL + schemaName);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(RequestMethod.PUT);
+			conn.setDoOutput(true);
+			String userpass = "admin:admin";
+			String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+			conn.setRequestProperty ("Authorization", basicAuth);
+			conn.connect();
+			OutputStream out = conn.getOutputStream();
+			m.marshal(o, out);
+			
+			IOUtils.closeQuietly(out);
+			IOUtils.closeQuietly(out);
+			RESTUtil.printResponse(conn);
+			conn.disconnect();
+			return true;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 }

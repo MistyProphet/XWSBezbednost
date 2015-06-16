@@ -36,6 +36,7 @@ import com.project.entities.Identifiable;
  * 
  * 
  */
+@SuppressWarnings("serial")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TBankarski_Racun_Klijenta", propOrder = {
     "racun",

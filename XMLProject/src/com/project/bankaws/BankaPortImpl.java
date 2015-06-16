@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -40,7 +42,9 @@ import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TRacunKlijenta;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
+import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
+import com.project.mt900.Mt900Clearing;
 import com.project.mt900.Mt900RTGS;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
 import com.project.nalog_za_placanje.Placanje;
@@ -48,6 +52,7 @@ import com.project.nalog_za_placanje.Uplata;
 import com.project.racuni.Racuni;
 import com.project.stavka_preseka.Transakcija;
 import com.project.util.CBport;
+import com.project.util.RecieveMT102Fault;
 import com.project.util.Util;
 
 /**
@@ -95,14 +100,35 @@ public class BankaPortImpl implements BankaPort {
     /* (non-Javadoc)
      * @see com.project.bankaws.BankaPort#odradiClearing(*
      */
-    public com.project.common_types.Status odradiClearing() throws ClearingFault { 
-        try {
-            com.project.common_types.Status _return = new com.project.common_types.Status();
+    public com.project.common_types.Status odradiClearing() throws ClearingFault {
+        	com.project.common_types.Status _return = new com.project.common_types.Status();
+            ArrayList<Mt102> nalozi = current_bank.formirajClearingNalog();
+            
+			try {
+				URL wsdl = new URL("http://localhost:8080/XML_CB/services/Banka?wsdl");
+		    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
+		    	QName portName = new QName("http://www.project.com/CBws", "CBport");
+		    	Service service = Service.create(wsdl, serviceName);
+		        CBport centralnaBanka = service.getPort(portName, CBport.class);
+		        //Za svaku banku pojedinacno poslati naloge za kliring
+		        for(Mt102 m: nalozi){
+	    	        try {
+						Mt900Clearing response = centralnaBanka.recieveMT102CB(m);
+						RESTUtil.objectToDB("BankaPoruke/MT900clearing", response.getIDPoruke(), response);
+					} catch (RecieveMT102Fault e) {
+						e.printStackTrace();
+						//Ako se desila greska pri kliringu, npr. neispravan ukupan iznos ili pogresan swift kod.
+						//Revertovati svaki nalog posebno (vratiti raspoloziva sredstva na staru vrednost)
+						throw new ClearingFault("An error occured with the clearing "+m.getIDPoruke()+"\nReason: "+
+						e.getMessage());
+					}
+	            }
+		        _return.setStatusText("All clearings have been processed.");
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+				throw new ClearingFault("Wsdl url not valid.");
+			}
             return _return;
-        } catch (java.lang.Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
-        }
         //throw new ClearingFault("clearingFault...");
     }
 
@@ -112,12 +138,46 @@ public class BankaPortImpl implements BankaPort {
     public com.project.common_types.Status receiveMT910(com.project.mt910.Mt910 mt910) throws ReceiveMT103Fault    { 
         LOG.info("Executing operation receiveMT910");
         System.out.println(mt910);
+        com.project.common_types.Status _return = new com.project.common_types.Status();
         try {
-            com.project.common_types.Status _return = new com.project.common_types.Status();
+			RESTUtil.objectToDB("BankaPoruke/MT910", mt910.getIDPoruke(), mt910);
+			//Update stanja na racunu klijenta na osnovu odobrenja
+			//Izvlacim iz baze mt103 nalog na osnovu polja u mt910
+			Mt103 temp = new Mt103();
+			temp = (Mt103) RESTUtil.doUnmarshall("//"+mt910.getIDPoruke(), "BankaPoruke/MT103", temp);
+			//Update-ujem racun
+			Racuni rac1 = new Racuni();
+			//Ucitavamo racune iz baze, kako bi update-ovali podatke
+			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "BankaRacuni/00"+current_bank.getId(), rac1);
+			
+			TBankarskiRacunKlijenta racun_primaoca = current_bank.getSpecificAccount(temp.getUplata().getRacunPrimaoca().getBrojRacuna());
+			if(racun_primaoca == null){
+				_return.setStatusText("Client account does not exist.");
+				throw new ReceiveMT103Fault(_return.getStatusText());
+			}
+			Transakcija transakcija = null;
+			transakcija = current_bank.generisiTransakcijuUplate(temp);
+			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
+			racun_primaoca.setStanje(racun_primaoca.getStanje().add(temp.getUplata().getIznos()));
+			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(temp.getUplata().getIznos()));
+			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
+			RESTUtil.objectToDB("BankaRacuni/001/Transakcije", transakcija.getId().toString(), transakcija);
+			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
+				//Nasli smo koji je racun u pitanju
+				if(k.getRacun().getBrojRacuna().equals(temp.getUplata().getRacunPrimaoca().getBrojRacuna())){
+					//dodajemo mu novac
+					k.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva());
+					k.setStanje(racun_primaoca.getStanje());
+					break;
+				}
+			}
+			//Vracam novo stanje racuna u bazu
+			RESTUtil.doMarshall("BankaRacuni/00"+current_bank.getId(), rac1);
+			_return.setStatusText("Account updated.");
             return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
-            throw new RuntimeException(ex);
+            throw new ReceiveMT103Fault(_return.getStatusText());
         }
         //throw new ReceiveMT103Fault("receiveMT103fault...");
     }
@@ -129,8 +189,10 @@ public class BankaPortImpl implements BankaPort {
         LOG.info("Executing operation receiveMT102");
         try {
 	        current_bank.obradiClearingNalog(mt102);
+			RESTUtil.objectToDB("BankaPoruke/MT102", mt102.getIDPoruke(), mt102);
 	        System.out.println(mt102);
 	        com.project.common_types.Status _return = new com.project.common_types.Status();
+	        _return.setStatusText("Clearing proccessed.");
 	        return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
@@ -165,8 +227,10 @@ public class BankaPortImpl implements BankaPort {
         try {
             LOG.info("Executing operation receiveMT103");
             current_bank.obradiRTGSNalog(mt103);
+			RESTUtil.objectToDB("BankaPoruke/MT103", mt103.getIDPoruke(), mt103);
             System.out.println(mt103);
             com.project.common_types.Status _return = new com.project.common_types.Status();
+            _return.setStatusText("RTGS invoice recieved and proccessed.");
             return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();

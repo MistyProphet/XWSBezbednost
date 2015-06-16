@@ -203,8 +203,24 @@ public class Banka extends Identifiable {
     		if(racun_primaoca != null){
     			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
     			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
+    			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(placanje.getUplata().getIznos()));
     			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
     			RESTUtil.objectToDB("BankaRacuni/001/Transakcije", transakcija.getId().toString(), transakcija);
+    			
+    			Racuni rac1 = new Racuni();
+    			//Spustamo izmenjena stanja na racunima u bazu
+    			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "BankaRacuni/00"+id, rac1);
+    			//Ovde uraditi update stanja na racunima, pa baciti u bazu ponovo
+    			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
+    				//Nasli smo koji je racun u pitanju
+    				if(k.getRacun().getBrojRacuna().equals(racun_primaoca.getRacun().getBrojRacuna())){
+    					//dodajemo mu novac
+    					k.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva());
+    					k.setStanje(racun_primaoca.getStanje());
+    				}
+    			}
+    			//vracamo u bazu izmenjena raspoloziva sredstva
+    			RESTUtil.doMarshall("BankaRacuni/00"+id, rac1);
     		} else {
     			throw new NonexistentAccountException();
     		}
@@ -228,8 +244,25 @@ public class Banka extends Identifiable {
 		if(racun_primaoca != null){
 			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
 			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
+			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(placanje.getUplata().getIznos()));
 			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
 			RESTUtil.objectToDB("BankaRacuni/001/Transakcije", transakcija.getId().toString(), transakcija);
+			
+			Racuni rac1 = new Racuni();
+			//Spustamo izmenjena stanja na racunima u bazu
+			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "BankaRacuni/00"+id, rac1);
+			//Ovde uraditi update stanja na racunima, pa baciti u bazu ponovo
+			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
+				//Nasli smo koji je racun u pitanju
+				if(k.getRacun().getBrojRacuna().equals(racun_primaoca.getRacun().getBrojRacuna())){
+					//dodajemo mu novac
+					k.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva());
+					k.setStanje(racun_primaoca.getStanje());
+				}
+			}
+			//vracamo u bazu izmenjena raspoloziva sredstva
+			RESTUtil.doMarshall("BankaRacuni/00"+id, rac1);
+			
 		} else {
 			throw new NonexistentAccountException();
 		}		
@@ -306,6 +339,20 @@ public class Banka extends Identifiable {
 		stavkaPreseka.setSifraValute(nalog.getPlacanje().getSifraValute());
 		stavkaPreseka.setSmer("U");
 		stavkaPreseka.setUplata(nalog.getPlacanje().getUplata());
+		return transakcija;
+    }
+    
+    public Transakcija generisiTransakcijuUplate(Mt103 nalog) {
+		Transakcija transakcija = new Transakcija();
+		String broj_rk_primaoca = nalog.getUplata().getRacunPrimaoca().getBrojRacuna();
+		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
+		transakcija.setRacunKlijenta(racun_primaoca);
+		transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
+		StavkaPreseka stavkaPreseka = new StavkaPreseka();
+		stavkaPreseka.setDatumValute(nalog.getDatumValute());
+		stavkaPreseka.setSifraValute(nalog.getSifraValute());
+		stavkaPreseka.setSmer("U");
+		stavkaPreseka.setUplata(nalog.getUplata());
 		return transakcija;
     }
     

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -17,6 +18,7 @@ import java.net.URL;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.basex.BaseXHTTP;
@@ -29,7 +31,7 @@ import org.basex.BaseXHTTP;
  * @author Igor Cverdelj-Fogarasi
  *
  */
-public class RESTUtil {
+public class RESTUtil<T> {
 
 	public static final String REST_URL = "http://localhost:8081/BaseX821/rest/";
 	
@@ -299,5 +301,27 @@ public class RESTUtil {
 		return true;
 	}
 	
+	public static Object doUnmarshall(String query, String schema, Object o){
+		try{
+			InputStream in = RESTUtil.retrieveResource(query, schema, RequestMethod.GET);
+			JAXBContext context = JAXBContext.newInstance(o.getClass(), o.getClass());
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Marshaller marshaller = context.createMarshaller();
+			// set optional properties
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	
+			String xml = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			for (String line; (line = br.readLine()) != null;) {
+				xml=xml+line+"\n";
+			}
+			StringReader reader = new StringReader(xml);
+			Object rac = (Object) unmarshaller.unmarshal(reader);
+			return rac;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 }

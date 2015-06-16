@@ -19,6 +19,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import misc.RESTUtil;
 import misc.RequestMethod;
 
+import com.project.banke_racuni.RacuniBanaka;
+import com.project.banke_racuni.RacuniBanaka.KodBanke;
 import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.entities.Identifiable;
@@ -33,6 +35,7 @@ import com.project.presek.Presek;
 import com.project.racuni.Racuni;
 import com.project.stavka_preseka.StavkaPreseka;
 import com.project.stavka_preseka.Transakcija;
+import com.project.stavka_preseka.TransakcijaService;
 import com.project.util.Util;
 import com.project.zahtev_za_izvod.ZahtevZaIzvod;
 
@@ -201,6 +204,7 @@ public class Banka extends Identifiable {
     			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
     			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
     			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
+    			RESTUtil.objectToDB("BankaRacuni/001/Transakcije", transakcija.getId().toString(), transakcija);
     		} else {
     			throw new NonexistentAccountException();
     		}
@@ -225,6 +229,7 @@ public class Banka extends Identifiable {
 			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
 			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
 			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
+			RESTUtil.objectToDB("BankaRacuni/001/Transakcije", transakcija.getId().toString(), transakcija);
 		} else {
 			throw new NonexistentAccountException();
 		}		
@@ -235,6 +240,36 @@ public class Banka extends Identifiable {
 		try {
 			//ekstrakcija prve tri cifre - oznake banke
 			idBanke = new Long(nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().split("-")[0]);
+			String cbOznakaBankePoverioca = idBanke.toString();
+			
+			InputStream in = RESTUtil.retrieveResource("//racuni_banaka", "Banke/Podaci", RequestMethod.GET);
+			JAXBContext context = JAXBContext.newInstance(RacuniBanaka.class, RacuniBanaka.class);
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			String xml = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			for (String line; (line = br.readLine()) != null;) {
+				xml=xml+line+"\n";
+			}
+			StringReader reader = new StringReader(xml);
+			RacuniBanaka rac = (RacuniBanaka) unmarshaller.unmarshal(reader);
+			
+			TBanka bankaPoverioca = new TBanka();
+			for(KodBanke k: rac.getKodBanke()){
+				if(k.getId().equals(cbOznakaBankePoverioca)){
+					bankaPoverioca.setBrojRacunaBanke(k.getRacunBanke());
+					bankaPoverioca.setId(Long.parseLong(k.getId()));
+					bankaPoverioca.setNazivBanke(k.getNaziv());
+					bankaPoverioca.setSWIFTKod(k.getSwift());
+					break;
+				}
+			}
+			
+			if (naloziZaClearing.containsKey(bankaPoverioca)) {
+				naloziZaClearing.get(bankaPoverioca).add(nalog);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -257,8 +292,7 @@ public class Banka extends Identifiable {
 	}
 
 	public Presek formirajPresek(ZahtevZaIzvod zahtev) throws IOException, JAXBException {
-		return null;
-		//return transakcijaDao.getPresek( zahtev.getDatum(), zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka());		
+		return TransakcijaService.getPresek( zahtev.getDatum(), zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka());		
 	}
 	
     public Transakcija generisiTransakcijuUplate(NalogZaPlacanje nalog) {

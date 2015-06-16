@@ -6,13 +6,9 @@
 
 package com.project.bankaws;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,7 +18,6 @@ import javax.ejb.Stateless;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
@@ -33,7 +28,6 @@ import javax.xml.validation.Validator;
 import javax.xml.ws.Service;
 
 import misc.RESTUtil;
-import misc.RequestMethod;
 
 import org.apache.commons.io.IOUtils;
 
@@ -346,19 +340,9 @@ public class BankaPortImpl implements BankaPort {
 	    	
 	    	//Provera da li ta druga banka postoji
 	    	String cbOznakaBankePoverioca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna().substring(0, 3);
-	    	InputStream in = RESTUtil.retrieveResource("//racuni_banaka", "Banke/Podaci", RequestMethod.GET);
-			JAXBContext context = JAXBContext.newInstance(RacuniBanaka.class, RacuniBanaka.class);
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-			String xml = "";
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			for (String line; (line = br.readLine()) != null;) {
-				xml=xml+line+"\n";
-			}
-			StringReader reader = new StringReader(xml);
-			RacuniBanaka rac = (RacuniBanaka) unmarshaller.unmarshal(reader);
+	    	RacuniBanaka rac = new RacuniBanaka();
+			rac = (RacuniBanaka) RESTUtil.doUnmarshall("//racuni_banaka", "Banke/Podaci", rac);
+			
 			
 			boolean found = false;
 			for(KodBanke k: rac.getKodBanke()){

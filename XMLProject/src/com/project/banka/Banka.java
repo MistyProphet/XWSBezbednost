@@ -217,6 +217,7 @@ public class Banka extends Identifiable {
     					//dodajemo mu novac
     					k.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva());
     					k.setStanje(racun_primaoca.getStanje());
+    					break;
     				}
     			}
     			//vracamo u bazu izmenjena raspoloziva sredstva
@@ -258,6 +259,7 @@ public class Banka extends Identifiable {
 					//dodajemo mu novac
 					k.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva());
 					k.setStanje(racun_primaoca.getStanje());
+					break;
 				}
 			}
 			//vracamo u bazu izmenjena raspoloziva sredstva

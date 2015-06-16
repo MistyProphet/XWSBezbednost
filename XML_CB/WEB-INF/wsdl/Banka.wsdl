@@ -26,58 +26,58 @@
     </wsdl:types>
     
     <!-- RTGS -->    
-    <wsdl:message name="recieveMT103request">
+    <wsdl:message name="receiveMT103request">
         <wsdl:part name="MT103" element="mt103:mt103"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="recieveMT103response">
+    <wsdl:message name="receiveMT103response">
         <wsdl:part name="MT900RTGS" element="mt900:mt900RTGS"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="recieveMT103fault">
+    <wsdl:message name="receiveMT103fault">
         <wsdl:part name="MT103fault" element="common:status"></wsdl:part>
     </wsdl:message>
     
     <!-- Clearing -->
-    <wsdl:message name="recieveMT102request">
+    <wsdl:message name="receiveMT102request">
         <wsdl:part name="MT102" element="mt102:mt102"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="recieveMT102response">
+    <wsdl:message name="receiveMT102response">
         <wsdl:part name="MT900Clearing" element="mt900:mt900Clearing"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="recieveMT102fault">
+    <wsdl:message name="receiveMT102fault">
         <wsdl:part name="MT102fault" element="common:status"></wsdl:part>
     </wsdl:message>
     
     <wsdl:portType name="CBport">
-        <wsdl:operation name="recieveMT103CB">
-            <wsdl:input name="recieveMT103request" message="ws:recieveMT103request"></wsdl:input>
-            <wsdl:output name="recieveMT103response" message="ws:recieveMT103response"></wsdl:output>
-            <wsdl:fault name="MT103fault" message="ws:recieveMT103fault"></wsdl:fault>
+        <wsdl:operation name="receiveMT103CB">
+            <wsdl:input name="receiveMT103request" message="ws:receiveMT103request"></wsdl:input>
+            <wsdl:output name="receiveMT103response" message="ws:receiveMT103response"></wsdl:output>
+            <wsdl:fault name="MT103fault" message="ws:receiveMT103fault"></wsdl:fault>
         </wsdl:operation>
         
-        <wsdl:operation name="recieveMT102CB">
-            <wsdl:input name="recieveMT102request" message="ws:recieveMT102request"></wsdl:input>
-            <wsdl:output name="recieveMT102response" message="ws:recieveMT102response"></wsdl:output>
-            <wsdl:fault name="MT102fault" message="ws:recieveMT102fault"></wsdl:fault>
+        <wsdl:operation name="receiveMT102CB">
+            <wsdl:input name="receiveMT102request" message="ws:receiveMT102request"></wsdl:input>
+            <wsdl:output name="receiveMT102response" message="ws:receiveMT102response"></wsdl:output>
+            <wsdl:fault name="MT102fault" message="ws:receiveMT102fault"></wsdl:fault>
         </wsdl:operation>
     </wsdl:portType>
     
     <wsdl:binding name="CBbinding" type="ws:CBport">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-        <wsdl:operation name="recieveMT103CB">
-            <wsdl:input name="recieveMT103request">
+        <wsdl:operation name="receiveMT103CB">
+            <wsdl:input name="receiveMT103request">
                 <soap:body use="literal"/>
             </wsdl:input>
-            <wsdl:output name="recieveMT103response">
+            <wsdl:output name="receiveMT103response">
                 <soap:body use="literal"/>
             </wsdl:output>
             <wsdl:fault name="MT103fault"></wsdl:fault>
         </wsdl:operation>
         
-        <wsdl:operation name="recieveMT102CB">
-            <wsdl:input name="recieveMT102request">
+        <wsdl:operation name="receiveMT102CB">
+            <wsdl:input name="receiveMT102request">
                 <soap:body use="literal"/>
             </wsdl:input>
-            <wsdl:output name="recieveMT102response">
+            <wsdl:output name="receiveMT102response">
                 <soap:body use="literal"/>
             </wsdl:output>
             <wsdl:fault name="MT102fault"></wsdl:fault>

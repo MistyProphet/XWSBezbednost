@@ -49,26 +49,26 @@ public final class CBport_CBport_Client {
         CBport port = ss.getCBport();  
         
         {
-        System.out.println("Invoking recieveMT102CB...");
-        com.project.mt102.Mt102 _recieveMT102CB_mt102 = new com.project.mt102.Mt102();
+        System.out.println("Invoking receiveMT102CB...");
+        com.project.mt102.Mt102 _receiveMT102CB_mt102 = new com.project.mt102.Mt102();
         try {
-            com.project.mt900.Mt900Clearing _recieveMT102CB__return = port.recieveMT102CB(_recieveMT102CB_mt102);
-            System.out.println("recieveMT102CB.result=" + _recieveMT102CB__return);
+            com.project.mt900.Mt900Clearing _receiveMT102CB__return = port.receiveMT102CB(_receiveMT102CB_mt102);
+            System.out.println("receiveMT102CB.result=" + _receiveMT102CB__return);
 
-        } catch (RecieveMT102Fault e) { 
-            System.out.println("Expected exception: recieveMT102fault has occurred.");
+        } catch (ReceiveMT102Fault e) { 
+            System.out.println("Expected exception: receiveMT102fault has occurred.");
             System.out.println(e.toString());
         }
             }
         {
-        System.out.println("Invoking recieveMT103CB...");
-        com.project.mt103.Mt103 _recieveMT103CB_mt103 = new com.project.mt103.Mt103();
+        System.out.println("Invoking receiveMT103CB...");
+        com.project.mt103.Mt103 _receiveMT103CB_mt103 = new com.project.mt103.Mt103();
         try {
-            com.project.mt900.Mt900RTGS _recieveMT103CB__return = port.recieveMT103CB(_recieveMT103CB_mt103);
-            System.out.println("recieveMT103CB.result=" + _recieveMT103CB__return);
+            com.project.mt900.Mt900RTGS _receiveMT103CB__return = port.receiveMT103CB(_receiveMT103CB_mt103);
+            System.out.println("receiveMT103CB.result=" + _receiveMT103CB__return);
 
-        } catch (RecieveMT103Fault e) { 
-            System.out.println("Expected exception: recieveMT103fault has occurred.");
+        } catch (ReceiveMT103Fault e) { 
+            System.out.println("Expected exception: receiveMT103fault has occurred.");
             System.out.println(e.toString());
         }
             }

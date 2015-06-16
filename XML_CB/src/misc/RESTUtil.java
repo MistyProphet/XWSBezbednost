@@ -15,14 +15,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.basex.BaseXHTTP;
+import org.xml.sax.SAXException;
 
-import com.project.mt103.Mt103;
+import com.project.cbws.ReceiveMT102Fault;
 
 
 /**
@@ -43,14 +48,18 @@ public class RESTUtil {
 		
 		File file = new File("src/resources/");
 		dropSchema("CB");
+		dropSchema("MT103");
+		dropSchema("MT102");
+		dropSchema("MT900");
+		dropSchema("MT910");
+	
 		/* Test CRUD operacija */
 		createSchema("CB");
-		createSchema("Poruke");
+		createSchema("MT103");
+		createSchema("MT102");
+		createSchema("MT900");
+		createSchema("MT910");
 		createResource("CB", "Racuni", new FileInputStream(new File(file, "banke.xml")));
-		createResource("Poruke", "MT103", new FileInputStream(new File(file, "MT103.xml")));
-		createResource("Poruke", "MT102", new FileInputStream(new File(file, "MT102.xml")));
-		createResource("Poruke", "MT900", new FileInputStream(new File(file, "MT900.xml")));
-		createResource("Poruke", "MT910", new FileInputStream(new File(file, "MT910.xml")));
 		
 	/*	printStream(retrieveResource("(//city/name)[position()= 10 to 15]", "factbook", RequestMethod.GET));
 		
@@ -119,7 +128,7 @@ public class RESTUtil {
 		return responseCode;
 	}
 	
-	public static void objectToDB(String schemaName, String resourceId,Object o){
+	public static void objectToDB(String schemaName, String resourceId,Object o, String nazivSeme) throws ReceiveMT102Fault{
 		JAXBContext context;
 		
 		try {
@@ -127,7 +136,10 @@ public class RESTUtil {
 		
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
+		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); 
+        Schema schema = sf.newSchema(new File("WEB-INF/scheme/" +nazivSeme)); 
+        marshaller.setSchema(schema);
+        marshaller.setEventHandler(new MyValidationEventHandler());
 		URL url = new URL(REST_URL + schemaName + "/" + resourceId);
 		
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -138,23 +150,25 @@ public class RESTUtil {
 		
 		System.out.println(out.toString());
 		IOUtils.closeQuietly(out);
-		IOUtils.closeQuietly(out);
 		
 		RESTUtil.printResponse(conn);
 		conn.disconnect();
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch blo
+			e.printStackTrace();
+		} catch (MarshalException e) {
+			throw new ReceiveMT102Fault("Neuspesna validacija naspram seme");
+		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 	}
 	// ovde se menja ceo stari resurs novim. Elegantnije je putem XUPDATE, pogledati u dokumentaciji
 	// u principu se u query element ugradjuje update

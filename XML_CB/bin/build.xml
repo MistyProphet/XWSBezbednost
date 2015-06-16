@@ -149,6 +149,7 @@
 	<target name="clean">
 		<delete file="${dist.dir}/${war.name}"/>
 		<delete file="${tomee.dir}/webapps/${war.name}"/>
+		<delete dir="${tomee.dir}/webapps/${war.name}"/>
 	</target>
 
 	<target name="main" depends="deploy">

@@ -86,6 +86,7 @@ public class Mt900RTGS {
     protected Mt900RTGS.PodaciOZaduzenju podaciOZaduzenju;
 
     public Mt900RTGS (Mt103 mt103){
+    	this.setIDPoruke(mt103.getIDPoruke());
     	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
 		zaduzenje.setObracunskiRacunBankeDuznika(mt103.getPodaciOBankama().getBankaDuznika().getBrojRacunaBanke());
@@ -101,6 +102,7 @@ public class Mt900RTGS {
 	
 	}
 	public Mt900RTGS(Mt102 mt102) {
+		this.setIDPoruke(mt102.getIDPoruke());
 	 	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 			zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
 			zaduzenje.setObracunskiRacunBankeDuznika(mt102.getBankaDuznika().getBrojRacunaBanke());

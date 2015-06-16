@@ -20,15 +20,15 @@ public interface CBport {
 
     @WebResult(name = "mt900Clearing", targetNamespace = "http://www.project.com/mt900", partName = "MT900Clearing")
     @WebMethod
-    public com.project.mt900.Mt900Clearing recieveMT102CB(
+    public com.project.mt900.Mt900Clearing receiveMT102CB(
         @WebParam(partName = "MT102", name = "mt102", targetNamespace = "http://www.project.com/mt102")
         com.project.mt102.Mt102 mt102
-    ) throws RecieveMT102Fault;
+    ) throws ReceiveMT102Fault;
 
     @WebResult(name = "mt900RTGS", targetNamespace = "http://www.project.com/mt900", partName = "MT900RTGS")
     @WebMethod
-    public com.project.mt900.Mt900RTGS recieveMT103CB(
+    public com.project.mt900.Mt900RTGS receiveMT103CB(
         @WebParam(partName = "MT103", name = "mt103", targetNamespace = "http://www.project.com/mt103")
         com.project.mt103.Mt103 mt103
-    ) throws RecieveMT103Fault;
+    ) throws ReceiveMT103Fault;
 }

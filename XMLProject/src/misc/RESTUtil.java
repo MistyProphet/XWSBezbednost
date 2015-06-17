@@ -10,18 +10,33 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.io.IOUtils;
 import org.basex.BaseXHTTP;
+
+import com.project.common_types.TBankarskiRacunKlijenta;
+import com.project.common_types.TRacunKlijenta;
+import com.project.nalog_za_placanje.Uplata;
+import com.project.stavka_preseka.StavkaPreseka;
+import com.project.stavka_preseka.Transakcija;
+import com.project.stavka_preseka.TransakcijaService;
+import com.project.util.Util;
 
 
 /**
@@ -60,6 +75,107 @@ public class RESTUtil<T> {
 		createResource("BankaPoruke", "MT910", new FileInputStream(new File(file, "MT910.xml")));
 		createResource("BankaRacuni", "001", new FileInputStream(new File(file, "klijenti1.xml")));
 		createResource("BankaRacuni", "002", new FileInputStream(new File(file, "klijenti2.xml")));
+		
+		//Generisanje 3 test transakcije
+		Transakcija t1 = new Transakcija();
+		t1.setId(new Long(5));
+		TRacunKlijenta rac1 = new TRacunKlijenta();
+		rac1.setBrojRacuna("000-1234567890-345");
+		rac1.setId(new Long(1));
+		rac1.setVlasnik("Mirko");
+		TBankarskiRacunKlijenta racun1 = new TBankarskiRacunKlijenta();
+		racun1.setId(new Long(1));
+		racun1.setRacun(rac1);
+		racun1.setRaspolozivaSredstva(new BigDecimal(500));
+		racun1.setStanje(new BigDecimal(500));
+		racun1.setValuta("RSD");
+		t1.setRacunKlijenta(racun1);
+		
+		t1.setStanjePosleTransakcije(new BigDecimal(500));
+		t1.setStanjePreTransakcije(new BigDecimal(600));
+		StavkaPreseka stavka1 = new StavkaPreseka();
+		stavka1.setDatumValute(Util.getXMLGregorianCalendarNow());
+		stavka1.setSifraValute("RSD");
+		stavka1.setSmer("U");
+		Uplata u1 = new Uplata();
+		u1.setIznos(new BigDecimal(100));
+		stavka1.setUplata(u1);
+		t1.setStavkaPreseka(stavka1);
+		objectToDB("BankaRacuni", "001/Transakcije/1",t1);
+		
+		Transakcija t2 = new Transakcija();
+		t2.setId(new Long(2));
+		TRacunKlijenta rac2 = new TRacunKlijenta();
+		rac2.setBrojRacuna("000-1234567890-345");
+		rac2.setId(new Long(2));
+		rac2.setVlasnik("Mirko");
+		TBankarskiRacunKlijenta racun2 = new TBankarskiRacunKlijenta();
+		racun2.setId(new Long(2));
+		racun2.setRacun(rac2);
+		racun2.setRaspolozivaSredstva(new BigDecimal(500));
+		racun2.setStanje(new BigDecimal(500));
+		racun2.setValuta("RSD");
+		t2.setRacunKlijenta(racun2);
+		
+		t2.setStanjePosleTransakcije(new BigDecimal(500));
+		t2.setStanjePreTransakcije(new BigDecimal(600));
+		StavkaPreseka stavka2 = new StavkaPreseka();
+		XMLGregorianCalendar d = Util.getXMLGregorianCalendarNow();
+		d.setDay(4);
+		stavka2.setDatumValute(d);
+		stavka2.setSifraValute("RSD");
+		stavka2.setSmer("U");
+		Uplata u2 = new Uplata();
+		u2.setIznos(new BigDecimal(200));
+		stavka2.setUplata(u2);
+		t2.setStavkaPreseka(stavka2);
+		objectToDB("BankaRacuni", "002/Transakcije/2",t2);
+		
+		Transakcija t3 = new Transakcija();
+		t3.setId(new Long(3));
+		TRacunKlijenta rac3 = new TRacunKlijenta();
+		rac3.setBrojRacuna("000-3234567890-345");
+		rac3.setId(new Long(3));
+		rac3.setVlasnik("Mirko");
+		TBankarskiRacunKlijenta racun3 = new TBankarskiRacunKlijenta();
+		racun3.setId(new Long(3));
+		racun3.setRacun(rac3);
+		racun3.setRaspolozivaSredstva(new BigDecimal(500));
+		racun3.setStanje(new BigDecimal(500));
+		racun3.setValuta("RSD");
+		t3.setRacunKlijenta(racun3);
+		
+		t3.setStanjePosleTransakcije(new BigDecimal(500));
+		t3.setStanjePreTransakcije(new BigDecimal(600));
+		StavkaPreseka stavka3 = new StavkaPreseka();
+		stavka3.setDatumValute(Util.getXMLGregorianCalendarNow());
+		stavka3.setSifraValute("RSD");
+		stavka3.setSmer("U");
+		Uplata u3 = new Uplata();
+		u3.setIznos(new BigDecimal(300));
+		stavka3.setUplata(u3);
+		t3.setStavkaPreseka(stavka3);
+		objectToDB("BankaRacuni", "003/Transakcije/3",t3);
+		
+
+//		printStream(retrieveResource("(//*:Transakcija)", "BankaRacuni", RequestMethod.GET));
+		
+
+		XMLGregorianCalendar date = Util.getXMLGregorianCalendarNow();
+		
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(new Date());
+		XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+		
+		//probni query - otkomentarisati za testiranje iz RESTUtil klase
+/*		String q2 = "(for $y in subsequence((for $x in //*:Transakcija where $x//*:Broj_Racuna='000-1234567890-345' and  $x//*:Datum_valute='" + xmlDate.toString()
+				+ "' order by $x/@id return $x), 1, 1) return $y)";
+		
+		printStream(retrieveResource(q2, "BankaRacuni", RequestMethod.GET));
+*/		
+		
+		//Test poziv metode iz TransakcijaService klase
+		TransakcijaService.getTransakcijeZaPresek(Util.getXMLGregorianCalendarNow(), "000-1234567890-345", 1);
 		
 	/*	printStream(retrieveResource("(//city/name)[position()= 10 to 15]", "factbook", RequestMethod.GET));
 		

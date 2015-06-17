@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -22,11 +25,10 @@ public class Util {
     public static XMLGregorianCalendar getXMLGregorianCalendarNow() 
             throws DatatypeConfigurationException
     {
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
-        XMLGregorianCalendar now = 
-            datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
-        return now;
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(new Date());
+		XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+		return xmlDate;
     }
     
     @SuppressWarnings("rawtypes")

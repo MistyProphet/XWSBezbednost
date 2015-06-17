@@ -1,9 +1,10 @@
 package com.project.stavka_preseka;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import misc.RESTUtil;
+import misc.RequestMethod;
 
 import org.basex.rest.Result;
 import org.basex.rest.Results;
@@ -26,30 +30,17 @@ public class TransakcijaService {
 	public static final String schemaName = "BankaRacuni/001/Transakcije";
 	
 	public static List<Transakcija> getTransakcijeZaPresek(XMLGregorianCalendar date, String brojRacuna, long brPreseka) throws IOException, JAXBException {
-	    
-        long begin = brPreseka*Banka.BROJ_STAVKI;
-        List<Transakcija> transakcije = null;
-        String query = "for $y in subsequence((for $x in transakcija where $x/racun_klijenta/Racun/Broj_racuna  = " +
-        brojRacuna + " and $x/Stavka_preseka/Datum_valute = '" + date + "' order by id return $x), " + begin + ", " + Banka.BROJ_STAVKI + ")"
-                + " return $y";
+		
+        long begin = (brPreseka-1)*Banka.BROJ_STAVKI;
+
+        String query = "(for $y in subsequence((for $x in //*:Transakcija where $x//*:Broj_Racuna='" + brojRacuna + "' and "
+        		+ "$x//*:Datum_valute='" + date.toXMLFormat() + "'"
+				+ " order by $x/@id return $x), " + begin + ", " + Banka.BROJ_STAVKI + ") return $y)";
         
-    /*    
-        let $sorted-people :=
-                   for $person in collection($collection)/person
-                   order by $person/last-name/text()
-                   return $person
-                 
-                for $person at $count in subsequence($sorted-people, $start, $records)
-                return
-                   <li>$person/last-name/text()</li>
-*/                   
-        transakcije = executeSelectQuery(query, false);
-        
-        if (transakcije==null || transakcije.size()==0) {
-            transakcije = new ArrayList<Transakcija>();
-        }
-        
-        return transakcije;
+        List<Transakcija> results = executeSelectQuery(query, false);
+        return results;              
+
+
     }
 
     public static Presek getPresek(XMLGregorianCalendar date, String brojRacuna, long brPreseka) throws IOException, JAXBException {
@@ -96,8 +87,6 @@ public class TransakcijaService {
 	 * Takes both XQuery
 	 */
 	public static List<Transakcija> executeSelectQuery(String xQuery, boolean wrap) throws IOException, JAXBException {
-		Results wrappedResults = null;
-		List<Transakcija> results = new ArrayList<Transakcija>();
 		
 		JAXBContext context = JAXBContext.newInstance("com.project.stavka_preseka");
 		Marshaller marshaller = context.createMarshaller();
@@ -107,38 +96,18 @@ public class TransakcijaService {
 		JAXBContext basex_context = JAXBContext.newInstance("org.basex.rest");
 		Unmarshaller basex_unmarshaller = basex_context.createUnmarshaller();
 		
-		String wrapString = wrap ? "yes" : "no";
-		String wrappedQuery = "<query xmlns='http://basex.org/rest'>" + 
-				"<text><![CDATA[%s]]></text>" + 
-				"<parameter name='wrap' value='" + wrapString + "'/>" +
-			"</query>";
-		wrappedQuery = String.format(wrappedQuery, xQuery);
-
-		URL url = new URL(REST_URL + schemaName);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		Results wrappedResults = null;
+		List<Transakcija> results = new ArrayList<Transakcija>();
 		
-		/*
-		 * Generate HTTP POST body.
-		 */
-		System.out.println(wrappedQuery);
-		
-		String userpass = "admin:admin";
-		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
-		conn.setRequestProperty ("Authorization", basicAuth);
-		conn.connect();
-
-		int responseCode = conn.getResponseCode();
-		String message = conn.getResponseMessage();
-
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
-		
-		if (responseCode == HttpURLConnection.HTTP_OK) {
-			wrappedResults = (Results) basex_unmarshaller.unmarshal(conn.getInputStream());
-			for (Result result : wrappedResults.getResult())
-				results.add((Transakcija) unmarshaller.unmarshal((Node)result.getAny()));
+		try {
+			wrappedResults = (Results) basex_unmarshaller.unmarshal(RESTUtil.retrieveResource(xQuery, "BankaRacuni", RequestMethod.GET));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	
-		conn.disconnect();
-		return results;
+		for (Result result : wrappedResults.getResult()) {
+			results.add((Transakcija) unmarshaller.unmarshal((Node)result.getAny()));
+		}
+		return results;   
 	}
 }

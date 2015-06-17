@@ -67,6 +67,8 @@
  	});
 */
 	$scope.invoices = Invoice.query();
+    $scope.reverseSort = false;
+    $scope.orderProp = 'suplierName';
 	$log.info($scope.invoices.length);//0
 	//kada smo kliknuli na red u tabeli prelazimo na stranicu za editovanje fakture sa zadatim id-om
  	$scope.insertOrEditInvoice = function (invoice) {

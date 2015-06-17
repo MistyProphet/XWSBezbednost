@@ -15,16 +15,11 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.io.IOUtils;
@@ -36,6 +31,7 @@ import com.project.nalog_za_placanje.Uplata;
 import com.project.stavka_preseka.StavkaPreseka;
 import com.project.stavka_preseka.Transakcija;
 import com.project.stavka_preseka.TransakcijaService;
+import com.project.transakcije.Transakcije;
 import com.project.util.Util;
 
 
@@ -76,13 +72,14 @@ public class RESTUtil<T> {
 		createResource("BankaRacuni", "001", new FileInputStream(new File(file, "klijenti1.xml")));
 		createResource("BankaRacuni", "002", new FileInputStream(new File(file, "klijenti2.xml")));
 		
+		Transakcije ttt = new Transakcije();
 		//Generisanje 3 test transakcije
 		Transakcija t1 = new Transakcija();
-		t1.setId(new Long(5));
+		t1.setId(new Long(1));
 		TRacunKlijenta rac1 = new TRacunKlijenta();
-		rac1.setBrojRacuna("000-1234567890-345");
+		rac1.setBrojRacuna("001-0000000000001-00");
 		rac1.setId(new Long(1));
-		rac1.setVlasnik("Mirko");
+		rac1.setVlasnik("Pera Peric");
 		TBankarskiRacunKlijenta racun1 = new TBankarskiRacunKlijenta();
 		racun1.setId(new Long(1));
 		racun1.setRacun(rac1);
@@ -101,16 +98,17 @@ public class RESTUtil<T> {
 		u1.setIznos(new BigDecimal(100));
 		stavka1.setUplata(u1);
 		t1.setStavkaPreseka(stavka1);
-		objectToDB("BankaRacuni", "001/Transakcije/1",t1);
+		ttt.getTransakcija().add(t1);
+		//objectToDB("BankaRacuni/001/1/Transakcije", t1.getId().toString(), t1);
 		
 		Transakcija t2 = new Transakcija();
 		t2.setId(new Long(2));
 		TRacunKlijenta rac2 = new TRacunKlijenta();
-		rac2.setBrojRacuna("000-1234567890-345");
-		rac2.setId(new Long(2));
-		rac2.setVlasnik("Mirko");
+		rac2.setBrojRacuna("001-0000000000001-00");
+		rac2.setId(new Long(1));
+		rac2.setVlasnik("Pera Peric");
 		TBankarskiRacunKlijenta racun2 = new TBankarskiRacunKlijenta();
-		racun2.setId(new Long(2));
+		racun2.setId(new Long(1));
 		racun2.setRacun(rac2);
 		racun2.setRaspolozivaSredstva(new BigDecimal(500));
 		racun2.setStanje(new BigDecimal(500));
@@ -122,23 +120,24 @@ public class RESTUtil<T> {
 		StavkaPreseka stavka2 = new StavkaPreseka();
 		XMLGregorianCalendar d = Util.getXMLGregorianCalendarNow();
 		d.setDay(4);
-		stavka2.setDatumValute(d);
+		stavka2.setDatumValute(Util.getXMLGregorianCalendarNow());
 		stavka2.setSifraValute("RSD");
 		stavka2.setSmer("U");
 		Uplata u2 = new Uplata();
 		u2.setIznos(new BigDecimal(200));
 		stavka2.setUplata(u2);
 		t2.setStavkaPreseka(stavka2);
-		objectToDB("BankaRacuni", "002/Transakcije/2",t2);
-		
+		ttt.getTransakcija().add(t2);
+		//objectToDB("BankaRacuni/001/1/Transakcije", t2.getId().toString(), t2);
+		/*
 		Transakcija t3 = new Transakcija();
-		t3.setId(new Long(3));
+		t3.setId(new Long(1));
 		TRacunKlijenta rac3 = new TRacunKlijenta();
-		rac3.setBrojRacuna("000-3234567890-345");
-		rac3.setId(new Long(3));
-		rac3.setVlasnik("Mirko");
+		rac3.setBrojRacuna("001-0000000000002-00");
+		rac3.setId(new Long(2));
+		rac3.setVlasnik("Mika Mikic");
 		TBankarskiRacunKlijenta racun3 = new TBankarskiRacunKlijenta();
-		racun3.setId(new Long(3));
+		racun3.setId(new Long(2));
 		racun3.setRacun(rac3);
 		racun3.setRaspolozivaSredstva(new BigDecimal(500));
 		racun3.setStanje(new BigDecimal(500));
@@ -155,59 +154,19 @@ public class RESTUtil<T> {
 		u3.setIznos(new BigDecimal(300));
 		stavka3.setUplata(u3);
 		t3.setStavkaPreseka(stavka3);
-		objectToDB("BankaRacuni", "003/Transakcije/3",t3);
-		
-
-//		printStream(retrieveResource("(//*:Transakcija)", "BankaRacuni", RequestMethod.GET));
-		
-
-		XMLGregorianCalendar date = Util.getXMLGregorianCalendarNow();
-		
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTime(new Date());
-		XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
-		
-		//probni query - otkomentarisati za testiranje iz RESTUtil klase
-/*		String q2 = "(for $y in subsequence((for $x in //*:Transakcija where $x//*:Broj_Racuna='000-1234567890-345' and  $x//*:Datum_valute='" + xmlDate.toString()
-				+ "' order by $x/@id return $x), 1, 1) return $y)";
-		
-		printStream(retrieveResource(q2, "BankaRacuni", RequestMethod.GET));
-*/		
-		
-		//Test poziv metode iz TransakcijaService klase
-		TransakcijaService.getTransakcijeZaPresek(Util.getXMLGregorianCalendarNow(), "000-1234567890-345", 1);
-		
-	/*	printStream(retrieveResource("(//city/name)[position()= 10 to 15]", "factbook", RequestMethod.GET));
-		
-		createSchema("firma");
-		createResource("firma", "uplatnica.xml", new FileInputStream(new File(file, "uplatnica_prazna.xml")));
-		
-		printStream(retrieveResource("//ulica/text()", "firma", RequestMethod.GET));
+		objectToDB("BankaRacuni/001/2/Transakcije", t3.getId().toString(), t3);
 		*/
-		//updateResource("firma", "uplatnica.xml", new FileInputStream(new File(file, "uplatnica.xml")));
-	/*	
-		printStream(retrieveResource("//ulica/text()", "firma", RequestMethod.GET));
 
-		/* XSD sema za REST query je data u src/main/resources folderu (mora se postovati ova gramatika za slanje zahteva. Nigde se ovaj fajl ne koristi, 
-		 * tu je za prikaz izgleda gramatike zahteva)*/
-		// CDATA zato sto hocemo da se obezbedimo da nas FLWOR izraz ostane u izvornom obliku i tako dodje do servera. Inace bi se mogli parsirati entiteti
-	/*	// npr. u xQUERY se ne koristi < vec ^lt
-		String xml = "<query xmlns='http://basex.org/rest'>"
-				+ 		"<text>"
-				+ 			"<![CDATA[%s]]>"
-				+ 		"</text>"
-				+ 		"<parameter name='wrap' value='yes'/>"
-				+ 		"</query>";
-		String xquery = "for $i in //ulica/text() return string-length($i)";
-		// na mesto %s u CDATA se ugradjuje query string
-		printStream(retrieveResource(String.format(xml, xquery), "firma", RequestMethod.POST));
+		//XMLGregorianCalendar date = Util.getXMLGregorianCalendarNow();
 		
-		dropSchema("factbook");
+		//GregorianCalendar cal = new GregorianCalendar();
+		//cal.setTime(new Date());
+		//XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
 		
-		deleteResource("firma", "uplatnica.xml");
-		dropSchema("firma");
-*/
-		/* Zaustavljanje baze */
+		objectToDB("BankaRacuni/001/1", "Transakcije", ttt);
+		//Test poziv metode iz TransakcijaService klase
+		TransakcijaService.getTransakcijeZaPresek(Util.getXMLGregorianCalendarNow(), "001-0000000000001-00", 1);
+		
 		if (http instanceof BaseXHTTP) http.stop();
 		
 	}
@@ -252,7 +211,7 @@ public class RESTUtil<T> {
 		return responseCode;
 	}
 	
-	public static void objectToDB(String schemaName, String resourceId,Object o){
+	public static void objectToDB(String schemaName, String resourceId, Object o){
 		JAXBContext context;
 		
 		try {
@@ -431,6 +390,31 @@ public class RESTUtil<T> {
 			for (String line; (line = br.readLine()) != null;) {
 				xml=xml+line+"\n";
 			}
+			StringReader reader = new StringReader(xml);
+			Object rac = (Object) unmarshaller.unmarshal(reader);
+			return rac;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static Object doUnmarshallTransactions(String query, String schema, Object o){
+		try{
+			InputStream in = RESTUtil.retrieveResource(query, schema, RequestMethod.GET);
+			JAXBContext context = JAXBContext.newInstance(o.getClass(), o.getClass());
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Marshaller marshaller = context.createMarshaller();
+			// set optional properties
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	
+			String xml = "<ns5:Transakcije xmlns:ns5=\"http://www.project.com/transakcije\" xmlns:ns2=\"http://www.project.com/common_types\" xmlns:ns3=\"http://www.project.com/nalog_za_placanje\" xmlns:ns4=\"http://www.project.com/stavka_preseka\">\n";
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			for (String line; (line = br.readLine()) != null;) {
+				xml=xml+line+"\n";
+				System.out.println(line);
+			}
+			xml=xml+"</ns5:Transakcije>";
 			StringReader reader = new StringReader(xml);
 			Object rac = (Object) unmarshaller.unmarshal(reader);
 			return rac;

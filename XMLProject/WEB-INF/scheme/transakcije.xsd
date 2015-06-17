@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.project.com/transakcije"
+    xmlns:sp="http://www.project.com/stavka_preseka" xmlns:tr="http://www.project.com/transakcije">
+    <xs:import namespace="http://www.project.com/stavka_preseka" schemaLocation="stavka_preseka.xsd"/>
+    <xs:element name="Transakcije">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="sp:Transakcija"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

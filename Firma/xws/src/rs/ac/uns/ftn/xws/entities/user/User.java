@@ -6,7 +6,7 @@
 //
 
 
-package generated;
+package rs.ac.uns.ftn.xws.entities.user;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

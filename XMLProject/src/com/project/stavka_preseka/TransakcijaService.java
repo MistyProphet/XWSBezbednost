@@ -23,7 +23,7 @@ public class TransakcijaService {
 
         String query = "(for $y in subsequence((for $x in //*:Transakcija where $x//*:Broj_Racuna='" + brojRacuna + "' and "
         		+ "$x//*:Datum_valute='" + date.toXMLFormat() + "'"
-				+ " order by $x/@id return $x), " + begin + ", " + Banka.BROJ_STAVKI + ") return $y)";
+				+ " order by xs:integer($x/@id) return $x), " + begin + ", " + Banka.BROJ_STAVKI + ") return $y)";
         
         Transakcije results = executeSelectQuery(query, false);
         return results;              
@@ -75,30 +75,9 @@ public class TransakcijaService {
 	 * Takes both XQuery
 	 */
 	public static Transakcije executeSelectQuery(String xQuery, boolean wrap) throws IOException, JAXBException {
-		/*
-		JAXBContext context = JAXBContext.newInstance("com.project.stavka_preseka");
-		Marshaller marshaller = context.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		
-		JAXBContext basex_context = JAXBContext.newInstance("org.basex.rest");
-		Unmarshaller basex_unmarshaller = basex_context.createUnmarshaller();
-		
-		Results wrappedResults = new Results();
-		List<Transakcija> results = new ArrayList<Transakcija>();
-		/*
-		try {
-			wrappedResults = (Results) basex_unmarshaller.unmarshal(RESTUtil.retrieveResource(xQuery, "BankaRacuni", RequestMethod.GET));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+
 		Transakcije wrappedResults = new Transakcije();
 		wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions(xQuery, "BankaRacuni/001/1/Transakcije", wrappedResults);
-		//rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "BankaRacuni/00"+current_bank.getId(), rac1);
-		//for (Result result : wrappedResults.getResult()) {
-			//results.add((Transakcija) unmarshaller.unmarshal((Node)result.getAny()));
-		//}
 		return wrappedResults;   
 	}
 }

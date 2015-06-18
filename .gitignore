@@ -13,3 +13,7 @@ hs_err_pid*
 
 # sass-cache
 Firma/InvoiceClient/.sass-cache/*
+
+# Intellij IDEA project files
+*.idea/
+*.iml

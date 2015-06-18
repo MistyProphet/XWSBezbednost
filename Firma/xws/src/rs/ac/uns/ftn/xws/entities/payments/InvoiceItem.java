@@ -1,161 +1,242 @@
 package rs.ac.uns.ftn.xws.entities.payments;
 
-import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Version;
 
-import org.hibernate.annotations.Where;
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "orderNumber",
+    "goodsName",
+    "quantity",
+    "measureUnit",
+    "pricePerUnit",
+    "amount",
+    "rebatePercentage",
+    "rebateAmount",
+    "minusRebate",
+    "totalTax"
+})
+@XmlRootElement(name = "invoiceItem")
+public class InvoiceItem extends Identifiable {
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-@Entity
-@Where(clause = "deleted = 'false'")
-@JsonInclude(Include.NON_NULL)
-public class InvoiceItem implements Serializable{
-
-	public InvoiceItem() {
-		super();
-	}
-
-	private static final long serialVersionUID = -1165417510036158730L;
-
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    protected long id;
-	
-    protected boolean deleted = false;
-
-    @Version
-    protected int version = 0;
-	
     protected int orderNumber;
-    
+    @XmlElement(required = true)
     protected String goodsName;
-
     protected double quantity;
-    
+    @XmlElement(required = true)
     protected String measureUnit;
-    
     protected double pricePerUnit;
-
     protected double amount;
-    
-    protected double rabatePercentage;
-    
-    protected double rabateAmount;
-    
-    protected double minusRabat;
-    
+    protected double rebatePercentage;
+    protected double rebateAmount;
+    protected double minusRebate;
     protected double totalTax;
-    
-	public long getId() {
-		return id;
-	}
+    @XmlAttribute(name = "id")
+    protected Long id;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    /**
+     * Gets the value of the orderNumber property.
+     * 
+     */
+    public int getOrderNumber() {
+        return orderNumber;
+    }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+    /**
+     * Sets the value of the orderNumber property.
+     * 
+     */
+    public void setOrderNumber(int value) {
+        this.orderNumber = value;
+    }
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
+    /**
+     * Gets the value of the goodsName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGoodsName() {
+        return goodsName;
+    }
 
-	public int getVersion() {
-		return version;
-	}
+    /**
+     * Sets the value of the goodsName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGoodsName(String value) {
+        this.goodsName = value;
+    }
 
-	public void setVersion(int version) {
-		this.version = version;
-	}
+    /**
+     * Gets the value of the quantity property.
+     * 
+     */
+    public double getQuantity() {
+        return quantity;
+    }
 
-	public int getOrderNumber() {
-		return orderNumber;
-	}
+    /**
+     * Sets the value of the quantity property.
+     * 
+     */
+    public void setQuantity(double value) {
+        this.quantity = value;
+    }
 
-	public void setOrderNumber(int orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    /**
+     * Gets the value of the measureUnit property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMeasureUnit() {
+        return measureUnit;
+    }
 
-	public String getGoodsName() {
-		return goodsName;
-	}
+    /**
+     * Sets the value of the measureUnit property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMeasureUnit(String value) {
+        this.measureUnit = value;
+    }
 
-	public void setGoodsName(String goodsName) {
-		this.goodsName = goodsName;
-	}
+    /**
+     * Gets the value of the pricePerUnit property.
+     * 
+     */
+    public double getPricePerUnit() {
+        return pricePerUnit;
+    }
 
-	public double getAmount() {
-		return quantity;
-	}
+    /**
+     * Sets the value of the pricePerUnit property.
+     * 
+     */
+    public void setPricePerUnit(double value) {
+        this.pricePerUnit = value;
+    }
 
-	public void setAmount(double amount) {
-		this.quantity = amount;
-	}
+    /**
+     * Gets the value of the amount property.
+     * 
+     */
+    public double getAmount() {
+        return amount;
+    }
 
-	public String getMeasureUnit() {
-		return measureUnit;
-	}
+    /**
+     * Sets the value of the amount property.
+     * 
+     */
+    public void setAmount(double value) {
+        this.amount = value;
+    }
 
-	public void setMeasureUnit(String measureUnit) {
-		this.measureUnit = measureUnit;
-	}
+    /**
+     * Gets the value of the rebatePercentage property.
+     * 
+     */
+    public double getRebatePercentage() {
+        return rebatePercentage;
+    }
 
-	public double getPricePerUnit() {
-		return pricePerUnit;
-	}
+    /**
+     * Sets the value of the rebatePercentage property.
+     * 
+     */
+    public void setRebatePercentage(double value) {
+        this.rebatePercentage = value;
+    }
 
-	public void setPricePerUnit(double pricePerUnit) {
-		this.pricePerUnit = pricePerUnit;
-	}
+    /**
+     * Gets the value of the rebateAmount property.
+     * 
+     */
+    public double getRebateAmount() {
+        return rebateAmount;
+    }
 
-	public double getQuantity() {
-		return quantity;
-	}
+    /**
+     * Sets the value of the rebateAmount property.
+     * 
+     */
+    public void setRebateAmount(double value) {
+        this.rebateAmount = value;
+    }
 
-	public void setQuantity(double quantity) {
-		this.quantity = quantity;
-	}
+    /**
+     * Gets the value of the minusRebate property.
+     * 
+     */
+    public double getMinusRebate() {
+        return minusRebate;
+    }
 
-	public double getRabatePercentage() {
-		return rabatePercentage;
-	}
+    /**
+     * Sets the value of the minusRebate property.
+     * 
+     */
+    public void setMinusRebate(double value) {
+        this.minusRebate = value;
+    }
 
-	public void setRabatePercentage(double rabatePercentage) {
-		this.rabatePercentage = rabatePercentage;
-	}
+    /**
+     * Gets the value of the totalTax property.
+     * 
+     */
+    public double getTotalTax() {
+        return totalTax;
+    }
 
-	public double getRabateAmount() {
-		return rabateAmount;
-	}
+    /**
+     * Sets the value of the totalTax property.
+     * 
+     */
+    public void setTotalTax(double value) {
+        this.totalTax = value;
+    }
 
-	public void setRabateAmount(double rabateAmount) {
-		this.rabateAmount = rabateAmount;
-	}
+    /**
+     * Gets the value of the id property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public double getMinusRabat() {
-		return minusRabat;
-	}
+    /**
+     * Sets the value of the id property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setId(Long value) {
+        this.id = value;
+    }
 
-	public void setMinusRabat(double minusRabat) {
-		this.minusRabat = minusRabat;
-	}
-
-	public double getTotalTax() {
-		return totalTax;
-	}
-
-	public void setTotalTax(double totalTax) {
-		this.totalTax = totalTax;
-	}
 }

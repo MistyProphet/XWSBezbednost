@@ -1,233 +1,446 @@
 package rs.ac.uns.ftn.xws.entities.payments;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Version;
 
-import org.hibernate.annotations.Where;
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "supplierName",
+    "supplierAddress",
+    "supplierTIN",
+    "buyerName",
+    "buyerAddress",
+    "accountNumber",
+    "date",
+    "totalGoodsValue",
+    "totalServiceValue",
+    "totalValue",
+    "totalRebate",
+    "totalTax",
+    "currency",
+    "totalAmount",
+    "currencyDate",
+    "invoiceItems"
+})
+@XmlRootElement(name = "invoice")
+public class Invoice extends Identifiable {
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+    @XmlElement(required = true)
+    protected String supplierName;
+    @XmlElement(required = true)
+    protected String supplierAddress;
+    @XmlElement(required = true)
+    protected String supplierTIN;
+    @XmlElement(required = true)
+    protected String buyerName;
+    @XmlElement(required = true)
+    protected String buyerAddress;
+    protected int accountNumber;
+    @XmlElement(required = true)
+    @XmlSchemaType(name = "date")
+    protected XMLGregorianCalendar date;
+    protected double totalGoodsValue;
+    protected double totalServiceValue;
+    protected double totalValue;
+    protected double totalRebate;
+    protected double totalTax;
+    @XmlElement(required = true)
+    protected String currency;
+    protected double totalAmount;
+    @XmlElement(required = true)
+    @XmlSchemaType(name = "date")
+    protected XMLGregorianCalendar currencyDate;
+    @XmlElement(required = true)
+    protected Invoice.InvoiceItems invoiceItems;
+    @XmlAttribute(name = "id")
+    protected Long id;
 
-@Entity
-@Where(clause = "deleted = 'false'")
-@JsonInclude(Include.NON_NULL)
-public class Invoice implements Serializable{
+    /**
+     * Gets the value of the supplierName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSupplierName() {
+        return supplierName;
+    }
 
-	public Invoice() {
-		super();
-	}
+    /**
+     * Sets the value of the supplierName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSupplierName(String value) {
+        this.supplierName = value;
+    }
 
-	private static final long serialVersionUID = 2014063575900600644L;
+    /**
+     * Gets the value of the supplierAddress property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSupplierAddress() {
+        return supplierAddress;
+    }
 
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    protected long id;
-	
-    protected boolean deleted = false;
+    /**
+     * Sets the value of the supplierAddress property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSupplierAddress(String value) {
+        this.supplierAddress = value;
+    }
 
-    @Version
-    protected int version = 0;
-	
-	protected String suplierName;
-	
-	protected String suplierAddress;
+    /**
+     * Gets the value of the supplierTIN property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSupplierTIN() {
+        return supplierTIN;
+    }
 
-	protected String supplierPib;
-	
-	protected String buyerName;
-	
-	protected String buyerAddress;
-	
-	protected int acountNumber;
-	
-	protected Date date;
-	
-	protected double totalGoodsValue;
-	
-	protected double totalServiceValue;
-	
-	protected double totalValue;
-	
-	protected double totalRabate;
-	
-	protected double totalTax;
-	
-	protected String currency;
-	
-	protected double totalAmount;
-	
-	protected Date currencyDate;
-	
-    @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-    @JoinColumn(name="invoiceId")
-    @Where(clause = "deleted = 'false'")
-    protected Set<InvoiceItem> invoiceItems = new HashSet<InvoiceItem>();
+    /**
+     * Sets the value of the supplierTIN property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSupplierTIN(String value) {
+        this.supplierTIN = value;
+    }
 
-	
-	public String getSupplierPib() {
-		return supplierPib;
-	}
+    /**
+     * Gets the value of the buyerName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBuyerName() {
+        return buyerName;
+    }
 
-	public void setSupplierPib(String supplierPib) {
-		this.supplierPib = supplierPib;
-	}
+    /**
+     * Sets the value of the buyerName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBuyerName(String value) {
+        this.buyerName = value;
+    }
 
-	public String getBuyerName() {
-		return buyerName;
-	}
+    /**
+     * Gets the value of the buyerAddress property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBuyerAddress() {
+        return buyerAddress;
+    }
 
-	public void setBuyerName(String buyerName) {
-		this.buyerName = buyerName;
-	}
+    /**
+     * Sets the value of the buyerAddress property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBuyerAddress(String value) {
+        this.buyerAddress = value;
+    }
 
-	public String getBuyerAddress() {
-		return buyerAddress;
-	}
+    /**
+     * Gets the value of the accountNumber property.
+     * 
+     */
+    public int getAccountNumber() {
+        return accountNumber;
+    }
 
-	public void setBuyerAddress(String buyerAddress) {
-		this.buyerAddress = buyerAddress;
-	}
+    /**
+     * Sets the value of the accountNumber property.
+     * 
+     */
+    public void setAccountNumber(int value) {
+        this.accountNumber = value;
+    }
 
-	public int getAcountNumber() {
-		return acountNumber;
-	}
+    /**
+     * Gets the value of the date property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public XMLGregorianCalendar getDate() {
+        return date;
+    }
 
-	public void setAcountNumber(int acountNumber) {
-		this.acountNumber = acountNumber;
-	}
+    /**
+     * Sets the value of the date property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public void setDate(XMLGregorianCalendar value) {
+        this.date = value;
+    }
 
-	public long getId() {
-		return id;
-	}
+    /**
+     * Gets the value of the totalGoodsValue property.
+     * 
+     */
+    public double getTotalGoodsValue() {
+        return totalGoodsValue;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    /**
+     * Sets the value of the totalGoodsValue property.
+     * 
+     */
+    public void setTotalGoodsValue(double value) {
+        this.totalGoodsValue = value;
+    }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+    /**
+     * Gets the value of the totalServiceValue property.
+     * 
+     */
+    public double getTotalServiceValue() {
+        return totalServiceValue;
+    }
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
+    /**
+     * Sets the value of the totalServiceValue property.
+     * 
+     */
+    public void setTotalServiceValue(double value) {
+        this.totalServiceValue = value;
+    }
 
-	public int getVersion() {
-		return version;
-	}
+    /**
+     * Gets the value of the totalValue property.
+     * 
+     */
+    public double getTotalValue() {
+        return totalValue;
+    }
 
-	public void setVersion(int version) {
-		this.version = version;
-	}
+    /**
+     * Sets the value of the totalValue property.
+     * 
+     */
+    public void setTotalValue(double value) {
+        this.totalValue = value;
+    }
 
-	public String getSuplierName() {
-		return suplierName;
-	}
+    /**
+     * Gets the value of the totalRebate property.
+     * 
+     */
+    public double getTotalRebate() {
+        return totalRebate;
+    }
 
-	public void setSuplierName(String suplierName) {
-		this.suplierName = suplierName;
-	}
+    /**
+     * Sets the value of the totalRebate property.
+     * 
+     */
+    public void setTotalRebate(double value) {
+        this.totalRebate = value;
+    }
 
-	public String getSuplierAddress() {
-		return suplierAddress;
-	}
+    /**
+     * Gets the value of the totalTax property.
+     * 
+     */
+    public double getTotalTax() {
+        return totalTax;
+    }
 
-	public void setSuplierAddress(String suplierAddress) {
-		this.suplierAddress = suplierAddress;
-	}
+    /**
+     * Sets the value of the totalTax property.
+     * 
+     */
+    public void setTotalTax(double value) {
+        this.totalTax = value;
+    }
 
-	public Set<InvoiceItem> getInvoiceItems() {
-		return invoiceItems;
-	}
+    /**
+     * Gets the value of the currency property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCurrency() {
+        return currency;
+    }
 
-	public void setInvoiceItems(Set<InvoiceItem> invoiceItems) {
-		this.invoiceItems = invoiceItems;
-	}
+    /**
+     * Sets the value of the currency property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCurrency(String value) {
+        this.currency = value;
+    }
 
-	public Date getDate() {
-		return date;
-	}
+    /**
+     * Gets the value of the totalAmount property.
+     * 
+     */
+    public double getTotalAmount() {
+        return totalAmount;
+    }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    /**
+     * Sets the value of the totalAmount property.
+     * 
+     */
+    public void setTotalAmount(double value) {
+        this.totalAmount = value;
+    }
 
-	public double getTotalGoodsValue() {
-		return totalGoodsValue;
-	}
+    /**
+     * Gets the value of the currencyDate property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public XMLGregorianCalendar getCurrencyDate() {
+        return currencyDate;
+    }
 
-	public void setTotalGoodsValue(double totalGoodsValue) {
-		this.totalGoodsValue = totalGoodsValue;
-	}
+    /**
+     * Sets the value of the currencyDate property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public void setCurrencyDate(XMLGregorianCalendar value) {
+        this.currencyDate = value;
+    }
 
-	public double getTotalServiceValue() {
-		return totalServiceValue;
-	}
+    /**
+     * Gets the value of the invoiceItems property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Invoice.InvoiceItems }
+     *     
+     */
+    public Invoice.InvoiceItems getInvoiceItems() {
+        return invoiceItems;
+    }
 
-	public void setTotalServiceValue(double totalServiceValue) {
-		this.totalServiceValue = totalServiceValue;
-	}
+    /**
+     * Sets the value of the invoiceItems property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Invoice.InvoiceItems }
+     *     
+     */
+    public void setInvoiceItems(Invoice.InvoiceItems value) {
+        this.invoiceItems = value;
+    }
 
-	public double getTotalValue() {
-		return totalValue;
-	}
+    /**
+     * Gets the value of the id property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public void setTotalValue(double totalValue) {
-		this.totalValue = totalValue;
-	}
+    /**
+     * Sets the value of the id property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setId(Long value) {
+        this.id = value;
+    }
 
-	public double getTotalRabate() {
-		return totalRabate;
-	}
 
-	public void setTotalRabate(double totalRabate) {
-		this.totalRabate = totalRabate;
-	}
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+        "invoiceItem"
+    })
+    public static class InvoiceItems {
 
-	public double getTotalTax() {
-		return totalTax;
-	}
+        @XmlElement(required = true)
+        protected List<InvoiceItem> invoiceItem;
 
-	public void setTotalTax(double totalTax) {
-		this.totalTax = totalTax;
-	}
+        /**
+         * Gets the value of the invoiceItem property.
+         * 
+         * Objects of the following type(s) are allowed in the list
+         * {@link InvoiceItem }
+         * 
+         * 
+         */
+        public List<InvoiceItem> getInvoiceItem() {
+            if (invoiceItem == null) {
+                invoiceItem = new ArrayList<InvoiceItem>();
+            }
+            return this.invoiceItem;
+        }
 
-	public String getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
-
-	public double getTotalAmount() {
-		return totalAmount;
-	}
-
-	public void setTotalAmount(double totalAmount) {
-		this.totalAmount = totalAmount;
-	}
-
-	public Date getCurrencyDate() {
-		return currencyDate;
-	}
-
-	public void setCurrencyDate(Date currencyDate) {
-		this.currencyDate = currencyDate;
-	}
+    }
 
 }

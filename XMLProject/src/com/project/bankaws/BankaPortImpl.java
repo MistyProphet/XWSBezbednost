@@ -560,7 +560,6 @@ public class BankaPortImpl implements BankaPort {
 			b.receiveNalog(novi);
 			System.out.println("Done.");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

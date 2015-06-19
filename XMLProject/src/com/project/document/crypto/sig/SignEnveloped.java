@@ -14,16 +14,15 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import org.apache.xml.security.exceptions.XMLSecurityException;
-import org.apache.xml.security.signature.SignedInfo;
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.signature.XMLSignatureException;
 import org.apache.xml.security.transforms.TransformationException;
 import org.apache.xml.security.transforms.Transforms;
 import org.apache.xml.security.utils.Constants;
-import org.bouncycastle.asn1.x9.X9FieldElement;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -135,23 +134,43 @@ public class SignEnveloped {
         
         try {
 			Element rootEl = doc.getDocumentElement();
-			
 			//kreira se signature objekat
 			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
+			sig.setId(getNextId()+"");
+			
+			//Dodavanje timestampa
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
+		      formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+		        //This is for UsernameToken element
+		        int id = getNextId();
+		        
+		        //This is for TimeStamp element value
+		        java.util.Date created = new java.util.Date();
+		        java.util.Date expires = new java.util.Date(created.getTime() + (5l * 60l * 1000l));
+		        //This is for TimeStamp value ends
+		        
+		        Element timestampElem = doc.createElement("Timestamp");
+		        Element createdElem = doc.createElement("Created");
+		        createdElem.setTextContent(formatter.format(created));
+		        
+		        Element expiresElem = doc.createElement("Expires");
+		        createdElem.setTextContent(formatter.format(expires));
+		        
+		        timestampElem.appendChild(createdElem);
+		        timestampElem.appendChild(expiresElem);
+		        
+		        sig.getElement().appendChild(timestampElem);
+
+                
 			//kreiraju se transformacije nad dokumentom
 			Transforms transforms = new Transforms(doc);
-			    
 			//iz potpisa uklanja Signature element
 			//Ovo je potrebno za enveloped tip po specifikaciji
 			transforms.addTransform(Transforms.TRANSFORM_ENVELOPED_SIGNATURE);
 			//normalizacija
 			transforms.addTransform(Transforms.TRANSFORM_C14N_WITH_COMMENTS);
-			    
-			//Dodavanje timestampa
-			Date timestamp = new java.util.Date();
-			java.util.Date create = new java.util.Date();
-	        java.util.Date expires = new java.util.Date(create.getTime() + (5l * 60l * 1000l));
-	        
+
 			//potpisuje se citav dokument (URI "")
 			sig.addDocument("", transforms, Constants.ALGO_ID_DIGEST_SHA1);
    
@@ -181,5 +200,10 @@ public class SignEnveloped {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private static int getNextId() {
+		return 0;
+
 	}
 }

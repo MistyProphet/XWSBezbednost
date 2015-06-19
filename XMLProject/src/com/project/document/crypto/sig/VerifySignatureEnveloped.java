@@ -13,6 +13,7 @@ import org.apache.xml.security.signature.XMLSignatureException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 //Vrsi proveru potpisa
@@ -28,8 +29,35 @@ public class VerifySignatureEnveloped {
 			NodeList signatures = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
 			Element signatureEl = (Element) signatures.item(0);
 			
+			java.util.Date now = new java.util.Date();
+			
 			//kreira se signature objekat od elementa
 			XMLSignature signature = new XMLSignature(signatureEl, null);
+			
+			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
+			NodeList list = timestamp.getChildNodes();
+			java.util.Date expires = null;
+			java.util.Date created = null;
+			if (list.item(0).getNodeName().equals("Created")) {
+				created = new java.util.Date(list.item(0).getNodeValue().trim());
+			} else if (list.item(0).getNodeName().equals("Expires")) {
+				expires = new java.util.Date(list.item(0).getNodeValue().trim());
+			} 
+			
+			if (list.item(1).getNodeName().equals("Created")) {
+				created = new java.util.Date(list.item(0).getNodeValue().trim());
+			} else if (list.item(1).getNodeName().equals("Expires")) {
+				expires = new java.util.Date(list.item(0).getNodeValue().trim());
+			}
+			
+			if (expires==null || created==null || list.getLength()!=2 || created.after(now) || expires.after(now)) {
+				//greska kod timestampa
+			}
+			
+			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId()) {
+				//greska kod id-ja
+			}
+			
 			//preuzima se key info
 			KeyInfo keyInfo = signature.getKeyInfo();
 			//ako postoji
@@ -42,7 +70,7 @@ public class VerifySignatureEnveloped {
 			    if(keyInfo.containsX509Data() && keyInfo.itemX509Data(0).containsCertificate()) { 
 			        Certificate cert = keyInfo.itemX509Data(0).itemCertificate(0).getX509Certificate();
 			        //provera da li je sertifikat povucen
-			        
+			      
 			        //ako postoji sertifikat, provera potpisa
 			        if(cert != null) 
 			        	return signature.checkSignatureValue((X509Certificate) cert);
@@ -62,5 +90,10 @@ public class VerifySignatureEnveloped {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	private static int getLastId() {
+		return 0;
+
 	}
 }

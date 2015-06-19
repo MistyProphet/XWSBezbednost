@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
+import javax.jws.HandlerChain;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -70,7 +71,7 @@ import com.project.util.Util;
                       targetNamespace = "http://www.project.com/BankaWS",
                       wsdlLocation = "file:/C:/Users/Geek/Desktop/Wp/XWSEclipse/XMLProject/WEB-INF/wsdl/Banka.wsdl",
                       endpointInterface = "com.project.bankaws.BankaPort")
-                      
+@HandlerChain(file = "/com/project/document/handler-chain-document.xml")
 public class BankaPortImpl implements BankaPort {
 
     private static final Logger LOG = Logger.getLogger(BankaPortImpl.class.getName());

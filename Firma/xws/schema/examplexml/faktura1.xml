@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura>
+  <ID_poruke>str1234</ID_poruke>
+  <Naziv_dobavljaca>str1234</Naziv_dobavljaca>
+  <Adresa_dobavljaca>str1234</Adresa_dobavljaca>
+  <PIB_dobavljaca>str12340000</PIB_dobavljaca>
+  <Naziv_kupca>str1234</Naziv_kupca>
+  <Adresa_kupca>str1234</Adresa_kupca>
+  <PIB_kupca>str12340000</PIB_kupca>
+  <Broj_racuna>123</Broj_racuna>
+  <Datum_racuna>2012-12-13</Datum_racuna>
+  <Vrednost_robe>123.45</Vrednost_robe>
+  <Vrednost_usluga>123.45</Vrednost_usluga>
+  <Ukupno_robe_i_usluga>123.45</Ukupno_robe_i_usluga>
+  <Ukupan_rabat>123.45</Ukupan_rabat>
+  <Ukupan_porez>123.45</Ukupan_porez>
+  <Oznaka_valute>str1234</Oznaka_valute>
+  <Sifra_valute>EUR</Sifra_valute>
+  <Iznos_za_uplatu>123.45</Iznos_za_uplatu>
+  <Uplata_na_racun>str123400000000000</Uplata_na_racun>
+  <Datum_valute>2012-12-13</Datum_valute>
+  <Stavke>
+    <Stavka>
+      <Redni_broj>123</Redni_broj>
+      <Naziv_robe_ili_usluge>str1234</Naziv_robe_ili_usluge>
+      <Kolicina>123.45</Kolicina>
+      <Jedinica_mere>123</Jedinica_mere>
+      <Jedinicna_cena>123.45</Jedinicna_cena>
+      <Vrednost>123.45</Vrednost>
+      <Procenat_rabata>123.45</Procenat_rabata>
+      <Iznos_rabata>123.45</Iznos_rabata>
+      <Umanjeno_za_rabat>123.45</Umanjeno_za_rabat>
+      <Ukupan_porez>123.45</Ukupan_porez>
+    </Stavka>
+  </Stavke>
+</Faktura>

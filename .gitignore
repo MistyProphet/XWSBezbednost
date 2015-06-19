@@ -17,3 +17,7 @@ Firma/InvoiceClient/.sass-cache/*
 # Intellij IDEA project files
 *.idea/
 *.iml
+
+# Vim swap files
+*.swp
+*.swo

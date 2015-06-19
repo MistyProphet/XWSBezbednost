@@ -10,7 +10,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
@@ -85,22 +84,23 @@ public class UserService {
 		return "ok";
 	}
 	
-	@GET 
-    @Path("login")
-    @Produces(MediaType.APPLICATION_JSON)
-    public User loginGet(@QueryParam("username") String username, @QueryParam("password") String password) {
-    	User user = null;
-		try {
-        	user = userDao.login(username, password);
-        } catch (Exception e) {
-        	log.error(e.getMessage(), e);
-        }
-		if(user==null){
-			throw new ServiceException("Wrong username or password", Status.FORBIDDEN);
-		}
-		log.info("USER: "+user);
-    	return user;
-    }
+    //Loging in by GET is pretty dangerous
+	//@GET 
+    //@Path("login")
+    //@Produces(MediaType.APPLICATION_JSON)
+    //public User loginGet(@QueryParam("username") String username, @QueryParam("password") String password) {
+    //	User user = null;
+	//	try {
+    //    	user = userDao.login(username, password);
+    //    } catch (Exception e) {
+    //    	log.error(e.getMessage(), e);
+    //    }
+	//	if(user==null){
+	//		throw new ServiceException("Wrong username or password", Status.FORBIDDEN);
+	//	}
+	//	log.info("USER: "+user);
+    //	return user;
+    //}
     
 	@POST
     @Path("login")

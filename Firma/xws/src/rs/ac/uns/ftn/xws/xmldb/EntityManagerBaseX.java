@@ -76,6 +76,34 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<T> findAll(String collection) throws IOException, JAXBException {
+		Results wrappedResults = null;
+		List<T> results = new ArrayList<T>();
+		
+		StringBuilder builder = new StringBuilder(REST_URL);
+		builder.append(schemaName);
+		builder.append("?query=collection('"+collection+"')");
+		builder.append("&wrap=yes");
+
+		url = new URL(builder.substring(0));
+		conn = (HttpURLConnection) url.openConnection();
+
+		int responseCode = conn.getResponseCode();
+		String message = conn.getResponseMessage();
+
+		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		
+		if (responseCode == HttpURLConnection.HTTP_OK) {
+			wrappedResults = (Results) basex_unmarshaller.unmarshal(conn.getInputStream());
+			for (Result result : wrappedResults.getResult())
+				results.add((T) unmarshaller.unmarshal((Node)result.getAny()));
+		}
+		
+		conn.disconnect();
+		return results;
+	}
+
+	@SuppressWarnings("unchecked")
 	public List<T> findAll() throws IOException, JAXBException {
 		Results wrappedResults = null;
 		List<T> results = new ArrayList<T>();

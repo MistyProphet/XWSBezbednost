@@ -48,7 +48,13 @@ public abstract class GenericDao<T extends Identifiable, ID extends Serializable
 		result = em.executeQuery(xQuery, wrap);
 		return result;
 	}
-	
+    
+	public List<T> findAll(String collection) throws IOException, JAXBException {
+		List<T> result;
+		result = em.findAll(collection);
+		return result;
+	}
+
 	public List<T> findAll() throws IOException, JAXBException {
 		List<T> result;
 		result = em.findAll();

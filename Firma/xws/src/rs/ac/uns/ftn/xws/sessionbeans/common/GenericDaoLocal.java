@@ -11,6 +11,8 @@ public interface GenericDaoLocal<T, ID extends Serializable> {
 
 	public T findById(ID id) throws JAXBException, IOException;
 
+	public List<T> findAll(String collection) throws IOException, JAXBException;
+
 	public List<T> findAll() throws IOException, JAXBException;
 
 	public T persist(T entity) throws JAXBException, IOException;

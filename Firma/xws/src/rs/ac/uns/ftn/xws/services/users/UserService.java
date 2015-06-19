@@ -10,12 +10,15 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
 import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.sessionbeans.users.UserDaoLocal;
+import rs.ac.uns.ftn.xws.util.ServiceException;
 
 @Path("/user")
 public class UserService {
@@ -52,18 +55,21 @@ public class UserService {
         return user;
     }
 
-//    @GET
-//    @Path("{username}")
-//    @Produces(MediaType.APPLICATION_XML)
-//    public User findByName(@PathParam("username") String username) {
-//        List<User> users = null;
-//        try {
-//            users = userDao.findBy("/user/username", true);
-//        } catch (Exception e) {
-//            log.error(e.getMessage(), e);
-//        }
-//        return users.get(0);
-//    }
+    @GET
+    @Path("{username}")
+    @Produces(MediaType.APPLICATION_XML)
+    public User findByName(@PathParam("username") String username) {
+        List<User> users = null;
+        try {
+            users = userDao.findAll("user");
+            for (User user : users)
+                if (user.getUsername().equals(username))
+                    return user;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
 	
 	@POST
 	@Path("")
@@ -79,39 +85,39 @@ public class UserService {
 		return "ok";
 	}
 	
-//	@GET 
-//    @Path("login")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public User loginGet(@QueryParam("username") String username, @QueryParam("password") String password) {
-//    	User user = null;
-//		try {
-//        	user = userDao.login(username, password);
-//        } catch (Exception e) {
-//        	log.error(e.getMessage(), e);
-//        }
-//		if(user==null){
-//			throw new ServiceException("Wrong username or password", Status.FORBIDDEN);
-//		}
-//		log.info("USER: "+user);
-//    	return user;
-//    }
+	@GET 
+    @Path("login")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User loginGet(@QueryParam("username") String username, @QueryParam("password") String password) {
+    	User user = null;
+		try {
+        	user = userDao.login(username, password);
+        } catch (Exception e) {
+        	log.error(e.getMessage(), e);
+        }
+		if(user==null){
+			throw new ServiceException("Wrong username or password", Status.FORBIDDEN);
+		}
+		log.info("USER: "+user);
+    	return user;
+    }
     
-//	@POST
-//    @Path("login")
-//    @Produces(MediaType.TEXT_HTML)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public String login(User sentUser) {
-//    	User user = null;
-//		try {
-//        	user = userDao.login(sentUser.getUsername(), sentUser.getPassword());
-//        } catch (Exception e) {
-//        	log.error(e.getMessage(), e);
-//        }
-//		if(user==null){//ako ne uspe prijava posalje se greska 403 - znam sta hoces, ali ti ne dozvoljavam 
-//			throw new ServiceException("Wrong username or password", Status.FORBIDDEN);
-//		}
-//    	return "ok";
-//    }
+	@POST
+    @Path("login")
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String login(User sentUser) {
+    	User user = null;
+		try {
+        	user = userDao.login(sentUser.getUsername(), sentUser.getPassword());
+        } catch (Exception e) {
+        	log.error(e.getMessage(), e);
+        }
+		if(user==null) {
+			throw new ServiceException("Wrong username or password", Status.FORBIDDEN);
+		}
+    	return "ok";
+    }
 	
 //	@GET
 //    @Path("logout")

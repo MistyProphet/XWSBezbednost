@@ -15,7 +15,7 @@ import javax.xml.ws.Service;
  * 
  */
 @WebServiceClient(name = "BankaService", 
-                  wsdlLocation = "file:/C:/Users/Geek/Desktop/Wp/XWSEclipse/XMLProject/WEB-INF/wsdl/Banka.wsdl",
+                  wsdlLocation = "WEB-INF/wsdl/Banka.wsdl",
                   targetNamespace = "http://www.project.com/BankaWS") 
 public class BankaService extends Service {
 
@@ -26,11 +26,11 @@ public class BankaService extends Service {
     static {
         URL url = null;
         try {
-            url = new URL("file:/C:/Users/Geek/Desktop/Wp/XWSEclipse/XMLProject/WEB-INF/wsdl/Banka.wsdl");
+            url = new URL("WEB-INF/wsdl/Banka.wsdl");
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(BankaService.class.getName())
                 .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "file:/C:/Users/Geek/Desktop/Wp/XWSEclipse/XMLProject/WEB-INF/wsdl/Banka.wsdl");
+                     "Can not initialize the default wsdl from {0}", "WEB-INF/wsdl/Banka.wsdl");
         }
         WSDL_LOCATION = url;
     }

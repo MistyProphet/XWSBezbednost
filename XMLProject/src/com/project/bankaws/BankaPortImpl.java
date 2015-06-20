@@ -66,7 +66,7 @@ import com.project.util.Util;
                       serviceName = "BankaService",
                       portName = "BankaPort",
                       targetNamespace = "http://www.project.com/BankaWS",
-                      wsdlLocation = "file:/C:/Users/Geek/Desktop/Wp/XWSEclipse/XMLProject/WEB-INF/wsdl/Banka.wsdl",
+                      wsdlLocation = "WEB-INF/wsdl/Banka.wsdl",
                       endpointInterface = "com.project.bankaws.BankaPort")
 @HandlerChain(file = "/com/project/document/handler-chain-document.xml")
 public class BankaPortImpl implements BankaPort {

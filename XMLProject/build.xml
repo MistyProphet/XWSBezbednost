@@ -116,12 +116,13 @@
 		</copy>
 	</target>
 	
-	<target name="war" depends="compile">
+	<target name="war" depends="compile, copy-non-java">
 		<delete file="${war.name}"/>
 		<war warfile="${dist.dir}/${war.name}" webxml="${webinf.dir}/web.xml">
 			<classes dir="${bin.dir}">
 				<exclude name="**/client/*.class"/>
 				<include name="**/*.class"/>
+				<include name="**/*.xml"/>
 			</classes>
 			<lib dir="${lib.dir}">
 				<include name="spring-*.jar"/>

@@ -35,10 +35,10 @@ public class SymmetricEncription {
 	private void generateKey() {
         try {
 			//generator para kljuceva za DES algoritam
-			KeyGenerator   keyGen = KeyGenerator.getInstance("DES"); 
+			KeyGenerator   keyGen = KeyGenerator.getInstance("AES"); 
 			//generise kljuc za DES 
-			secretKey = keyGen.generateKey();
-
+	        keyGen.init(128);
+	        secretKey = keyGen.generateKey();
         } catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +49,7 @@ public class SymmetricEncription {
 		try {
 			System.out.println("Kriptuje se: " + data);	
 			//klasa za sifrovanje
-			Cipher rsaCipherEnc = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			Cipher rsaCipherEnc = Cipher.getInstance("AES");
 			//inicijalizacija za sifrovanje, 
 			rsaCipherEnc.init(Cipher.ENCRYPT_MODE, secretKey);
 			
@@ -59,7 +59,7 @@ public class SymmetricEncription {
 			
 			//desifrovanje poruke 
 			//algoritam MORA biti isti kao i kod sifrovanja, provider moze da se razlikuje
-			Cipher rsaCipherDec = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			Cipher rsaCipherDec = Cipher.getInstance("AES");
 			//inicijalizacija za dekriptovanje
 			rsaCipherDec.init(Cipher.DECRYPT_MODE, secretKey);
 			

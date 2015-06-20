@@ -52,25 +52,29 @@ public class RESTUtil<T> {
 		
 		
 		File file = new File("src/resource/");
-		dropSchema("Banka");
-		dropSchema("Poruke");
 		dropSchema("Banke");
-		dropSchema("BankaPoruke");
-		dropSchema("BankaRacuni");
-		
-		/* Test CRUD operacija */
+		dropSchema("Banka");
+
+		createSchema("Banka");
 		createSchema("Banke");
-		createSchema("BankaPoruke");
-		createSchema("BankaRacuni");
 		createResource("Banke", "Podaci", new FileInputStream(new File(file, "banke.xml")));
-		createResource("BankaPoruke", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
-		createResource("BankaPoruke", "MT103", new FileInputStream(new File(file, "MT103.xml")));
-		createResource("BankaPoruke", "MT102", new FileInputStream(new File(file, "MT102.xml")));
-		createResource("BankaPoruke", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
-		createResource("BankaPoruke", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
-		createResource("BankaPoruke", "MT910", new FileInputStream(new File(file, "MT910.xml")));
-		createResource("BankaRacuni", "001", new FileInputStream(new File(file, "klijenti1.xml")));
-		createResource("BankaRacuni", "002", new FileInputStream(new File(file, "klijenti2.xml")));
+
+		createResource("Banka/001", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
+		createResource("Banka/001", "MT103", new FileInputStream(new File(file, "MT103.xml")));
+		createResource("Banka/001", "MT102", new FileInputStream(new File(file, "MT102.xml")));
+		createResource("Banka/001", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
+		createResource("Banka/001", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
+		createResource("Banka/001", "MT910", new FileInputStream(new File(file, "MT910.xml")));
+
+		createResource("Banka/002", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
+		createResource("Banka/002", "MT103", new FileInputStream(new File(file, "MT103.xml")));
+		createResource("Banka/002", "MT102", new FileInputStream(new File(file, "MT102.xml")));
+		createResource("Banka/002", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
+		createResource("Banka/002", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
+		createResource("Banka/002", "MT910", new FileInputStream(new File(file, "MT910.xml")));
+		
+		createResource("Banka/001", "Racuni", new FileInputStream(new File(file, "klijenti1.xml")));
+		createResource("Banka/002", "Racuni", new FileInputStream(new File(file, "klijenti2.xml")));
 		
 		Transakcije ttt = new Transakcije();
 		//Generisanje 3 test transakcije
@@ -163,9 +167,9 @@ public class RESTUtil<T> {
 		//cal.setTime(new Date());
 		//XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
 		
-		objectToDB("BankaRacuni/001/1", "Transakcije", ttt);
+		objectToDB("Banka/001/Racuni/1", "Transakcije", ttt);
 		//Test poziv metode iz TransakcijaService klase
-		TransakcijaService.getTransakcijeZaPresek(Util.getXMLGregorianCalendarNow(), "001-0000000000001-00", 1);
+		TransakcijaService.getTransakcijeZaPresek(Util.getXMLGregorianCalendarNow(), "001-0000000000001-00", 1, 1, 1);
 		
 		if (http instanceof BaseXHTTP) http.stop();
 		

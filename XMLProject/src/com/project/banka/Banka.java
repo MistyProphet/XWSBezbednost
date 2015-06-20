@@ -36,6 +36,7 @@ import com.project.racuni.Racuni;
 import com.project.stavka_preseka.StavkaPreseka;
 import com.project.stavka_preseka.Transakcija;
 import com.project.stavka_preseka.TransakcijaService;
+import com.project.transakcije.Transakcije;
 import com.project.util.Util;
 import com.project.zahtev_za_izvod.ZahtevZaIzvod;
 
@@ -56,7 +57,7 @@ public class Banka extends Identifiable {
 		naloziZaClearing = new HashMap<TBanka, ArrayList<NalogZaPlacanje>>();
 		//Ucitavanje racuna iz baze na osnovu swift koda
 		try {
-			InputStream in = RESTUtil.retrieveResource("//Racuni", "BankaRacuni/00"+id, RequestMethod.GET);
+			InputStream in = RESTUtil.retrieveResource("//Racuni", "Banka/00"+id, RequestMethod.GET);
 			JAXBContext context = JAXBContext.newInstance(Racuni.class, Racuni.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			Marshaller marshaller = context.createMarshaller();
@@ -205,11 +206,14 @@ public class Banka extends Identifiable {
     			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
     			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(placanje.getUplata().getIznos()));
     			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
-    			RESTUtil.objectToDB("BankaRacuni/001/Transakcije", transakcija.getId().toString(), transakcija);
     			
+    			Transakcije wrappedResults = new Transakcije();
+    			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+    			wrappedResults.getTransakcija().add(transakcija);
+    			    			
     			Racuni rac1 = new Racuni();
     			//Spustamo izmenjena stanja na racunima u bazu
-    			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "BankaRacuni/00"+id, rac1);
+    			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "Banka/00"+id, rac1);
     			//Ovde uraditi update stanja na racunima, pa baciti u bazu ponovo
     			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
     				//Nasli smo koji je racun u pitanju
@@ -221,7 +225,7 @@ public class Banka extends Identifiable {
     				}
     			}
     			//vracamo u bazu izmenjena raspoloziva sredstva
-    			RESTUtil.doMarshall("BankaRacuni/00"+id, rac1);
+    			RESTUtil.doMarshall("Banka/00"+id+"/Racuni", rac1);
     		} else {
     			throw new NonexistentAccountException();
     		}
@@ -247,11 +251,14 @@ public class Banka extends Identifiable {
 			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
 			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(placanje.getUplata().getIznos()));
 			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
-			RESTUtil.objectToDB("BankaRacuni/001/Transakcije", transakcija.getId().toString(), transakcija);
 			
+			Transakcije wrappedResults = new Transakcije();
+			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+			wrappedResults.getTransakcija().add(transakcija);
+						
 			Racuni rac1 = new Racuni();
 			//Spustamo izmenjena stanja na racunima u bazu
-			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "BankaRacuni/00"+id, rac1);
+			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "Banka/00"+id, rac1);
 			//Ovde uraditi update stanja na racunima, pa baciti u bazu ponovo
 			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
 				//Nasli smo koji je racun u pitanju
@@ -263,7 +270,7 @@ public class Banka extends Identifiable {
 				}
 			}
 			//vracamo u bazu izmenjena raspoloziva sredstva
-			RESTUtil.doMarshall("BankaRacuni/00"+id, rac1);
+			RESTUtil.doMarshall("Banka/00"+id+"/Racuni", rac1);
 			
 		} else {
 			throw new NonexistentAccountException();
@@ -327,7 +334,19 @@ public class Banka extends Identifiable {
 	}
 
 	public Presek formirajPresek(ZahtevZaIzvod zahtev) throws IOException, JAXBException {
-		return TransakcijaService.getPresek( zahtev.getDatum(), zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka());		
+		Long idRacuna = null;
+		Racuni rac1 = new Racuni();
+		rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "Banka/00"+id, rac1);
+		for(TBankarskiRacunKlijenta k: rac1.getRacun()){
+			if(k.getRacun().getBrojRacuna().equals(zahtev.getBrojRacuna())){
+				idRacuna = k.getId();
+			}
+		}
+		if(idRacuna == null){
+			throw new JAXBException("Account doesn't exist in this bank.");
+		}
+		return TransakcijaService.getPresek( zahtev.getDatum(), zahtev.getBrojRacuna(), zahtev.getRedniBrojPreseka(),
+				id, idRacuna);		
 	}
 	
     public Transakcija generisiTransakcijuUplate(NalogZaPlacanje nalog) {

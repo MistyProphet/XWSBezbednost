@@ -17,7 +17,7 @@ public class TransakcijaService {
 	//public static final String REST_URL = "http://localhost:8081/BaseX821/rest/";
 	//public static final String schemaName = "BankaRacuni/001/Transakcije";
 	
-	public static Transakcije getTransakcijeZaPresek(XMLGregorianCalendar date, String brojRacuna, long brPreseka) throws IOException, JAXBException {
+	public static Transakcije getTransakcijeZaPresek(XMLGregorianCalendar date, String brojRacuna, long brPreseka, long idBanke, long idRacuna) throws IOException, JAXBException {
 		
         long begin = (brPreseka-1)*Banka.BROJ_STAVKI;
 
@@ -25,15 +25,15 @@ public class TransakcijaService {
         		+ "$x//*:Datum_valute='" + date.toXMLFormat() + "'"
 				+ " order by xs:integer($x/@id) return $x), " + begin + ", " + Banka.BROJ_STAVKI + ") return $y)";
         
-        Transakcije results = executeSelectQuery(query, false);
+        Transakcije results = executeSelectQuery(query, false, idBanke, idRacuna);
         return results;              
 
 
     }
 
-    public static Presek getPresek(XMLGregorianCalendar date, String brojRacuna, long brPreseka) throws IOException, JAXBException {
+    public static Presek getPresek(XMLGregorianCalendar date, String brojRacuna, long brPreseka, long idBanke, long idRacuna) throws IOException, JAXBException {
         
-    	Transakcije transakcije = getTransakcijeZaPresek(date, brojRacuna, brPreseka);
+    	Transakcije transakcije = getTransakcijeZaPresek(date, brojRacuna, brPreseka, idBanke, idRacuna);
         
         Presek presek = new Presek();
         ZaglavljePreseka zaglavlje = new ZaglavljePreseka();
@@ -74,10 +74,10 @@ public class TransakcijaService {
     /*
 	 * Takes both XQuery
 	 */
-	public static Transakcije executeSelectQuery(String xQuery, boolean wrap) throws IOException, JAXBException {
+	public static Transakcije executeSelectQuery(String xQuery, boolean wrap, Long idBanke, Long idRacuna) throws IOException, JAXBException {
 
 		Transakcije wrappedResults = new Transakcije();
-		wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions(xQuery, "BankaRacuni/001/1/Transakcije", wrappedResults);
+		wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions(xQuery, "Banka/00"+idBanke+"/Racuni/"+idRacuna+"/Transakcije", wrappedResults);
 		return wrappedResults;   
 	}
 }

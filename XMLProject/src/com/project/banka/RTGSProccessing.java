@@ -85,7 +85,7 @@ public class RTGSProccessing {
 					//duznik ima dovoljno para, skidamo pare
 	    			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
 	    			
-	    			InputStream in1 = RESTUtil.retrieveResource("//Racuni", "BankaRacuni/00"+bankaPort.current_bank.getId(), RequestMethod.GET);
+	    			InputStream in1 = RESTUtil.retrieveResource("//Racuni", "Banka/00"+bankaPort.current_bank.getId(), RequestMethod.GET);
 	    			JAXBContext context1 = JAXBContext.newInstance(Racuni.class, Racuni.class);
 	    			Unmarshaller unmarshaller1 = context1.createUnmarshaller();
 	    			Marshaller marshaller1 = context1.createMarshaller();
@@ -107,7 +107,7 @@ public class RTGSProccessing {
 	    					//skidamo mu novac
 	    					k.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva());
 	    					//vracamo u bazu izmenjena raspoloziva sredstva
-	    					RESTUtil.doMarshall("BankaRacuni/00"+bankaPort.current_bank.getId(), rac1);
+	    					RESTUtil.doMarshall("Banka/00"+bankaPort.current_bank.getId()+"/Racuni", rac1);
 	    					break;
 	    				}
 	    			}

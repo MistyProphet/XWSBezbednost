@@ -51,7 +51,7 @@ public class AsymmetricEncription {
 			//generator pseudo slucajnih brojeva
 			SecureRandom       random = SecureRandom.getInstance("SHA1PRNG", "SUN");
 			//inicijalizacija generatora, 2048 bitni kljuc
-			keyGen.initialize(512, random);
+			keyGen.initialize(1024, random);
 			
 			System.out.println("Kreira par kljuceva...");
 			

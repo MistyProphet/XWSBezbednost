@@ -19,6 +19,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import misc.RESTUtil;
 import misc.RequestMethod;
 
+import com.project.bankaws.PortHelper;
 import com.project.banke_racuni.RacuniBanaka;
 import com.project.banke_racuni.RacuniBanaka.KodBanke;
 import com.project.common_types.TBanka;
@@ -181,6 +182,8 @@ public class Banka extends Identifiable {
 				sum.add(nalog.getPlacanje().getUplata().getIznos());
 			}
 			mt102.setUkupanIznos(sum);
+			mt102.setId(Long.parseLong(PortHelper.mt102ID.toString()));
+			PortHelper.mt102ID++;
 		}
 		return ret;
 	}
@@ -210,6 +213,7 @@ public class Banka extends Identifiable {
     			Transakcije wrappedResults = new Transakcije();
     			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
     			wrappedResults.getTransakcija().add(transakcija);
+    			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), "Transakcije", wrappedResults);
     			    			
     			Racuni rac1 = new Racuni();
     			//Spustamo izmenjena stanja na racunima u bazu
@@ -255,6 +259,7 @@ public class Banka extends Identifiable {
 			Transakcije wrappedResults = new Transakcije();
 			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
 			wrappedResults.getTransakcija().add(transakcija);
+			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), "Transakcije", wrappedResults);
 						
 			Racuni rac1 = new Racuni();
 			//Spustamo izmenjena stanja na racunima u bazu
@@ -315,11 +320,6 @@ public class Banka extends Identifiable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		//TBanka bankaPrimaoca = tBankaDao.findById(idBanke);
-		//if (naloziZaClearing.containsKey(bankaPrimaoca)) {
-		//	naloziZaClearing.get(bankaPrimaoca).add(nalog);
-		//}
 	
 	}
 
@@ -355,6 +355,9 @@ public class Banka extends Identifiable {
 		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
 		transakcija.setRacunKlijenta(racun_primaoca);
 		transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
+		Long id = getMaxTransactionID(Long.valueOf(racun_primaoca.getRacun().getBrojRacuna().substring(0, 3)), racun_primaoca.getId());
+		id++;
+		transakcija.setId(id);
 		StavkaPreseka stavkaPreseka = new StavkaPreseka();
 		stavkaPreseka.setDatumValute(nalog.getDatumValute());
 		stavkaPreseka.setSifraValute(nalog.getPlacanje().getSifraValute());
@@ -369,6 +372,9 @@ public class Banka extends Identifiable {
 		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
 		transakcija.setRacunKlijenta(racun_primaoca);
 		transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
+		Long id = getMaxTransactionID(Long.valueOf(racun_primaoca.getRacun().getBrojRacuna().substring(0, 3)), racun_primaoca.getId());
+		id++;
+		transakcija.setId(id);
 		StavkaPreseka stavkaPreseka = new StavkaPreseka();
 		stavkaPreseka.setDatumValute(nalog.getDatumValute());
 		stavkaPreseka.setSifraValute(nalog.getSifraValute());
@@ -383,6 +389,9 @@ public class Banka extends Identifiable {
 		TBankarskiRacunKlijenta racun_duznika = getSpecificAccount(broj_rk_duznika);
 		transakcija.setRacunKlijenta(racun_duznika);
 		transakcija.setStanjePreTransakcije(racun_duznika.getStanje());
+		Long id = getMaxTransactionID(Long.valueOf(racun_duznika.getRacun().getBrojRacuna().substring(0, 3)), racun_duznika.getId());
+		id++;
+		transakcija.setId(id);
 		StavkaPreseka stavkaPreseka = new StavkaPreseka();
 		stavkaPreseka.setDatumValute(nalog.getDatumValute());
 		stavkaPreseka.setSifraValute(nalog.getPlacanje().getSifraValute());
@@ -390,6 +399,22 @@ public class Banka extends Identifiable {
 		stavkaPreseka.setUplata(nalog.getPlacanje().getUplata());
 		return transakcija;
     }
-
+    
+    public Long getMaxTransactionID(Long idBanke, Long idRacuna){
+    	Transakcije t = new Transakcije();
+    	t = (Transakcije) RESTUtil.doUnmarshall("//*:Transakcije", "Banka/00"+idBanke.toString()+"/Racuni/"+idRacuna.toString(), t);
+    	int maxID = -1;
+    	for(Transakcija tt: t.getTransakcija()){
+    		if(tt.getId().doubleValue() > maxID){
+    			maxID = Integer.parseInt(tt.getId().toString());
+    		}
+    	}
+    	return Long.valueOf(maxID);
+    }
+    
+    public static void main(String[] args) {
+    	Banka b = new Banka();
+    	System.out.println(b.getMaxTransactionID(Long.valueOf("1"), Long.valueOf("1")));
+    }
 	
 }

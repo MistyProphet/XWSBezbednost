@@ -13,7 +13,7 @@ import javax.xml.bind.Unmarshaller;
 import misc.RESTUtil;
 import misc.RequestMethod;
 
-import com.project.bankaws.BankaPortImpl;
+import com.project.bankaws.PortHelper;
 import com.project.bankaws.ReceiveNalogFault;
 import com.project.banke_racuni.RacuniBanaka;
 import com.project.banke_racuni.RacuniBanaka.KodBanke;
@@ -28,17 +28,11 @@ import com.project.racuni.Racuni;
 import com.project.util.Util;
 
 public class RTGSProccessing {
-	private BankaPortImpl bankaPort = null;
-    private Integer mt103ID = 1;
-    
-    public RTGSProccessing(BankaPortImpl banka){
-    	bankaPort = banka;
-    }
 	
 	public Mt103 kreirajMT103(NalogZaPlacanje nalog) throws ReceiveNalogFault{
 		try{
 			Mt103 rtgsNalog = new Mt103();
-			rtgsNalog.setIDPoruke((mt103ID++).toString());
+			rtgsNalog.setIDPoruke((PortHelper.mt103ID++).toString());
 			rtgsNalog.setDatumValute(Util.getXMLGregorianCalendarNow());
 			rtgsNalog.setSifraValute(nalog.getPlacanje().getSifraValute());
 			rtgsNalog.setUplata(nalog.getPlacanje().getUplata());
@@ -73,19 +67,19 @@ public class RTGSProccessing {
 				}
 			}
 			
-			pob.setBankaDuznika(bankaPort.current_bank.getPodaci_o_banci());
+			pob.setBankaDuznika(PortHelper.current_bank.getPodaci_o_banci());
 			pob.setBankaPoverioca(bankaPoverioca);
 			rtgsNalog.setPodaciOBankama(pob);
 			
 			//rezervisati sredstva klijenta (raspoloziva sredstva)
-			TBankarskiRacunKlijenta racun_duznika = bankaPort.current_bank.getSpecificAccount(nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna());
+			TBankarskiRacunKlijenta racun_duznika = PortHelper.current_bank.getSpecificAccount(nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna());
 			if(racun_duznika != null){
 				BigDecimal iznos = nalog.getPlacanje().getUplata().getIznos();
 				if(!(racun_duznika.getRaspolozivaSredstva().compareTo(iznos) == -1)){
 					//duznik ima dovoljno para, skidamo pare
 	    			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
 	    			
-	    			InputStream in1 = RESTUtil.retrieveResource("//Racuni", "Banka/00"+bankaPort.current_bank.getId(), RequestMethod.GET);
+	    			InputStream in1 = RESTUtil.retrieveResource("//Racuni", "Banka/00"+PortHelper.current_bank.getId(), RequestMethod.GET);
 	    			JAXBContext context1 = JAXBContext.newInstance(Racuni.class, Racuni.class);
 	    			Unmarshaller unmarshaller1 = context1.createUnmarshaller();
 	    			Marshaller marshaller1 = context1.createMarshaller();
@@ -107,7 +101,7 @@ public class RTGSProccessing {
 	    					//skidamo mu novac
 	    					k.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva());
 	    					//vracamo u bazu izmenjena raspoloziva sredstva
-	    					RESTUtil.doMarshall("Banka/00"+bankaPort.current_bank.getId()+"/Racuni", rac1);
+	    					RESTUtil.doMarshall("Banka/00"+PortHelper.current_bank.getId()+"/Racuni", rac1);
 	    					break;
 	    				}
 	    			}

@@ -1,13 +1,10 @@
 package rs.ac.uns.ftn.xws.sessionbeans.users;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.management.Query;
 import javax.ws.rs.core.Context;
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,8 +30,6 @@ public class UserDao extends GenericDao<User, Long> implements UserDaoLocal{
 
 	@Override
 	public User login(String username, String password) {
-        //TODO find the user by querying the database. This is suicide
-        
         try {
             List<User> users = new ArrayList<User>();
             try {

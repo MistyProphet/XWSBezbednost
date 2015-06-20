@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.xws.sessionbeans.payments;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -9,6 +10,8 @@ import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDaoLocal;
 
 public interface InvoiceDaoLocal extends GenericDaoLocal<Invoice, Long>{
+
+    public List<Invoice> findInvoicesByTIN(String TIN) throws IOException;
 
 	public InvoiceItem findItemInInvoice(Long invoiceId, Long itemId) throws IOException, JAXBException;
 	

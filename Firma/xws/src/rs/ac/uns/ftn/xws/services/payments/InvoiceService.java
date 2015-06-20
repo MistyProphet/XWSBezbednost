@@ -20,7 +20,7 @@ import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
 
-@Path("/invoice")
+@Path("/partneri/{PIB}/fakture")
 public class InvoiceService {
 
 	private static Logger log = Logger.getLogger(Invoice.class);
@@ -28,12 +28,12 @@ public class InvoiceService {
 	@EJB
 	private InvoiceDaoLocal invoiceDao;
 
-	@GET 
+	@GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Invoice> findByAll() {
+    public List<Invoice> findByPIB(@PathParam("PIB") String PIB) {
 		List<Invoice> retVal = null;
 		try {
-			retVal = invoiceDao.findAll();
+			retVal = invoiceDao.findInvoicesByTIN(PIB);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -42,21 +42,39 @@ public class InvoiceService {
 	
 	@GET 
 	@Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
-    public Invoice findById(@PathParam("id") String id) {
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Invoice findById(@PathParam("PIB") String PIB, @PathParam("id") String id) {
 		Invoice retVal = null;
 		try {
 			retVal = invoiceDao.findById(Long.parseLong(id));
+            if (retVal.getSupplierTIN().equals(PIB))
+                return retVal;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		return retVal;
+		return null;
+    }
+    
+	@GET 
+	@Path("{id}/stavke")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<InvoiceItem> findAllItems(@PathParam("PIB") String PIB, @PathParam("id") String id) {
+		Invoice retVal = null;
+		try {
+			retVal = invoiceDao.findById(Long.parseLong(id));
+            if (retVal.getSupplierTIN().equals(PIB))
+                return retVal.getInvoiceItems().getInvoiceItem();
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Invoice create(Invoice entity) {
+        //TODO biznis logika
 		Invoice retVal = null;
 		try {
 			System.out.println("entity: "+entity);
@@ -111,18 +129,6 @@ public class InvoiceService {
 		return retVal;
     }
     
-    @GET 
-	@Path("{id}/item/{itemId}")
-    @Produces(MediaType.APPLICATION_XML)
-    public InvoiceItem findItemInInvoice(@PathParam("id") Long invoiceId, @PathParam("itemId") Long itemId) {
-    	InvoiceItem retVal = null;
-		try {
-			retVal = invoiceDao.findItemInInvoice(invoiceId, itemId);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return retVal;
-    }
 
     @PUT
     @Path("{id}/item/{itemId}")

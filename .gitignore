@@ -21,3 +21,6 @@ Firma/InvoiceClient/.sass-cache/*
 # Vim swap files
 *.swp
 *.swo
+
+# fckn build folder
+Firma/xws/build/*

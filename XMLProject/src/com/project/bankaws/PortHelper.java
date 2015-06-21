@@ -1,6 +1,8 @@
 package com.project.bankaws;
 
-import java.util.ResourceBundle;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import com.project.banka.Banka;
 import com.project.banka.RTGSProccessing;
@@ -17,13 +19,22 @@ public class PortHelper {
     static {
     	current_bank = new Banka();
     	String propFile = "deploy"+ID_Instance_Banke;
-    	String s = ResourceBundle.getBundle(propFile).getString("swift.code");
+    	Properties properties = new Properties();
+    	String s = "";
+	    try {
+	      properties.load(new FileInputStream(propFile+".properties"));
+	      s = properties.getProperty("swift.code");
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    }
     	Long i = Long.parseLong(Integer.toString(ID_Instance_Banke));
     	TBanka podaci = new TBanka();
     	podaci.setSWIFTKod(s);
     	podaci.setId(current_bank.getId());
-    	podaci.setBrojRacunaBanke(ResourceBundle.getBundle(propFile).getString("account.number"));
-    	podaci.setNazivBanke(ResourceBundle.getBundle(propFile).getString("bank.name"));
+    	String accNum =  properties.getProperty("account.number");
+    	podaci.setBrojRacunaBanke(accNum);
+    	String bName = properties.getProperty("bank.name");
+    	podaci.setNazivBanke(bName);
     	current_bank.setPodaci_o_banci(podaci);
     	current_bank.setSWIFTCode(s);
     	current_bank.setId(i);

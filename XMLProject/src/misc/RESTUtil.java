@@ -15,6 +15,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -44,7 +45,17 @@ import com.project.util.Util;
  */
 public class RESTUtil<T> {
 
-	public static final String REST_URL = "http://localhost:8081/BaseX821/rest/";
+	public static String REST_URL = "";
+	
+	static {
+		try {
+			Properties properties = new Properties();
+	        properties.load(new FileInputStream("basex.properties"));
+	        REST_URL = properties.getProperty("rest.url");
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
 	
 	public static void main(String[] args) throws Exception {
 

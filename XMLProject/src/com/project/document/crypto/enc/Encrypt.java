@@ -12,6 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Properties;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -26,6 +27,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.project.bankaws.PortHelper;
 import com.project.util.DocumentUtil;
 
 //Generise tajni kljuc
@@ -33,9 +35,16 @@ import com.project.util.DocumentUtil;
 //Kriptuje tajni kljuc javnim kljucem
 //Kriptovani tajni kljuc se stavlja kao KeyInfo kriptovanog elementa
 public class Encrypt {
-	private static final String KEY_STORE_FILE = "./data/primer.jks";
+	private static String KEY_STORE_FILE = "";
 	
     static {
+    	Properties properties = new Properties();
+	    try {
+	      properties.load(new FileInputStream("deploy"+PortHelper.current_bank.getId()+".properties"));
+	      KEY_STORE_FILE = properties.getProperty("keystore.file");
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    }
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }

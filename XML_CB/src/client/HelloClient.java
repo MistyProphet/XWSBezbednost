@@ -43,7 +43,7 @@ public class HelloClient {
 			CBport RTGS = service.getPort(portName, CBport.class);
 
 			Mt103 request = new Mt103();
-			request.setIDPoruke("1");
+			request.setIDPoruke("333");
 			PodaciOBankama pb = new PodaciOBankama();
 			TBanka duznik = new TBanka();
 			duznik.setBrojRacunaBanke("111-1231231231231-32");
@@ -51,7 +51,7 @@ public class HelloClient {
 			duznik.setId(new Long(111));
 			duznik.setNazivBanke("UniCredit");
 			TBanka poverioc = new TBanka();
-			poverioc.setBrojRacunaBanke("211-1231555551231-32");
+			poverioc.setBrojRacunaBanke("111-1231555551231-32");
 			poverioc.setSWIFTKod("BBBBRS01");
 			poverioc.setNazivBanke("Raiffeisen");
 			poverioc.setId(new Long(112));
@@ -79,7 +79,7 @@ public class HelloClient {
 			mt102.setIDPoruke("2");
 			mt102.setBankaDuznika(duznik);
 			mt102.setBankaPoverioca(poverioc);
-			mt102.setIDPoruke("434");
+			mt102.setIDPoruke("111");
 
 			mt102.setUkupanIznos((new BigDecimal(646)));
 			ArrayList<Placanje> placanja = new ArrayList<Placanje>();

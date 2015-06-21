@@ -5,9 +5,9 @@
 
 package com.project.cbws;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
@@ -60,20 +60,22 @@ public class CBportImpl implements CBport {
 			// service.getPort(new
 			// QName(BankaPort.class.getAnnotation(WebService.class).name()),BankaPort.class);
 			Mt910 mt910 = new Mt910(mt102);
+		
+			mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
 			// bankaPort.receiveMT910(mt910);
-		//	RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
-		//			"mt910.xsd");
+			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
+					"mt910.xsd");
 			// bankaPort.receiveMT102(mt102);
 			Mt900Clearing mt900 = new Mt900Clearing(mt102);
-			mt900.setIDPoruke("1");
-		//	RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
-		//			"mt900.xsd");
+			mt900.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT900")+1));
+			//mt900.setIDPoruke("1");
+			RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
+					"mt900.xsd");
 			return mt900;
 
 		} catch (ReceiveMT102Fault e) {
 			throw e;
 		}
-
 	}
 
 	/*
@@ -114,11 +116,13 @@ public class CBportImpl implements CBport {
 
 			Mt910 mt910 = new Mt910(mt103);
 			// bankaPort.receiveMT910(mt910);
+			mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
 			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
 					"mt910.xsd");
 			// bankaPort.receiveMT103(mt103);
 			Mt900RTGS mt900 = new Mt900RTGS(mt103);
-			mt900.setIDPoruke(("1"));
+			//mt900.setIDPoruke(("1"));
+			mt900.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT900")+1));
 			RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
 					"mt900.xsd");
 			return mt900;

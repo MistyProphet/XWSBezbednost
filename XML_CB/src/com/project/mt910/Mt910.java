@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.project.common_types.TBanka;
 import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
 
@@ -38,8 +39,7 @@ import com.project.mt103.Mt103;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="SWIFT_kod_banke_poverioca" type="{http://www.project.com/common_types}TSwift_kod_banke"/>
- *                   &lt;element name="Obracunski_racun_banke_poverioca" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
+ *                   &lt;element name="Banka_poverioca" type="{http://www.project.com/common_types}TBanka"/>
  *                   &lt;element name="ID_poruke_naloga">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -92,41 +92,37 @@ public class Mt910 {
      *     {@link String }
      *     
      */
-    public String getIDPoruke() {
-        return idPoruke;
-    }
-
-
     public Mt910(Mt103 mt103) {
-    	this.idPoruke = mt103.getIDPoruke();
+    
     	PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
 		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
 		zaduzenje.setSifraValute(mt103.getSifraValute());
 		zaduzenje.setIznos(mt103.getUplata().getIznos());
 		zaduzenje.setDatumValute(mt103.getDatumValute());
-		
-		zaduzenje.setObracunskiRacunBankePoverioca(mt103.getPodaciOBankama().getBankaPoverioca().getBrojRacunaBanke());
-		zaduzenje.setSWIFTKodBankePoverioca(mt103.getPodaciOBankama().getBankaPoverioca().getSWIFTKod());
+		zaduzenje.setBankaPoverioca(mt103.getPodaciOBankama().getBankaPoverioca());
 		this.setPodaciOOdobrenju(zaduzenje);
 		
     }
 
 	public Mt910(Mt102 mt102) {
-		this.idPoruke = mt102.getIDPoruke();
+		
 		PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
 			zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
 			zaduzenje.setSifraValute(mt102.getSifraValute());
 			zaduzenje.setIznos(mt102.getUkupanIznos());
 			zaduzenje.setDatumValute(mt102.getDatumValute());
 			
-			zaduzenje.setObracunskiRacunBankePoverioca(mt102.getBankaPoverioca().getBrojRacunaBanke());
-			zaduzenje.setSWIFTKodBankePoverioca(mt102.getBankaPoverioca().getSWIFTKod());
+			zaduzenje.setBankaPoverioca(mt102.getBankaPoverioca());
 			this.setPodaciOOdobrenju(zaduzenje);
 	}
-
-	public Mt910() {
+    public Mt910() {
 		// TODO Auto-generated constructor stub
 	}
+
+	public String getIDPoruke() {
+        return idPoruke;
+    }
+
     /**
      * Sets the value of the idPoruke property.
      * 
@@ -174,8 +170,7 @@ public class Mt910 {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="SWIFT_kod_banke_poverioca" type="{http://www.project.com/common_types}TSwift_kod_banke"/>
-     *         &lt;element name="Obracunski_racun_banke_poverioca" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
+     *         &lt;element name="Banka_poverioca" type="{http://www.project.com/common_types}TBanka"/>
      *         &lt;element name="ID_poruke_naloga">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -204,8 +199,7 @@ public class Mt910 {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "swiftKodBankePoverioca",
-        "obracunskiRacunBankePoverioca",
+        "bankaPoverioca",
         "idPorukeNaloga",
         "datumValute",
         "iznos",
@@ -213,10 +207,8 @@ public class Mt910 {
     })
     public static class PodaciOOdobrenju {
 
-        @XmlElement(name = "SWIFT_kod_banke_poverioca", required = true, defaultValue = "AAAAAA00")
-        protected String swiftKodBankePoverioca;
-        @XmlElement(name = "Obracunski_racun_banke_poverioca", required = true, defaultValue = "000-0000000000000-00")
-        protected String obracunskiRacunBankePoverioca;
+        @XmlElement(name = "Banka_poverioca", required = true)
+        protected TBanka bankaPoverioca;
         @XmlElement(name = "ID_poruke_naloga", required = true)
         protected String idPorukeNaloga;
         @XmlElement(name = "Datum_valute", required = true)
@@ -228,51 +220,27 @@ public class Mt910 {
         protected String sifraValute;
 
         /**
-         * Gets the value of the swiftKodBankePoverioca property.
+         * Gets the value of the bankaPoverioca property.
          * 
          * @return
          *     possible object is
-         *     {@link String }
+         *     {@link TBanka }
          *     
          */
-        public String getSWIFTKodBankePoverioca() {
-            return swiftKodBankePoverioca;
+        public TBanka getBankaPoverioca() {
+            return bankaPoverioca;
         }
 
         /**
-         * Sets the value of the swiftKodBankePoverioca property.
+         * Sets the value of the bankaPoverioca property.
          * 
          * @param value
          *     allowed object is
-         *     {@link String }
+         *     {@link TBanka }
          *     
          */
-        public void setSWIFTKodBankePoverioca(String value) {
-            this.swiftKodBankePoverioca = value;
-        }
-
-        /**
-         * Gets the value of the obracunskiRacunBankePoverioca property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getObracunskiRacunBankePoverioca() {
-            return obracunskiRacunBankePoverioca;
-        }
-
-        /**
-         * Sets the value of the obracunskiRacunBankePoverioca property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setObracunskiRacunBankePoverioca(String value) {
-            this.obracunskiRacunBankePoverioca = value;
+        public void setBankaPoverioca(TBanka value) {
+            this.bankaPoverioca = value;
         }
 
         /**
@@ -372,5 +340,6 @@ public class Mt910 {
         }
 
     }
-
+    
+  
 }

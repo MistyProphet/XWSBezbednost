@@ -12,6 +12,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Properties;
 
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
@@ -20,12 +21,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.project.bankaws.PortHelper;
+
 //Dekriptuje tajni kljuc privatnim kljucem
 //Tajnim kljucem dekriptuje podatke
 public class Decrypt {
-	private static final String KEY_STORE_FILE = "./data/primer.jks";
+	private static String KEY_STORE_FILE = "";
 	
     static {
+    	Properties properties = new Properties();
+	    try {
+	      properties.load(new FileInputStream("deploy"+PortHelper.current_bank.getId()+".properties"));
+	      KEY_STORE_FILE = properties.getProperty("keystore.file");
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    }
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }

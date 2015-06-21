@@ -105,7 +105,7 @@ public class Encrypt {
 	private static SecretKey generateDataEncryptionKey() {
 
         try {
-			KeyGenerator keyGenerator = KeyGenerator.getInstance("AES"); //Triple DES
+			KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
 			keyGenerator.init(128);
 			return keyGenerator.generateKey();
 		

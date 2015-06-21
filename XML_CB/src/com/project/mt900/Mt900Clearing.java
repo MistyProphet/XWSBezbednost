@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.project.common_types.TBanka;
 import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
-import com.project.mt900.Mt900RTGS.PodaciOZaduzenju;
 
 
 /**
@@ -39,8 +39,7 @@ import com.project.mt900.Mt900RTGS.PodaciOZaduzenju;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="SWIFT_kod_banke_duznika" type="{http://www.project.com/common_types}TSwift_kod_banke"/>
- *                   &lt;element name="Obracunski_racun_banke_duznika" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
+ *                   &lt;element name="Banka_duznika" type="{http://www.project.com/common_types}TBanka"/>
  *                   &lt;element name="ID_poruke_naloga">
  *                     &lt;simpleType>
  *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -93,19 +92,16 @@ public class Mt900Clearing {
      *     {@link String }
      *     
      */
-    public String getIDPoruke() {
-        return idPoruke;
-    }
-
+    
     public Mt900Clearing (Mt103 mt103){
-    	this.setIDPoruke(mt103.getIDPoruke());
+    
     	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
-		zaduzenje.setObracunskiRacunBankeDuznika(mt103.getPodaciOBankama().getBankaDuznika().getBrojRacunaBanke());
-		zaduzenje.setSifraValute(mt103.getSifraValute());
-		zaduzenje.setSWIFTKodBankeDuznika(mt103.getPodaciOBankama().getBankaDuznika().getSWIFTKod());
 		zaduzenje.setIznos(mt103.getUplata().getIznos());
 		zaduzenje.setDatumValute(mt103.getDatumValute());
+		zaduzenje.setSifraValute(mt103.getSifraValute());
+		zaduzenje.setBankaDuznika(mt103.getPodaciOBankama().getBankaDuznika());
+		
 		this.setPodaciOZaduzenju(zaduzenje);
 	
     }
@@ -114,16 +110,19 @@ public class Mt900Clearing {
 	
 	}
 	public Mt900Clearing(Mt102 mt102) {
-		this.setIDPoruke(mt102.getIDPoruke());
+		
 		PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
-		zaduzenje.setObracunskiRacunBankeDuznika(mt102.getBankaDuznika().getBrojRacunaBanke());
 		zaduzenje.setSifraValute(mt102.getSifraValute());
-		zaduzenje.setSWIFTKodBankeDuznika(mt102.getBankaDuznika().getSWIFTKod());
+		zaduzenje.setBankaDuznika(mt102.getBankaDuznika());
 		zaduzenje.setIznos(mt102.getUkupanIznos());
 		zaduzenje.setDatumValute(mt102.getDatumValute());
 		this.setPodaciOZaduzenju(zaduzenje);
 	}
+    public String getIDPoruke() {
+        return idPoruke;
+    }
+
     /**
      * Sets the value of the idPoruke property.
      * 
@@ -171,8 +170,7 @@ public class Mt900Clearing {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="SWIFT_kod_banke_duznika" type="{http://www.project.com/common_types}TSwift_kod_banke"/>
-     *         &lt;element name="Obracunski_racun_banke_duznika" type="{http://www.project.com/common_types}TBroj_Bankarskog_Racuna"/>
+     *         &lt;element name="Banka_duznika" type="{http://www.project.com/common_types}TBanka"/>
      *         &lt;element name="ID_poruke_naloga">
      *           &lt;simpleType>
      *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -201,8 +199,7 @@ public class Mt900Clearing {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "swiftKodBankeDuznika",
-        "obracunskiRacunBankeDuznika",
+        "bankaDuznika",
         "idPorukeNaloga",
         "datumValute",
         "iznos",
@@ -210,10 +207,8 @@ public class Mt900Clearing {
     })
     public static class PodaciOZaduzenju {
 
-        @XmlElement(name = "SWIFT_kod_banke_duznika", required = true, defaultValue = "AAAAAA00")
-        protected String swiftKodBankeDuznika;
-        @XmlElement(name = "Obracunski_racun_banke_duznika", required = true, defaultValue = "000-0000000000000-00")
-        protected String obracunskiRacunBankeDuznika;
+        @XmlElement(name = "Banka_duznika", required = true)
+        protected TBanka bankaDuznika;
         @XmlElement(name = "ID_poruke_naloga", required = true)
         protected String idPorukeNaloga;
         @XmlElement(name = "Datum_valute", required = true)
@@ -225,51 +220,27 @@ public class Mt900Clearing {
         protected String sifraValute;
 
         /**
-         * Gets the value of the swiftKodBankeDuznika property.
+         * Gets the value of the bankaDuznika property.
          * 
          * @return
          *     possible object is
-         *     {@link String }
+         *     {@link TBanka }
          *     
          */
-        public String getSWIFTKodBankeDuznika() {
-            return swiftKodBankeDuznika;
+        public TBanka getBankaDuznika() {
+            return bankaDuznika;
         }
 
         /**
-         * Sets the value of the swiftKodBankeDuznika property.
+         * Sets the value of the bankaDuznika property.
          * 
          * @param value
          *     allowed object is
-         *     {@link String }
+         *     {@link TBanka }
          *     
          */
-        public void setSWIFTKodBankeDuznika(String value) {
-            this.swiftKodBankeDuznika = value;
-        }
-
-        /**
-         * Gets the value of the obracunskiRacunBankeDuznika property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getObracunskiRacunBankeDuznika() {
-            return obracunskiRacunBankeDuznika;
-        }
-
-        /**
-         * Sets the value of the obracunskiRacunBankeDuznika property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setObracunskiRacunBankeDuznika(String value) {
-            this.obracunskiRacunBankeDuznika = value;
+        public void setBankaDuznika(TBanka value) {
+            this.bankaDuznika = value;
         }
 
         /**
@@ -369,5 +340,6 @@ public class Mt900Clearing {
         }
 
     }
-
+    
+  
 }

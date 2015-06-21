@@ -1,8 +1,14 @@
 package com.project.cbws;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Iterator;
+
+import misc.RESTUtil;
 
 import com.project.mt102.Mt102;
 import com.project.nalog_za_placanje.Placanje;
@@ -74,6 +80,33 @@ public class CBUtil {
 
 	}
 
+	public static Long getMaxTransactionID(String schemeName) throws ReceiveMT102Fault {
+        String xQuery =  "xs:integer(max(//*:ID_poruke))";
+    	try {
+    		InputStream input = null;
+                try {
+                        input = RESTUtil.retrieveResource(xQuery, schemeName, "UTF-8", false);
+                } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        BufferedReader br = new BufferedReader(new InputStreamReader(input));
+        Long result = new Long(0);
+                String line;
+			
+					line = br.readLine();
+				
+ 
+                if (line != null)
+                        result = Long.parseLong(line);
+        System.out.println("!!!----> " + result);
+    
+        return result;
+    	} catch (IOException e) {
+			throw new ReceiveMT102Fault("");
+		}
+    }
+	
 	public static void main(String[] args) {
 		try {
 			CBUtil.RTGSTransaction("AAAARS01", "BBBBRS01", new BigDecimal(

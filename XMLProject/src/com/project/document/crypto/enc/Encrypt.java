@@ -1,6 +1,7 @@
 package com.project.document.crypto.enc;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,15 +15,18 @@ import java.security.cert.CertificateException;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import org.apache.xml.security.keys.KeyInfo;
+import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
+import org.apache.xml.security.keys.KeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.project.util.DocumentUtil;
 
 //Generise tajni kljuc
 //Kriptije sadrzaj dokumenta tajnim kljucem
@@ -92,7 +96,8 @@ public class Encrypt {
 	private static SecretKey generateDataEncryptionKey() {
 
         try {
-			KeyGenerator keyGenerator = KeyGenerator.getInstance("DESede"); //Triple DES
+			KeyGenerator keyGenerator = KeyGenerator.getInstance("AES"); //Triple DES
+			keyGenerator.init(128);
 			return keyGenerator.generateKey();
 		
         } catch (NoSuchAlgorithmException e) {
@@ -115,7 +120,7 @@ public class Encrypt {
 		    EncryptedKey encryptedKey = keyCipher.encryptKey(doc, key);
 			
 		    //cipher za kriptovanje XML-a
-		    XMLCipher xmlCipher = XMLCipher.getInstance(XMLCipher.TRIPLEDES);
+		    XMLCipher xmlCipher = XMLCipher.getInstance(XMLCipher.AES_128);
 		    //inicijalizacija za kriptovanje
 		    xmlCipher.init(XMLCipher.ENCRYPT_MODE, key);
 		    
@@ -142,6 +147,23 @@ public class Encrypt {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public static void main(String[] args) {
+		javax.xml.parsers.DocumentBuilderFactory dbf=javax.xml.parsers.DocumentBuilderFactory.newInstance();
+		File f=new File("src/resource/klijenti1.xml");
+	    DocumentBuilder db;
+		try {
+			db = dbf.newDocumentBuilder();
+		    Document doc = db.parse(new java.io.FileInputStream(f));
+		    Document encryptedDoc = encryptDocument(doc);
+		    DocumentUtil.printDocument(encryptedDoc);
+		    
+		    Document decryptedDoc = Decrypt.decryptDocument(encryptedDoc);
+		    DocumentUtil.printDocument(decryptedDoc);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

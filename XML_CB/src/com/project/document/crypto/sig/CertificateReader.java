@@ -9,7 +9,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -17,15 +16,8 @@ import java.util.ResourceBundle;
  */
 public class CertificateReader {
 
-	public static final String BASE64_ENC_CERT_FILE = "./data/jovan2.cer";
-	public static final String BIN_ENC_CERT_FILE = "./data/jovan1.cer";
+	public static final String BASE64_ENC_CERT_FILE = "./data/CB.cer";
 	public static final String CLR_FILE = "./data/clr.xml";
-	
-	/* za konacnu verziju, sa pravim fajovima
-	 * String propFile = "deploy"+ID_Instance_Banke;
-	 * public static final String BASE64_ENC_CERT_FILE = ResourceBundle.getBundle(propFile).getString("cert.file");
-	 * public static final String CLR_FILE = ResourceBundle.getBundle(propFile).getString("crl.file");
-	 */
 	
 	private static List<Certificate> certificateList = new ArrayList<Certificate>();
  	

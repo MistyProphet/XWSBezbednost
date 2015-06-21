@@ -188,7 +188,7 @@ public class Banka extends Identifiable {
 		return ret;
 	}
 
-	public void obradiClearingNalog(Mt102 mt102) throws NonexistentAccountException {
+	public void obradiClearingNalog(Mt102 mt102) throws NonexistentAccountException, NumberFormatException, IOException {
 		NalogZaPlacanje nalog = null;
 		Transakcija transakcija = null;
 				
@@ -237,7 +237,7 @@ public class Banka extends Identifiable {
 	}
 	
 
-	public void obradiRTGSNalog(Mt103 mt103) throws NonexistentAccountException {
+	public void obradiRTGSNalog(Mt103 mt103) throws NonexistentAccountException, NumberFormatException, IOException {
 		NalogZaPlacanje nalog = new NalogZaPlacanje();
 		Placanje placanje = new Placanje();
 		placanje.setSifraValute(mt103.getSifraValute());
@@ -349,7 +349,7 @@ public class Banka extends Identifiable {
 				id, idRacuna);		
 	}
 	
-    public Transakcija generisiTransakcijuUplate(NalogZaPlacanje nalog) {
+    public Transakcija generisiTransakcijuUplate(NalogZaPlacanje nalog) throws NumberFormatException, IOException {
 		Transakcija transakcija = new Transakcija();
 		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
 		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
@@ -366,7 +366,7 @@ public class Banka extends Identifiable {
 		return transakcija;
     }
     
-    public Transakcija generisiTransakcijuUplate(Mt103 nalog) {
+    public Transakcija generisiTransakcijuUplate(Mt103 nalog) throws NumberFormatException, IOException {
 		Transakcija transakcija = new Transakcija();
 		String broj_rk_primaoca = nalog.getUplata().getRacunPrimaoca().getBrojRacuna();
 		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
@@ -383,7 +383,7 @@ public class Banka extends Identifiable {
 		return transakcija;
     }
     
-    public Transakcija generisiTransakcijuIsplate(NalogZaPlacanje nalog) {
+    public Transakcija generisiTransakcijuIsplate(NalogZaPlacanje nalog) throws NumberFormatException, IOException {
 		Transakcija transakcija = new Transakcija();
 		String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
 		TBankarskiRacunKlijenta racun_duznika = getSpecificAccount(broj_rk_duznika);
@@ -400,7 +400,25 @@ public class Banka extends Identifiable {
 		return transakcija;
     }
     
-    public Long getMaxTransactionID(Long idBanke, Long idRacuna){
+    public Long getMaxTransactionID(Long idBanke, Long idRacuna) throws IOException {
+    	String xQuery = "xs:integer(max(//*:Transakcija/@id))";
+    	InputStream input = null;
+		try {
+			input = RESTUtil.retrieveResource(xQuery, "Banka/00"+idBanke+"/Racuni/"+idRacuna+"/Transakcije", "UTF-8", true);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	BufferedReader br = new BufferedReader(new InputStreamReader(input));
+    	Long result = new Long(0);
+		String line = br.readLine();
+
+		if (line != null) 
+			result = Long.parseLong(line);
+
+
+    	System.out.println("!!!----> " + result);
+/*    	wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions(xQuery, "Banka/00"+idBanke+"/Racuni/"+idRacuna+"/Transakcije", wrappedResults);
     	Transakcije t = new Transakcije();
     	t = (Transakcije) RESTUtil.doUnmarshall("//*:Transakcije", "Banka/00"+idBanke.toString()+"/Racuni/"+idRacuna.toString(), t);
     	int maxID = -1;
@@ -410,9 +428,11 @@ public class Banka extends Identifiable {
     		}
     	}
     	return Long.valueOf(maxID);
+    	*/
+    	return result;
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NumberFormatException, IOException {
     	Banka b = new Banka();
     	System.out.println(b.getMaxTransactionID(Long.valueOf("1"), Long.valueOf("1")));
     }

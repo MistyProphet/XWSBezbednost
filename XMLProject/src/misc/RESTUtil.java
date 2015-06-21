@@ -79,7 +79,7 @@ public class RESTUtil<T> {
 		Transakcije ttt = new Transakcije();
 		//Generisanje 3 test transakcije
 		Transakcija t1 = new Transakcija();
-		t1.setId(new Long(1));
+		t1.setId(new Long(11));
 		TRacunKlijenta rac1 = new TRacunKlijenta();
 		rac1.setBrojRacuna("001-0000000000001-00");
 		rac1.setId(new Long(1));
@@ -106,7 +106,7 @@ public class RESTUtil<T> {
 		//objectToDB("BankaRacuni/001/1/Transakcije", t1.getId().toString(), t1);
 		
 		Transakcija t2 = new Transakcija();
-		t2.setId(new Long(2));
+		t2.setId(new Long(22));
 		TRacunKlijenta rac2 = new TRacunKlijenta();
 		rac2.setBrojRacuna("001-0000000000001-00");
 		rac2.setId(new Long(1));
@@ -456,5 +456,24 @@ public class RESTUtil<T> {
 			return false;
 		}
 	}
+	
+    public Long getMaxID(Long idBanke, String schemaName, String itemName) throws IOException {
+    	String xQuery = "xs:integer(max(//*:" + itemName + "/@id))";
+    	InputStream input = null;
+		try {
+			input = RESTUtil.retrieveResource(xQuery, schemaName, "UTF-8", true);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	BufferedReader br = new BufferedReader(new InputStreamReader(input));
+    	Long result = null;
+		String line = br.readLine();
+
+		if (line != null) 
+			result = Long.parseLong(line);
+
+    	return result;
+    }
 	
 }

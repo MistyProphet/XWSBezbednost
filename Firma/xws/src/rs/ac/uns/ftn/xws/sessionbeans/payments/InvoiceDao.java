@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.xws.sessionbeans.payments;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,10 +28,10 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 	}
 
     public List<Invoice> findInvoicesByTIN(String TIN) throws IOException {
-        List<Invoice> invoices = null;
+        List<Invoice> invoices = new ArrayList<Invoice>();
 
         invoices = (List<Invoice>) RESTUtil.doUnmarshall(
-                    "(//invoice)[supplierTIN=\"" + TIN +"\"]",
+                    "(/)[supplierTIN=\"" + TIN +"\"]",
                     "invoice",
                     invoices);
         return invoices;

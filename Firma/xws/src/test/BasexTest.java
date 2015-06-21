@@ -44,9 +44,20 @@ public class BasexTest {
         Assert.assertNotNull(invoice);
 	}
 
+    @Test
+    public void testFindAllInvoices() throws IOException, JAXBException {
+        List<Invoice> invoices = invoiceDao.findAll("invoice");
+        System.out.println("##############################");
+        System.out.println(invoices.size());
+        for(Invoice i : invoices)
+            System.out.println(i.getId());
+        if(invoices != null)
+            Assert.assertTrue(invoices.size() > 1);
+    } 
+
     @Ignore
     @Test
-    public void testFindAllInvoices() throws IOException {
+    public void testFindAllInvoicesWithTIN() throws IOException {
         List<Invoice> invoices = invoiceDao.findInvoicesByTIN("supplierTIN0");
         if(invoices != null)
             Assert.assertTrue(invoices.size() > 1);
@@ -55,7 +66,7 @@ public class BasexTest {
     @Test
     public void testFindAllInvoicesByHand() throws JAXBException, IOException {
         EntityManagerBaseX<Invoice, String> manager = null; 
-        manager = new EntityManagerBaseX<Invoice, String>("invoice", "");
+        manager = new EntityManagerBaseX<Invoice, String>("invoice", "rs.ac.uns.ftn.xws.entities.payments");
 
         System.out.println(manager.executeQuery("(/)", false));
     }

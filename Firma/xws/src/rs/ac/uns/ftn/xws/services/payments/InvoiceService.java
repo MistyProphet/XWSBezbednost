@@ -28,6 +28,8 @@ public class InvoiceService {
 	@EJB
 	private InvoiceDaoLocal invoiceDao;
 
+// ########## Gets for the invoices and the items
+ 
 	@GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Invoice> findByPIB(@PathParam("PIB") String PIB) {
@@ -70,10 +72,24 @@ public class InvoiceService {
 		return null;
     }
 
+	@GET 
+	@Path("{id}/stavke/{item_id}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public InvoiceItem findItemByID(@PathParam("PIB") String PIB, @PathParam("id") String id, @PathParam("item_id") String item_id) {
+		try {
+			return invoiceDao.findItemInInvoice(Long.parseLong(id), Long.parseLong(item_id));
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
+    }
+
+// ############### Puts and Posts and the Deletes
+
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Invoice create(Invoice entity) {
+    public Invoice createInvoice(Invoice entity) {
         //TODO biznis logika
 		Invoice retVal = null;
 		try {
@@ -84,7 +100,7 @@ public class InvoiceService {
 		}
 		return retVal;
     }
-    
+
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_XML)

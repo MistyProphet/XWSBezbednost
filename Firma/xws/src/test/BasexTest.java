@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
@@ -74,7 +73,6 @@ public class BasexTest {
         }
     }            
 
-
     @Test
     public void testUpdateInvoiceItem() throws IOException, JAXBException {
         List<Invoice> invoices = invoiceDao.findAll();
@@ -84,7 +82,7 @@ public class BasexTest {
                 Random random = new Random();
                 double val = random.nextDouble();
                 testItem.setAmount(val);
-                invoiceDao.updateInvoiceItem(testInvoice.getId(), testItem);
+                invoiceDao.updateInvoiceItem(testInvoice.getId(), testItem.getId(), testItem);
 
                 InvoiceItem result = invoiceDao.findItemInInvoice(testInvoice.getId(), testItem.getId());
                 Assert.assertNotNull(result);
@@ -92,4 +90,26 @@ public class BasexTest {
             }
         }
     }
+
+//    @Test void testCreateAndDeleteItem() throws IOException, JAXBException {
+//        List<Invoice> invoices = invoiceDao.findAll();
+//        Assert.assertNotNull(invoices);
+//
+//        InvoiceItem testItem = new InvoiceItem();
+//
+//        for (Invoice testInvoice : invoices) {
+//            invoiceDao.createInvoiceItem(testInvoice.getId(), testItem);
+//            InvoiceItem pulledItem = invoiceDao.
+//            for (InvoiceItem testItem : testInvoice.getInvoiceItems().getInvoiceItem()) {
+//                Random random = new Random();
+//                double val = random.nextDouble();
+//                testItem.setAmount(val);
+//                invoiceDao.updateInvoiceItem(testInvoice.getId(), testItem.getId(), testItem);
+//
+//                InvoiceItem result = invoiceDao.findItemInInvoice(testInvoice.getId(), testItem.getId());
+//                Assert.assertNotNull(result);
+//                Assert.assertEquals(val, result.getAmount(), 0.01);
+//            }
+//        }
+//    }
 }

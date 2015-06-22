@@ -74,7 +74,7 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 		return merge(invoice, invoiceId);
 	}
 	
-	public Invoice updateInvoiceItem(Long invoiceId, InvoiceItem item) throws IOException, JAXBException {
+	public Invoice updateInvoiceItem(Long invoiceId, Long itemID, InvoiceItem item) throws IOException, JAXBException {
 		Invoice invoice = findById(invoiceId);
 		
 		if (invoice instanceof Invoice) { 

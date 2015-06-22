@@ -100,21 +100,57 @@ public class InvoiceService {
 		}
 		return retVal;
     }
-
-    @PUT
-    @Path("{id}")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Invoice update(Invoice entity) {
-    	Invoice retVal = null;
+    
+    /**
+     * Adds a new item to the existing invoice with the ID in the URL.
+     * @param newItem The invoice item to be added
+     * @param id The ID of the invoice we're adding the item to
+     * @return Returns 201 if the supplier is a business partner and the invoice exists, 
+     * and sets Content-Location to the URL of the new invoice item.
+     * In case the supplier isn't a business partner, returns 403 Forbidden.
+     * In case the invoice doesn't exist, returns 404 Not Found.
+     * In case the invoice item passed is invalid, returns 400 Bad Request.
+     */
+    @POST
+    @Path("{id}/stavke/")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void updateInvoiceItem(InvoiceItem newItem, @PathParam("id") String id) {
+        //TODO business logic
         try {
-        	retVal = invoiceDao.merge(entity, entity.getId());
+            invoiceDao.createInvoiceItem(Long.parseLong(id), newItem);
         } catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		return retVal;
     }
 
+    @PUT
+    @Path("{id}/stavke/{item_id}")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void updateInvoiceItem(InvoiceItem newItem, @PathParam("id") String id, @PathParam("item_id") String item_id) {
+        try {
+            invoiceDao.updateInvoiceItem(Long.parseLong(id), Long.parseLong(item_id), newItem);
+        } catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+    }
+    
+    /**
+     * Deletes an invoice item with the ID in the URL.
+     * @return If the supplier is a business partner and the item exists, deletes it and returns 204 No Content.
+     * If the supplier is not a business partner, returns 403 Forbidden.
+     * If the invoice or the invoice item is not found, returns 404 Not Found.
+     */
+    @DELETE
+    @Path("{id}/stavke/{item_id}")
+    public void deleteInvoiceItemWithID(@PathParam("id") String id, @PathParam("item_id") String item_id) {
+        try {
+            invoiceDao.removeItemFromInvoice(Long.parseLong(id), Long.parseLong(item_id));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    
     @DELETE 
     @Path("{id}")
     @Produces(MediaType.TEXT_HTML)
@@ -140,21 +176,6 @@ public class InvoiceService {
 		try {
 			retVal = invoiceDao.createInvoiceItem(invoiceId, item);
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return retVal;
-    }
-    
-
-    @PUT
-    @Path("{id}/item/{itemId}")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Invoice updateInvoiceItem(@PathParam("id") Long invoiceId, InvoiceItem item) {
-    	Invoice retVal = null;
-        try {
-        	retVal = invoiceDao.updateInvoiceItem(invoiceId, item);
-        } catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 		return retVal;

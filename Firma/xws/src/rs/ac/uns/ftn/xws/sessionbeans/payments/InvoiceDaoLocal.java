@@ -19,5 +19,5 @@ public interface InvoiceDaoLocal extends GenericDaoLocal<Invoice, Long>{
 
 	public Invoice createInvoiceItem(Long invoiceId, InvoiceItem item) throws IOException, JAXBException;
 
-	public Invoice updateInvoiceItem(Long invoiceId, InvoiceItem item) throws IOException, JAXBException;
+	public Invoice updateInvoiceItem(Long invoiceId, Long itemID, InvoiceItem item) throws IOException, JAXBException;
 }

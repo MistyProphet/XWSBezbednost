@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.xws.sessionbeans.payments;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXBException;
+
+import org.apache.commons.io.IOUtils;
 
 import misc.RESTUtil;
 
@@ -27,13 +30,10 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 		super(contextPath, schemaName);
 	}
 
-    public List<Invoice> findInvoicesByTIN(String TIN) throws IOException {
+    public List<Invoice> findInvoicesByTIN(String TIN) throws IOException, JAXBException {
         List<Invoice> invoices = new ArrayList<Invoice>();
-
-        invoices = (List<Invoice>) RESTUtil.doUnmarshall(
-                    "(/)[supplierTIN=\"" + TIN +"\"]",
-                    "invoice",
-                    invoices);
+        
+        invoices = (List<Invoice>) em.runQuery("invoice", "(//invoice[supplierTIN=\"" + TIN + "\"])");
         return invoices;
     }
 

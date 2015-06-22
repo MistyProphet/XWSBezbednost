@@ -288,8 +288,8 @@ public class RESTUtil<T> {
 		builder.append(schemaName);
 		builder.append("?query=");
 		builder.append(query.replace(" ", "+"));
-		builder.append("&encoding=");
-		builder.append(encoding);
+		//builder.append("&encoding=");
+		//builder.append(encoding);
 		if (wrap) builder.append("&wrap=yes");
 
 		URL url = new URL(builder.substring(0));
@@ -363,7 +363,8 @@ public class RESTUtil<T> {
 	public static Object doUnmarshall(String query, String schema, Object o){
 		try{
 			InputStream in = RESTUtil.retrieveResource(query, schema, RequestMethod.GET);
-			JAXBContext context = JAXBContext.newInstance(o.getClass(), o.getClass());
+			//JAXBContext context = JAXBContext.newInstance(o.getClass(), o.getClass());
+			JAXBContext context = JAXBContext.newInstance("rs.ac.uns.ftn.xws.entities.payments");
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			Marshaller marshaller = context.createMarshaller();
 			// set optional properties
@@ -374,6 +375,7 @@ public class RESTUtil<T> {
 			for (String line; (line = br.readLine()) != null;) {
 				xml=xml+line+"\n";
 			}
+            System.out.println(xml);
 			StringReader reader = new StringReader(xml);
 			Object rac = (Object) unmarshaller.unmarshal(reader);
 			return rac;

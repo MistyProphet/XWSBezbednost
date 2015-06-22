@@ -1,13 +1,17 @@
 package test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import misc.RESTUtil;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,7 +27,7 @@ public class BasexTest {
 	InvoiceDaoLocal invoiceDao;
 
 	@BeforeClass
-	public static void clear() throws Exception {
+	public static void clear() {
         // CLEAR THE SCREEN
         final String ANSI_CLS = "\u001b[2J";
         final String ANSI_HOME = "\u001b[H";
@@ -34,10 +38,10 @@ public class BasexTest {
 
     @Before
     public void setUp() {
+        clear();
         invoiceDao = new InvoiceDao();
     }
 
-    @Ignore
 	@Test
 	public void testFindByID() throws JAXBException, IOException {
         Invoice invoice = invoiceDao.findById(1L);
@@ -47,27 +51,19 @@ public class BasexTest {
     @Test
     public void testFindAllInvoices() throws IOException, JAXBException {
         List<Invoice> invoices = invoiceDao.findAll("invoice");
-        System.out.println("##############################");
-        System.out.println(invoices.size());
-        for(Invoice i : invoices)
-            System.out.println(i.getId());
         if(invoices != null)
             Assert.assertTrue(invoices.size() > 1);
+        else
+            Assert.fail();
     } 
 
-    @Ignore
     @Test
-    public void testFindAllInvoicesWithTIN() throws IOException {
-        List<Invoice> invoices = invoiceDao.findInvoicesByTIN("supplierTIN0");
-        if(invoices != null)
+    public void testFindAllInvoicesWithTIN() throws IOException, JAXBException {
+        List<Invoice> invoices = invoiceDao.findInvoicesByTIN("supplierTIfN4");
+        if(invoices != null) {
             Assert.assertTrue(invoices.size() > 1);
+            for (Invoice invoice : invoices)
+                Assert.assertEquals(invoice.getSupplierTIN(), "supplierTIfN4");
+        }
     } 
-    
-    @Test
-    public void testFindAllInvoicesByHand() throws JAXBException, IOException {
-        EntityManagerBaseX<Invoice, String> manager = null; 
-        manager = new EntityManagerBaseX<Invoice, String>("invoice", "rs.ac.uns.ftn.xws.entities.payments");
-
-        System.out.println(manager.executeQuery("(/)", false));
-    }
 }

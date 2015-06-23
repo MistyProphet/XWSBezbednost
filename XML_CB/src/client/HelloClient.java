@@ -14,7 +14,6 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import com.project.cbws.CBport;
-import com.project.cbws.CBportImpl;
 import com.project.common_types.TBanka;
 import com.project.common_types.TRacunKlijenta;
 import com.project.mt102.Mt102;

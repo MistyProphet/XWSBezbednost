@@ -5,12 +5,12 @@
 
 package com.project.cbws;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
+import javax.jws.HandlerChain;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -35,6 +35,7 @@ import com.project.nalog_za_placanje.Uplata;
  */
 
 @javax.jws.WebService(serviceName = "CBservice", portName = "CBport", targetNamespace = "http://www.project.com/CBws", wsdlLocation = "WEB-INF/wsdl/Banka.wsdl", endpointInterface = "com.project.cbws.CBport")
+@HandlerChain(file = "/com/project/document/handler-chain-document.xml")
 public class CBportImpl implements CBport {
 
 	private static final Logger LOG = Logger.getLogger(CBportImpl.class

@@ -160,7 +160,7 @@ public class Encrypt {
 	
 	public static void main(String[] args) {
 		javax.xml.parsers.DocumentBuilderFactory dbf=javax.xml.parsers.DocumentBuilderFactory.newInstance();
-		File f=new File("src/resource/klijenti1.xml");
+		File f=new File("src/resources/banke.xml");
 	    DocumentBuilder db;
 		try {
 			db = dbf.newDocumentBuilder();

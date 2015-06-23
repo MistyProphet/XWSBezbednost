@@ -6,6 +6,8 @@
 package com.project.cbws;
 
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
@@ -14,9 +16,12 @@ import javax.jws.HandlerChain;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
 import misc.RESTUtil;
 
+import com.project.banka.BankaPort;
 import com.project.common_types.TBanka;
 import com.project.common_types.TRacunKlijenta;
 import com.project.mt102.Mt102;
@@ -54,7 +59,21 @@ public class CBportImpl implements CBport {
 			RESTUtil.objectToDB("MT102", mt102.getIDPoruke(), mt102,
 					"mt102.xsd");
 			CBUtil.ClearingTransaction(mt102);
-
+			
+			
+			URL wsdl;
+			try {
+				wsdl = new URL("http://localhost:8080/proj/services/Banka?wsdl");
+		    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
+		    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
+		    	Service service = Service.create(wsdl, serviceName);
+		        BankaPort centralnaBanka = service.getPort(portName, BankaPort.class);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        
 			// Service service = Service.create(new URL("wsdlbanke"),
 			// new QName("serviceNAme"));
 			// BankaPort bankaPort =

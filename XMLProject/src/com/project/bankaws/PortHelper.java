@@ -22,6 +22,8 @@ public class PortHelper {
     public static String checkNalogEx = "";
     public static Long mt103ID = Long.valueOf("1");
     public static Long mt102ID = Long.valueOf("1");
+	public static String KEY_STORE_FILE;
+	public static String KEY_STORE_PASSWORD;
     
     static {
     	current_bank = new Banka();
@@ -45,6 +47,8 @@ public class PortHelper {
     	current_bank.setPodaci_o_banci(podaci);
     	current_bank.setSWIFTCode(s);
     	current_bank.setId(i);
+    	KEY_STORE_FILE = properties.getProperty("keystore.file");
+    	KEY_STORE_PASSWORD = properties.getProperty("keystore.password");
     	
     	try {
     		mt102ID = getMaxMTID(i, "MT102");

@@ -1,9 +1,12 @@
 package com.project.document.crypto.sig;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -17,6 +20,8 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+import misc.RESTUtil;
+
 import org.apache.xml.security.exceptions.XMLSecurityException;
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.signature.XMLSignatureException;
@@ -28,9 +33,10 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.project.bankaws.PortHelper;
+
 //Potpisuje dokument, koristi se enveloped tip
 public class SignEnveloped {
-	private static final String KEY_STORE_FILE = "./data/primer.jks";
 	
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -55,11 +61,12 @@ public class SignEnveloped {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
-			ks.load(in, "primer".toCharArray());
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(PortHelper.KEY_STORE_FILE));
+			//password?
+			ks.load(in, PortHelper.KEY_STORE_PASSWORD.toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				Certificate cert = ks.getCertificate("primer");
+			if(ks.isKeyEntry(PortHelper.KEY_STORE_PASSWORD)) {
+				Certificate cert = ks.getCertificate(PortHelper.KEY_STORE_PASSWORD);
 				return cert;
 				
 			}
@@ -96,11 +103,11 @@ public class SignEnveloped {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(PortHelper.KEY_STORE_FILE));
 			ks.load(in, "primer".toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				PrivateKey pk = (PrivateKey) ks.getKey("primer", "primer".toCharArray());
+			if(ks.isKeyEntry(PortHelper.KEY_STORE_PASSWORD)) {
+				PrivateKey pk = (PrivateKey) ks.getKey(PortHelper.KEY_STORE_PASSWORD, PortHelper.KEY_STORE_PASSWORD.toCharArray());
 				return pk;
 			}
 			else
@@ -136,14 +143,12 @@ public class SignEnveloped {
 			Element rootEl = doc.getDocumentElement();
 			//kreira se signature objekat
 			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
-			sig.setId(getNextId()+"");
+			//PROVERITI
+			sig.setId(getNextId(rootEl.getNodeName(), rootEl.getElementsByTagName("ID_poruke").item(0).getNodeValue())+"");
 			
 			//Dodavanje timestampa
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
-		      formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-		        //This is for UsernameToken element
-		        int id = getNextId();
+		      formatter.setTimeZone(TimeZone.getTimeZone("GMT"));;
 		        
 		        //This is for TimeStamp element value
 		        java.util.Date created = new java.util.Date();
@@ -202,8 +207,36 @@ public class SignEnveloped {
 		}
 	}
 	
-	private static int getNextId() {
-		return 0;
+	private static int getNextId(String documentName, String docId) {
 
+        String xQuery = "//" + documentName + "[@id=\"" + docId + "\"]/text()";
+        
+        InputStream stream = null;
+		try {
+			stream = RESTUtil.retrieveResource(xQuery, "Banka/001/indeksiPoruka", "UTF-8", false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+    	int result = -1;
+		String line;
+		try {
+			line = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}
+
+		if (line != null) 
+			result = Integer.parseInt(line);
+
+		return result+1;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getNextId("mt102", "2"));
 	}
 }

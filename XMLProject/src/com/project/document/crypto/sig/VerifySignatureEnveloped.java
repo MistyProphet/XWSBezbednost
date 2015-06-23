@@ -1,5 +1,9 @@
 package com.project.document.crypto.sig;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -18,10 +22,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.project.banka.Banka;
 import com.project.exceptions.WithdrawnCertificateException;
 import com.project.exceptions.WrongIdSignatureException;
 import com.project.exceptions.WrongSignatureException;
 import com.project.exceptions.WrongTimestampException;
+import com.project.transakcije.Transakcije;
 
 //Vrsi proveru potpisa
 public class VerifySignatureEnveloped {
@@ -58,11 +64,20 @@ public class VerifySignatureEnveloped {
 			}
 			
 			if (expires==null || created==null || list.getLength()!=2 || created.after(now) || expires.after(now)) {
-				throw new WrongTimestampException();
+				WrongTimestampException ex = new WrongTimestampException();
+				ex.printStackTrace();
+				return false;
 			}
 			
-			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId()) {
-				throw new WrongIdSignatureException();
+			String documentName = doc.getElementsByTagName("body").item(0).getChildNodes().item(0).getNodeName();
+			System.out.println("!!!!!!!!!!!! DOCUMENT NAME: " + documentName);
+			String idPoruke = doc.getElementsByTagName("body").item(0).getChildNodes().item(0).getAttributes().getNamedItem("id").toString();
+			System.out.println("!!!!!!!!!!!! ID PORUKE: " + idPoruke);
+			
+			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId(documentName,idPoruke)) {
+				WrongIdSignatureException ex = new WrongIdSignatureException();
+				ex.printStackTrace();
+				return false;
 			}
 			
 			//preuzima se key info
@@ -79,7 +94,9 @@ public class VerifySignatureEnveloped {
 			        //provera da li je sertifikat povucen
 			      
 			        if (CertificateReader.checkIfWithdrown(cert)) {
-			        	throw new WithdrawnCertificateException();
+			        	WithdrawnCertificateException ex = new WithdrawnCertificateException();
+			        	ex.printStackTrace();
+			        	return false;
 			        }
 			        //ako postoji sertifikat, provera potpisa
 			        if(cert != null) 
@@ -102,10 +119,36 @@ public class VerifySignatureEnveloped {
 		}
 	}
 	
-	private static int getLastId() {
-		//RESTUtil.getMaxID(racun_duznika.getRacun().getBrojRacuna().substring(0, 3)), racun_duznika.getId()
-		//RESTUtil.getMaxID(, String schemaName, String itemName))
-		return 0;
+	private static int getLastId(String documentName, String docId) {
 
+        String xQuery = "//" + documentName + "[@id=\"" + docId + "\"]/text()";
+        
+        InputStream stream = null;
+		try {
+			stream = RESTUtil.retrieveResource(xQuery, "Banka/001/indeksiPoruka", "UTF-8", false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+    	int result = -1;
+		String line;
+		try {
+			line = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+
+		if (line != null) 
+			result = Integer.parseInt(line);
+
+		return result;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getLastId("mt103", "1"));
 	}
 }

@@ -110,7 +110,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		
 		StringBuilder builder = new StringBuilder(REST_URL);
 		builder.append(schemaName);
-		builder.append("?query=collection('invoice')");
+		builder.append("?query=collection('" + schemaName + "')");
 		builder.append("&wrap=yes");
 
 		url = new URL(builder.substring(0));

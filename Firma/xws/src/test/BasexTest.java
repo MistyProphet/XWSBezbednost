@@ -9,15 +9,20 @@ import javax.xml.bind.JAXBException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import rs.ac.uns.ftn.xws.entities.partner.Partner;
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
-import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
+import rs.ac.uns.ftn.xws.sessionbeans.partners.PartnerDao;
+import rs.ac.uns.ftn.xws.sessionbeans.partners.PartnerDaoLocal;
 import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDao;
+import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
 
 public class BasexTest {
 	InvoiceDaoLocal invoiceDao;
+    PartnerDaoLocal partnerDao;
 
 	@BeforeClass
 	public static void clear() {
@@ -32,6 +37,7 @@ public class BasexTest {
     @Before
     public void setUp() {
         invoiceDao = new InvoiceDao();
+        partnerDao = new PartnerDao();
     }
 
 	@Test
@@ -112,4 +118,43 @@ public class BasexTest {
 //            }
 //        }
 //    }
+
+    @Test 
+    public void getAllPartners() throws IOException, JAXBException {
+        List<Partner> partners = partnerDao.findAll();
+        Assert.assertNotNull(partners);
+        Assert.assertTrue(partners.size() > 0);
+    }        
+
+    @Test
+    public void addPartner() throws IOException, JAXBException {
+        Partner partner = new Partner();
+        partner.setTIN("19583492057");
+        partner.setURL("192.168.1.144");
+        partner.setName("Toster");
+
+        partnerDao.persist(partner);
+
+        List<Partner> partners = partnerDao.findAll();
+        Boolean foundPartner = false;
+        for (Partner p : partners) 
+            if (p.getTIN().equals(partner.getTIN()))
+                foundPartner = true;
+
+        Assert.assertTrue(foundPartner);
+    }
+
+    @Test 
+    public void findAllTINs() throws IOException {
+        List<String> tins = partnerDao.findAllTINs();
+        for (String s : tins)  {
+            System.out.println(s);
+            Assert.assertEquals(11, s.length());
+        }
+    }
+
+    @Test
+    public void checkIfPartnerExists() throws IOException, JAXBException {
+        Assert.assertTrue(partnerDao.isBusinessPartner("19583492057"));
+    }
 }

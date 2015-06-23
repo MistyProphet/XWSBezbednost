@@ -1,9 +1,10 @@
-package rs.ac.uns.ftn.xws.services.payments;
+ackage rs.ac.uns.ftn.xws.services.payments;
 
 
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -12,6 +13,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -24,6 +26,9 @@ import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
 public class InvoiceService {
 
 	private static Logger log = Logger.getLogger(Invoice.class);
+
+    @Context
+    private HttpServletResponse response;
 
 	@EJB
 	private InvoiceDaoLocal invoiceDao;
@@ -41,7 +46,14 @@ public class InvoiceService {
 		}
 		return retVal;
     }
-	
+    
+    /**
+     * Returns an invoice with the ID in the URL.
+     * @param id The ID of the invoice we're adding the item to
+     * @return The invoice with the selected ID.
+     * In case the supplier isn't a business partner, returns 403 Forbidden.
+     * In case the invoice doesn't exist, returns 404 Not Found.
+     */
 	@GET 
 	@Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -85,20 +97,25 @@ public class InvoiceService {
     }
 
 // ############### Puts and Posts and the Deletes
-
+    
+    /**
+     * Adds a new invoice.
+     * @param entity The invoice passed as either an xml or a json file.
+     * @return Returns 201 Created, with Content-Location pointing to the newly created invoice.
+     * In case the supplier isn't a business partner, returns 403 Forbidden.
+     * In case the invoice passed is invalid, returns 400 Bad Request.
+     */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Invoice createInvoice(Invoice entity) {
         //TODO biznis logika
-		Invoice retVal = null;
+        Invoice retVal;
 		try {
 			System.out.println("entity: "+entity);
 			retVal = invoiceDao.persist(entity);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		return retVal;
     }
     
     /**
@@ -114,7 +131,7 @@ public class InvoiceService {
     @POST
     @Path("{id}/stavke/")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void updateInvoiceItem(InvoiceItem newItem, @PathParam("id") String id) {
+    public void createInvoiceItem(InvoiceItem newItem, @PathParam("id") String id) {
         //TODO business logic
         try {
             invoiceDao.createInvoiceItem(Long.parseLong(id), newItem);
@@ -123,6 +140,14 @@ public class InvoiceService {
 		}
     }
 
+    /**
+     * Modifies an existing invoice item with the invoice and the item IDs in the URL
+     * @return If the supplier is a business partner and the invoice an the item exist,
+     * returns 200 OK.
+     * In case the supplier isn't a business partner, returns 403 Forbidden.
+     * In case the invoice or the item doesn't exist, returns 404 Not Found.
+     * In case the invoice item passed is invalid, returns 400 Bad Request.
+     */
     @PUT
     @Path("{id}/stavke/{item_id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})

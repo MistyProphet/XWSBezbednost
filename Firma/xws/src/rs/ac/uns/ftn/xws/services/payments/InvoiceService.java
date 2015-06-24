@@ -1,10 +1,10 @@
-ackage rs.ac.uns.ftn.xws.services.payments;
-
+package rs.ac.uns.ftn.xws.services.payments;
 
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,6 +13,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -21,7 +23,9 @@ import org.apache.log4j.Logger;
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
+import rs.ac.uns.ftn.xws.util.ValidateSupplier;
 
+@ValidateSupplier
 @Path("/partneri/{PIB}/fakture")
 public class InvoiceService {
 
@@ -34,9 +38,15 @@ public class InvoiceService {
 	private InvoiceDaoLocal invoiceDao;
 
 // ########## Gets for the invoices and the items
- 
+    
+    /**
+     * Returns a list of invoices of the supplier the PIN in the URL.
+     * @return A list of suppliers invoices, as an XML or JSON.
+     * In case the supplier isn't a business partner, returns 403 Forbidden.
+     */
 	@GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @ValidateSupplier
     public List<Invoice> findByPIB(@PathParam("PIB") String PIB) {
 		List<Invoice> retVal = null;
 		try {
@@ -107,12 +117,10 @@ public class InvoiceService {
      */
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Invoice createInvoice(Invoice entity) {
-        //TODO biznis logika
-        Invoice retVal;
+    public void createInvoice(Invoice entity) {
 		try {
 			System.out.println("entity: "+entity);
-			retVal = invoiceDao.persist(entity);
+			invoiceDao.persist(entity);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -217,5 +225,4 @@ public class InvoiceService {
     	}
     	return "ok";
     }
-    
 }

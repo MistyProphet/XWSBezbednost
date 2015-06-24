@@ -54,7 +54,6 @@ public class PartnerDao extends GenericDao<Partner, Long> implements PartnerDaoL
 
     public Boolean isBusinessPartner(String TIN) throws IOException, JAXBException {
         List<Partner> partners = em.runQuery("partner", "(//Partner[TIN=\"" + TIN + "\"])");
-        System.out.println("size   : " + partners.size());
         if (partners.size() > 0)
             return true;
         return false;

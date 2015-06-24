@@ -9,7 +9,6 @@ import javax.xml.bind.JAXBException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import rs.ac.uns.ftn.xws.entities.partner.Partner;
@@ -129,7 +128,7 @@ public class BasexTest {
     @Test
     public void addPartner() throws IOException, JAXBException {
         Partner partner = new Partner();
-        partner.setTIN("19583492057");
+        partner.setTIN("supplierTIfN4");
         partner.setURL("192.168.1.144");
         partner.setName("Toster");
 
@@ -155,6 +154,6 @@ public class BasexTest {
 
     @Test
     public void checkIfPartnerExists() throws IOException, JAXBException {
-        Assert.assertTrue(partnerDao.isBusinessPartner("19583492057"));
+        Assert.assertTrue(partnerDao.isBusinessPartner("supplierTIfN4"));
     }
 }

@@ -40,7 +40,6 @@ import com.project.nalog_za_placanje.Uplata;
  */
 
 @javax.jws.WebService(serviceName = "CBservice", portName = "CBport", targetNamespace = "http://www.project.com/CBws", wsdlLocation = "WEB-INF/wsdl/Banka.wsdl", endpointInterface = "com.project.cbws.CBport")
-@HandlerChain(file = "/com/project/document/handler-chain-document.xml")
 public class CBportImpl implements CBport {
 
 	private static final Logger LOG = Logger.getLogger(CBportImpl.class
@@ -62,40 +61,40 @@ public class CBportImpl implements CBport {
 			
 			
 			URL wsdl;
-			try {
 				wsdl = new URL("http://localhost:8080/proj/services/Banka?wsdl");
 		    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
 		    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
 		    	Service service = Service.create(wsdl, serviceName);
-		        BankaPort centralnaBanka = service.getPort(portName, BankaPort.class);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
 	        
 	        
-			// Service service = Service.create(new URL("wsdlbanke"),
-			// new QName("serviceNAme"));
-			// BankaPort bankaPort =
-			// service.getPort(new
-			// QName(BankaPort.class.getAnnotation(WebService.class).name()),BankaPort.class);
-			Mt910 mt910 = new Mt910(mt102);
-		
-			mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
-			// bankaPort.receiveMT910(mt910);
-			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
-					"mt910.xsd");
-			// bankaPort.receiveMT102(mt102);
-			Mt900Clearing mt900 = new Mt900Clearing(mt102);
-			mt900.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT900")+1));
-			//mt900.setIDPoruke("1");
-			RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
-					"mt900.xsd");
-			return mt900;
+				// Service service = Service.create(new URL("wsdlbanke"),
+				// new QName("serviceNAme"));
+				// BankaPort bankaPort =
+				// service.getPort(new
+				// QName(BankaPort.class.getAnnotation(WebService.class).name()),BankaPort.class);
+				Mt910 mt910 = new Mt910(mt102);
+			
+				mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
+				// bankaPort.receiveMT910(mt910);
+				RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
+						"mt910.xsd");
+				bankaPort.receiveMT102(mt102);
+				Mt900Clearing mt900 = new Mt900Clearing(mt102);
+				mt900.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT900")+1));
+				//mt900.setIDPoruke("1");
+				RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
+						"mt900.xsd");
+				return mt900;
 
 		} catch (ReceiveMT102Fault e) {
 			throw e;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getCause());
+			System.out.println(e.getMessage());
 		}
+		return null;
 	}
 
 	/*
@@ -133,9 +132,15 @@ public class CBportImpl implements CBport {
 			// BankaPort bankaPort =
 			// service.getPort(new
 			// QName(BankaPort.class.getAnnotation(WebService.class).name()),BankaPort.class);
-
+			URL wsdl;
+			wsdl = new URL("http://localhost:8080/proj/services/Banka?wsdl");
+	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
+	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
+	    	Service service = Service.create(wsdl, serviceName);
+	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
 			Mt910 mt910 = new Mt910(mt103);
-			// bankaPort.receiveMT910(mt910);
+			bankaPort.receiveMT910(mt910);
+			
 			mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
 			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
 					"mt910.xsd");
@@ -152,6 +157,8 @@ public class CBportImpl implements CBport {
 			throw e;
 		} catch (ReceiveMT102Fault e) {
 			throw new ReceiveMT103Fault(e.getMessage());
+		} catch (Exception e) {
+			throw new ReceiveMT103Fault(e.getMessage());
 		}
 	}
 
@@ -161,13 +168,13 @@ public class CBportImpl implements CBport {
 		request.setIDPoruke("1");
 		PodaciOBankama pb = new PodaciOBankama();
 		TBanka duznik = new TBanka();
-		duznik.setBrojRacunaBanke("111-1231231231231-32");
+		duznik.setBrojRacunaBanke("001-0000000000001-00");
 		duznik.setSWIFTKod("AAAARS01");
 		duznik.setId(new Long(111));
 		duznik.setNazivBanke("UniCredit");
 		TBanka poverioc = new TBanka();
-		poverioc.setBrojRacunaBanke("111-1231555551231-32");
-		poverioc.setSWIFTKod("BBBBRS01");
+		poverioc.setBrojRacunaBanke("001-0000000000001-00");
+		poverioc.setSWIFTKod("AAAARS01");
 		poverioc.setNazivBanke("Raiffeisen");
 		poverioc.setId(new Long(112));
 		pb.setBankaDuznika(duznik);
@@ -191,12 +198,11 @@ public class CBportImpl implements CBport {
 		Mt900RTGS response;
 
 		Mt102 mt102 = new Mt102();
-		mt102.setIDPoruke("2");
 		mt102.setBankaDuznika(duznik);
 		mt102.setBankaPoverioca(poverioc);
 		mt102.setIDPoruke("434");
 
-		mt102.setUkupanIznos((new BigDecimal(646)));
+		mt102.setUkupanIznos((new BigDecimal(323)));
 		ArrayList<Placanje> placanja = new ArrayList<Placanje>();
 		Placanje placanje = new Placanje();
 		placanje.setUplata(u);
@@ -204,14 +210,6 @@ public class CBportImpl implements CBport {
 		placanje.setSifraValute("RSD");
 		placanja.add(placanje);
 		
-		
-		placanje = new Placanje();
-		u.getRacunPrimaoca().setBrojRacuna("111-1231555551231-32");
-		placanje.setUplata(u);
-
-		placanje.setIDPoruke("1");
-		placanje.setSifraValute("RSD");
-		placanja.add(placanje);
 		
 		mt102.setPlacanje(placanja);
 		GregorianCalendar cal = new GregorianCalendar();
@@ -223,7 +221,7 @@ public class CBportImpl implements CBport {
 					.newXMLGregorianCalendar(cal);
 			mt102.setDatum(now);
 			mt102.getPlacanje().get(0).getUplata().setDatumNaloga(now);
-			mt102.getPlacanje().get(1).getUplata().setDatumNaloga(now);
+			//mt102.getPlacanje().get(1).getUplata().setDatumNaloga(now);
 			mt102.setDatumValute(now);
 		} catch (DatatypeConfigurationException e1) {
 			// TODO Auto-generated catch block

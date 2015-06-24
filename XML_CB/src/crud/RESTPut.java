@@ -2,6 +2,7 @@ package crud;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -16,6 +17,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import misc.RESTUtil;
+import misc.RequestMethod;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -50,7 +52,11 @@ public final class RESTPut {
 		/* URL konekcije ka konkretnom resursu - semi baze */
 		URL url = new URL(REST_URL + "CB/"+baza);
 		System.out.println("\n* URL: " + url);
-		InputStream in = url.openStream();
+		
+
+		
+		InputStream in = RESTUtil.retrieveResource("//racuni_banaka", "CB/Racuni", "UTF-8", false);
+		//InputStream in = conn.getInputStream();
 		Document doc = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder().parse(in);
 

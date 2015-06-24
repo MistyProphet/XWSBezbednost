@@ -2,7 +2,7 @@
 <racuni_banaka xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="file:/C:/Users/Geek/Documents/XWSBezbednost/XMLProject/WEB-INF/scheme/racuni_banaka.xsd">
     <kod_banke swift='AAAARS01'>
-        <racun_banke>111-1231231231231-32</racun_banke>
+        <racun_banke>001-1231231231231-32</racun_banke>
         <id>001</id>
         <naziv>A Banka</naziv>
     </kod_banke>

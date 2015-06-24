@@ -58,6 +58,7 @@ public class RESTUtil {
 		createSchema("MT102");
 		createSchema("MT900");
 		createSchema("MT910");
+		createSchema("indeksiPoruka");
 		createResource("CB", "Racuni", new FileInputStream(new File(file, "banke.xml")));
 		
 	/*	printStream(retrieveResource("(//city/name)[position()= 10 to 15]", "factbook", RequestMethod.GET));
@@ -101,6 +102,10 @@ public class RESTUtil {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		conn.setRequestMethod(RequestMethod.PUT);
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
 		int responseCode = printResponse(conn);
 		conn.disconnect();
 		return responseCode;
@@ -112,6 +117,10 @@ public class RESTUtil {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		conn.setRequestMethod(RequestMethod.PUT);
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
 		
 		/* Preuzimanje output stream-a iz otvorene konekcije */
 		OutputStream out = new BufferedOutputStream(conn.getOutputStream());
@@ -144,6 +153,10 @@ public class RESTUtil {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod(RequestMethod.PUT);
 		conn.setDoOutput(true);
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
 		OutputStream out = conn.getOutputStream();
 		marshaller.marshal(o,out );
 		
@@ -190,6 +203,10 @@ public class RESTUtil {
 		conn.setDoOutput(true);
 		conn.setRequestMethod(RequestMethod.POST);
 		conn.setRequestProperty("Content-Type", "application/query+xml");
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
 		OutputStream out = conn.getOutputStream();
 		out.write(xquery.getBytes("UTF-8"));
 		out.close();
@@ -218,6 +235,10 @@ public class RESTUtil {
 
 		URL url = new URL(builder.substring(0));
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
 
 		/* Response kod vracen od strane servera */
 		int responseCode = printResponse(conn);
@@ -239,6 +260,10 @@ public class RESTUtil {
 		URL url = new URL(REST_URL + schemaName + "/" + resourceId);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod(RequestMethod.DELETE);
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
 		int responseCode = printResponse(conn);
 		conn.disconnect();
 		return responseCode;

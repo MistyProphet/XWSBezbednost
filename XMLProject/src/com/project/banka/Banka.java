@@ -182,7 +182,7 @@ public class Banka extends Identifiable {
 				sum.add(nalog.getPlacanje().getUplata().getIznos());
 			}
 			mt102.setUkupanIznos(sum);
-			mt102.setId(Long.parseLong(PortHelper.mt102ID.toString()));
+			mt102.setIDPoruke(PortHelper.mt102ID.toString());
 			PortHelper.mt102ID++;
 		}
 		return ret;

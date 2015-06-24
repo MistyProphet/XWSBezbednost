@@ -86,7 +86,7 @@
     
     <wsdl:service name="CBservice">
         <wsdl:port name="CBport" binding="ws:CBbinding">
-            <soap:address location="http://localhost:8081/CBport"/>
+            <soap:address location="http://localhost:8080/CBport"/>
         </wsdl:port>
     </wsdl:service>
     

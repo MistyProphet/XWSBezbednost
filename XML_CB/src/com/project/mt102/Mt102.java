@@ -286,9 +286,12 @@ public class Mt102 {
         return this.placanje;
     }
 
-	public void setPlacanje(List<Placanje> placanje) {
-		this.placanje = placanje;
-	}
-
-
+    public void setPlacanje(ArrayList<Placanje> placanje) {
+        if (this.placanje == null) {
+        	this.placanje = new ArrayList<Placanje>();
+        }
+        for(Placanje p: placanje){
+        	this.placanje.add(p);
+        }
+    }
 }

@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.project.banka.Identifiable;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -38,7 +40,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "hitno"
 })
 @XmlRootElement(name = "Nalog_Za_Placanje")
-public class NalogZaPlacanje {
+public class NalogZaPlacanje extends Identifiable{
 
     @XmlElement(name = "Placanje", required = true)
     protected Placanje placanje;
@@ -111,5 +113,17 @@ public class NalogZaPlacanje {
     public void setHitno(boolean value) {
         this.hitno = value;
     }
+    
+    @Override
+	public Long getId() {
+		return placanje.getId();
+	}
 
+	@Override
+	public void setId(Long value) {
+		if(placanje == null){
+			placanje = new Placanje();
+		}
+		this.placanje.setId(value);
+	}
 }

@@ -53,7 +53,14 @@ public final class RESTPost {
 		conn.setRequestMethod(RequestMethod.POST);
 		/* Postavljanje Content-Type u header-u HTTP request-a */
 		conn.setRequestProperty("Content-Type", "application/query+xml"); //u pitanju je raw xml
+		
 
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
+
+		
 		// Get and cache output stream
 		OutputStream out = conn.getOutputStream();
 

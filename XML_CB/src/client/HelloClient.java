@@ -32,7 +32,7 @@ public class HelloClient {
 		URL wsdlLocation;
 		try {
 			wsdlLocation = new URL(
-					"http://localhost:8081/vezbe-wsdl-ws/services/CB?wsdl");
+					"http://localhost:8080/projCB/services/CB?wsdl");
 
 			QName serviceName = new QName("http://www.project.com/CBws",
 					"CBservice");

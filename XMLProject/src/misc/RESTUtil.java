@@ -72,7 +72,7 @@ public class RESTUtil<T> {
 
 		createResource("Banka/001", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
 		createResource("Banka/001", "MT103", new FileInputStream(new File(file, "MT103.xml")));
-		createResource("Banka/001", "MT102", new FileInputStream(new File(file, "MT102.xml")));
+		//createResource("Banka/001", "MT102", new FileInputStream(new File(file, "MT102.xml")));
 		createResource("Banka/001", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/001", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/001", "MT910", new FileInputStream(new File(file, "MT910.xml")));
@@ -405,6 +405,7 @@ public class RESTUtil<T> {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			for (String line; (line = br.readLine()) != null;) {
 				xml=xml+line+"\n";
+				System.out.println(line);
 			}
 			StringReader reader = new StringReader(xml);
 			Object rac = (Object) unmarshaller.unmarshal(reader);

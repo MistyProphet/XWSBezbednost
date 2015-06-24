@@ -33,6 +33,10 @@ public final class RESTGet {
 		/* HTTP request je po defaultu GET, tako da to ne treba explicitno naznaciti. */
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		//conn.setRequestMethod(RequestMethod.GET);
+		String userpass = "admin:admin";
+		String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+		conn.setRequestProperty ("Authorization", basicAuth);
+		conn.connect();
 
 		/* Response kod vracen od strane servera */
 		int responseCode = RESTUtil.printResponse(conn);

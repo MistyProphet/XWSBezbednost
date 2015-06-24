@@ -81,7 +81,6 @@ public class PortHelper {
     
     public static void main(String[] args) {
     	Mt102 mt102 = new Mt102();
-    	mt102.setId(Long.parseLong("1"));
     	mt102.setIDPoruke("314");
     	mt102.setSifraValute("RSD");
     	mt102.setUkupanIznos(BigDecimal.valueOf(200));

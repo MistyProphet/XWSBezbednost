@@ -6,8 +6,8 @@
             <Vlasnik>Pera Peric</Vlasnik>
             <Broj_Racuna>001-0000000000001-00</Broj_Racuna>
         </Racun>
-        <Stanje xmlns="http://www.project.com/common_types">10000</Stanje>
-        <Raspoloziva_sredstva xmlns="http://www.project.com/common_types">9000</Raspoloziva_sredstva>
+        <Stanje xmlns="http://www.project.com/common_types">500000</Stanje>
+        <Raspoloziva_sredstva xmlns="http://www.project.com/common_types">500000</Raspoloziva_sredstva>
         <Valuta xmlns="http://www.project.com/common_types">RSD</Valuta>
     </Racun>
     <Racun>

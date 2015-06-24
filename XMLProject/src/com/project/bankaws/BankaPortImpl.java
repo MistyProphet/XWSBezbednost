@@ -7,12 +7,16 @@
 package com.project.bankaws;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -21,6 +25,8 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -32,15 +38,21 @@ import javax.xml.ws.Service;
 import misc.RESTUtil;
 
 import org.apache.commons.io.IOUtils;
+import org.basex.server.Log;
 
+import com.project.banka.Banka;
+import com.project.banka.RTGSProccessing;
 import com.project.banke_racuni.RacuniBanaka;
 import com.project.banke_racuni.RacuniBanaka.KodBanke;
+import com.project.common_types.Status;
+import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TRacunKlijenta;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
 import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
+import com.project.mt103.Mt103.PodaciOBankama;
 import com.project.mt900.Mt900Clearing;
 import com.project.mt900.Mt900RTGS;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
@@ -68,7 +80,6 @@ import com.project.util.Util;
                       targetNamespace = "http://www.project.com/BankaWS",
                       wsdlLocation = "WEB-INF/wsdl/Banka.wsdl",
                       endpointInterface = "com.project.bankaws.BankaPort")
-@HandlerChain(file = "/com/project/document/handler-chain-document.xml")
 public class BankaPortImpl implements BankaPort {
 
     private static final Logger LOG = Logger.getLogger(BankaPortImpl.class.getName());
@@ -157,7 +168,7 @@ public class BankaPortImpl implements BankaPort {
 			Transakcija transakcija = null;
 			
 			Transakcije wrappedResults = new Transakcije();
-			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+			wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
 			
 			transakcija = PortHelper.current_bank.generisiTransakcijuUplate(temp);
 			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
@@ -192,15 +203,19 @@ public class BankaPortImpl implements BankaPort {
     public com.project.common_types.Status receiveMT102(com.project.mt102.Mt102 mt102) throws ReceiveMT102Fault    { 
         LOG.info("Executing operation receiveMT102");
         try {
-        	PortHelper.current_bank.obradiClearingNalog(mt102);
-			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT102", mt102.getIDPoruke(), mt102);
+        	System.out.println(PortHelper.current_bank.getAccounts().size());
+        	System.out.println(PortHelper.current_bank.getId());
+        	//RESTUtil.objectToDB("Banka/SHIT", mt102.getIDPoruke(), mt102.getIDPoruke().toString());
+			//RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT102", mt102.getIDPoruke(), mt102);
+			
+        	//PortHelper.current_bank.obradiClearingNalog(mt102);
 	        System.out.println(mt102);
 	        com.project.common_types.Status _return = new com.project.common_types.Status();
 	        _return.setStatusText("Clearing proccessed.");
 	        return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
-            throw new ReceiveMT102Fault(ex.getMessage());
+            throw new ReceiveMT102Fault("Fuuu");
         }
         //throw new ReceiveMT102Fault("receiveMT102fault...");
     }
@@ -283,12 +298,12 @@ public class BankaPortImpl implements BankaPort {
     					transakcijaPrimalac.setStanjePosleTransakcije(racun_primaoca.getStanje());
     					
     					Transakcije wrappedResults = new Transakcije();
-    					wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+    					wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
     					wrappedResults.getTransakcija().add(transakcijaPrimalac);
     					RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), "Transakcije", wrappedResults);
     					
     					Transakcije wrappedResults2 = new Transakcije();
-    					wrappedResults2 = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), wrappedResults2);
+    					wrappedResults2 = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), wrappedResults2);
     					wrappedResults2.getTransakcija().add(transakcijaDuznik);
     					RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), "Transakcije", wrappedResults2);
     					
@@ -340,7 +355,7 @@ public class BankaPortImpl implements BankaPort {
         		//spustanje mt103 u bazu
         		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT103", rtgsNalog.getId().toString(), rtgsNalog);
         		//slanje MT103
-        		URL wsdl = new URL("http://localhost:8080/XML_CB/services/Banka?wsdl");
+        		URL wsdl = new URL("http://localhost:8080/projCB/services/CB?wsdl");
     	    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
     	    	QName portName = new QName("http://www.project.com/CBws", "CBport");
     	    	
@@ -353,7 +368,7 @@ public class BankaPortImpl implements BankaPort {
 
     				transakcijaDuznik.setStanjePosleTransakcije(racun_duznika.getStanje());
             		Transakcije wrappedResults = new Transakcije();
-    				wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), wrappedResults);
+    				wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), wrappedResults);
     				wrappedResults.getTransakcija().add(transakcijaDuznik);
     				RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), "Transakcije", wrappedResults);
     				
@@ -509,6 +524,7 @@ public class BankaPortImpl implements BankaPort {
     }
     
     public static void main(String[] args) {
+    	/*
     	//test area
     	
     	BankaPortImpl b = new BankaPortImpl();
@@ -533,7 +549,7 @@ public class BankaPortImpl implements BankaPort {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	u.setIznos(BigDecimal.valueOf(350.0));
+    	u.setIznos(BigDecimal.valueOf(350000.0));
     	u.setModelOdobrenja(12);
     	u.setModelZaduzenja(12);
     	u.setPozivNaBrojOdobrenja("12335678912345678912");
@@ -544,23 +560,113 @@ public class BankaPortImpl implements BankaPort {
     	t1.setVlasnik("Pera Peric");
     	u.setRacunDuznika(t1);
     	TRacunKlijenta t2 = new TRacunKlijenta();
-    	t2.setBrojRacuna("001-0000000000002-00");
-    	t2.setId(Long.parseLong("2"));
+    	t2.setBrojRacuna("003-0000000000001-00");
+    	t2.setId(Long.parseLong("1"));
     	t2.setVlasnik("Mika Mikic");
     	u.setRacunPrimaoca(t2);
     	u.setSvrhaPlacanja("Eto 'nako");
     	p.setUplata(u);
     	novi.setPlacanje(p);
-    	//Status s;
+    	Status s;
 		try {
-			//s = b.receiveNalog(novi);
-	    	//System.out.println(s.getStatusText());
-			System.out.println(b.checkNalog(novi));
+			s = b.receiveNalog(novi);
+	    	System.out.println(s.getStatusText());
+			//System.out.println(b.checkNalog(novi));
 			//b.receiveNalog(novi);
 			System.out.println("Done.");
 		} catch (Exception e) {
 			e.printStackTrace();
+		}*/
+    	
+    	/*
+		TBanka duznik = new TBanka();
+		duznik.setBrojRacunaBanke("001-0000000000001-00");
+		duznik.setSWIFTKod("AAAARS01");
+		duznik.setId(new Long(111));
+		duznik.setNazivBanke("UniCredit");
+		TBanka poverioc = new TBanka();
+		poverioc.setBrojRacunaBanke("001-0000000000001-00");
+		poverioc.setSWIFTKod("AAAARS01");
+		poverioc.setNazivBanke("Raiffeisen");
+		poverioc.setId(new Long(112));
+		
+    	Mt102 mt102 = new Mt102();
+		mt102.setIDPoruke("1");
+		mt102.setBankaDuznika(duznik);
+		mt102.setBankaPoverioca(poverioc);
+		mt102.setIDPoruke("434");
+		
+		Uplata u = new Uplata();
+		u.setIznos(new BigDecimal(323));
+		u.setModelOdobrenja(new Long(97));
+		u.setModelZaduzenja(new Long(97));
+		u.setPozivNaBrojOdobrenja("22222222222222222222");
+		u.setPozivNaBrojZaduzenja("22222222222222222222");
+		u.setSvrhaPlacanja("svrha placanja");
+		
+		mt102.setUkupanIznos((new BigDecimal(323)));
+		ArrayList<Placanje> placanja = new ArrayList<Placanje>();
+		Placanje placanje = new Placanje();
+		placanje.setUplata(u);
+		placanje.setIDPoruke("1");
+		placanje.setSifraValute("RSD");
+		placanja.add(placanje);
+		
+		
+		mt102.setPlacanje(placanja);
+		GregorianCalendar cal = new GregorianCalendar();
+		DatatypeFactory datatypeFactory;
+		try {
+			datatypeFactory = DatatypeFactory.newInstance();
+
+			XMLGregorianCalendar now = datatypeFactory
+					.newXMLGregorianCalendar(cal);
+			mt102.setDatum(now);
+			mt102.getPlacanje().get(0).getUplata().setDatumNaloga(now);
+			//mt102.getPlacanje().get(1).getUplata().setDatumNaloga(now);
+			mt102.setDatumValute(now);
+		} catch (DatatypeConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		mt102.setSifraValute("RSD");
+		//RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT102", "1", mt102);
+		mt102 = (Mt102) RESTUtil.doUnmarshall("//*:mt102", "Banka/001/MT102/1", mt102);
+		*/
+    	PortHelper.current_bank = new Banka();
+    	String propFile = "deploy"+PortHelper.ID_Instance_Banke;
+    	Properties properties = new Properties();
+    	String s = "";
+	    try {
+	      properties.load(new FileInputStream(propFile+".properties"));
+	      s = properties.getProperty("swift.code");
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    }
+    	Long i = Long.parseLong(Integer.toString(PortHelper.ID_Instance_Banke));
+    	TBanka podaci = new TBanka();
+    	podaci.setSWIFTKod(s);
+    	podaci.setId(PortHelper.current_bank.getId());
+    	String accNum =  properties.getProperty("account.number");
+    	podaci.setBrojRacunaBanke(accNum);
+    	String bName = properties.getProperty("bank.name");
+    	podaci.setNazivBanke(bName);
+    	PortHelper.current_bank.setPodaci_o_banci(podaci);
+    	PortHelper.current_bank.setSWIFTCode(s);
+    	PortHelper.current_bank.setId(i);
+    	PortHelper.KEY_STORE_FILE = properties.getProperty("keystore.file");
+    	PortHelper.KEY_STORE_PASSWORD = properties.getProperty("keystore.password");
+    	
+    	try {
+    		PortHelper.mt102ID = PortHelper.getMaxMTID(i, "MT102");
+    		PortHelper.mt103ID = PortHelper.getMaxMTID(i, "MT103");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	PortHelper.current_bank.init();
+    	PortHelper.rtgsObrada = new RTGSProccessing();
+    	
     }
 
 }

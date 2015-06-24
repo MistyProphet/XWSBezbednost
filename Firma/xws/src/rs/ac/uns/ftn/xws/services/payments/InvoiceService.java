@@ -1,8 +1,10 @@
 package rs.ac.uns.ftn.xws.services.payments;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -17,6 +19,7 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 
@@ -46,14 +49,9 @@ public class InvoiceService {
      */
 	@GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @ValidateSupplier
-    public List<Invoice> findByPIB(@PathParam("PIB") String PIB) {
+    public List<Invoice> findByPIB(@PathParam("PIB") String PIB) throws Exception {
 		List<Invoice> retVal = null;
-		try {
-			retVal = invoiceDao.findInvoicesByTIN(PIB);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
+        retVal = invoiceDao.findInvoicesByTIN(PIB);
 		return retVal;
     }
     
@@ -67,15 +65,11 @@ public class InvoiceService {
 	@GET 
 	@Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Invoice findById(@PathParam("PIB") String PIB, @PathParam("id") String id) {
+    public Invoice findById(@PathParam("PIB") String PIB, @PathParam("id") String id) throws Exception {
 		Invoice retVal = null;
-		try {
-			retVal = invoiceDao.findById(Long.parseLong(id));
-            if (retVal.getSupplierTIN().equals(PIB))
-                return retVal;
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
+		retVal = invoiceDao.findById(Long.parseLong(id));
+        if (retVal.getSupplierTIN().equals(PIB))
+            return retVal;
 		return null;
     }
     

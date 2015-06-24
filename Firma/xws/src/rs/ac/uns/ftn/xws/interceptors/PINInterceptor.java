@@ -35,8 +35,12 @@ public class PINInterceptor {
         for (int i=0; i< parts.length; i++)
             if (parts[i].equals("partneri") && parts.length > i+1) {
                 if (!partnerDao.isBusinessPartner(parts[i+1])) {
-                    System.out.println(parts[i+1]);
-                    throw new ServiceException("Partner does not exist. ", Status.FORBIDDEN);
+                    if (request.getMethod().equals("POST") || 
+                        request.getMethod().equals("PUT")  ||
+                        request.getMethod().equals("DELETE"))
+                            throw new ServiceException("Partner does not exist. ", Status.FORBIDDEN);
+                    else if (request.getMethod().equals("GET"))
+                        throw new ServiceException("Resource not found. ", Status.NOT_FOUND);
                 }
             }
 		Object result = context.proceed();

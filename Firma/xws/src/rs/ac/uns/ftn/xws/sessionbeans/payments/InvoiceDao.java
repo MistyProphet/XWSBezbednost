@@ -17,9 +17,11 @@ import misc.RESTUtil;
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDao;
+import rs.ac.uns.ftn.xws.util.FourOhFour;
 
 @Stateless
 @Local(InvoiceDaoLocal.class)
+@FourOhFour
 public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoLocal{
 
 	public static final String contextPath = "rs.ac.uns.ftn.xws.entities.payments";
@@ -30,6 +32,7 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 		super(contextPath, schemaName);
 	}
 
+    @FourOhFour
     public List<Invoice> findInvoicesByTIN(String TIN) throws IOException, JAXBException {
         List<Invoice> invoices = new ArrayList<Invoice>();
         

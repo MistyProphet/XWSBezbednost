@@ -56,7 +56,7 @@ public class InvoiceService {
         try {
             retVal = invoiceDao.findInvoicesByTIN(PIB);
 		    return retVal;
-        } catch (IOException | JAXBException e) {
+        } catch (Exception e) {
             log.error(e);
             return null;
         }
@@ -79,12 +79,8 @@ public class InvoiceService {
             if (retVal.getSupplierTIN().equals(PIB))
                 return retVal;
 		    return null;
-        } catch (IOException | JAXBException e) {
+        } catch (Exception e) {
             log.error(e);
-        } catch (NotFoundException e) {
-            response.setStatus(404);        
-        } catch (BadRequestException e) {
-            response.setStatus(400);
         }
         return null;
     }

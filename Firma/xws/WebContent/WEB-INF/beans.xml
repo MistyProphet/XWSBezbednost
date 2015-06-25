@@ -5,7 +5,8 @@
 	<interceptors>
     	<class>rs.ac.uns.ftn.xws.interceptors.AuthenticationInterceptor</class>
     	<class>rs.ac.uns.ftn.xws.interceptors.PINInterceptor</class>
-    	<class>rs.ac.uns.ftn.xws.interceptors.EmptyResponseInterceptor</class>
+        <!--<class>rs.ac.uns.ftn.xws.interceptors.EmptyResponseInterceptor</class>-->
+        <!--<class>rs.ac.uns.ftn.xws.interceptors.PaymentServiceInterceptor</class>-->
 	</interceptors>
 
 </beans>

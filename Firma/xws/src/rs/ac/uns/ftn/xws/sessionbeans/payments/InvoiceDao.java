@@ -21,7 +21,7 @@ import rs.ac.uns.ftn.xws.util.FourOhFour;
 
 @Stateless
 @Local(InvoiceDaoLocal.class)
-@FourOhFour
+//@FourOhFour
 public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoLocal{
 
 	public static final String contextPath = "rs.ac.uns.ftn.xws.entities.payments";

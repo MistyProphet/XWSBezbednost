@@ -192,15 +192,15 @@ public class Banka extends Identifiable {
     		transakcija = generisiTransakcijuUplate(nalog);
 
     		if(racun_primaoca != null){
-    			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
-    			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
-    			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(placanje.getUplata().getIznos()));
-    			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
+    			transakcija.setStanjePreTransakcije(new BigDecimal(racun_primaoca.getStanje()));
+    			racun_primaoca.setStanje(placanje.getUplata().getIznos().doubleValue()+racun_primaoca.getStanje());
+    			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva()+placanje.getUplata().getIznos().doubleValue());
+    			transakcija.setStanjePosleTransakcije(new BigDecimal(racun_primaoca.getStanje()));
     			
     			Transakcije wrappedResults = new Transakcije();
-    			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+    			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getRacun().getId(), wrappedResults);
     			wrappedResults.getTransakcija().add(transakcija);
-    			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), "Transakcije", wrappedResults);
+    			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getRacun().getId(), "Transakcije", wrappedResults);
     			    			
     			Racuni rac1 = new Racuni();
     			//Spustamo izmenjena stanja na racunima u bazu
@@ -238,15 +238,15 @@ public class Banka extends Identifiable {
 		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
 		
 		if(racun_primaoca != null){
-			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
-			racun_primaoca.setStanje(placanje.getUplata().getIznos().add(racun_primaoca.getStanje()));
-			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(placanje.getUplata().getIznos()));
-			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
+			transakcija.setStanjePreTransakcije(new BigDecimal(racun_primaoca.getStanje()));
+			racun_primaoca.setStanje(placanje.getUplata().getIznos().doubleValue()+racun_primaoca.getStanje());
+			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva()+placanje.getUplata().getIznos().doubleValue());
+			transakcija.setStanjePosleTransakcije(new BigDecimal(racun_primaoca.getStanje()));
 			
 			Transakcije wrappedResults = new Transakcije();
-			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getRacun().getId(), wrappedResults);
 			wrappedResults.getTransakcija().add(transakcija);
-			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), "Transakcije", wrappedResults);
+			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getRacun().getId(), "Transakcije", wrappedResults);
 						
 			Racuni rac1 = new Racuni();
 			//Spustamo izmenjena stanja na racunima u bazu
@@ -326,7 +326,7 @@ public class Banka extends Identifiable {
 		rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "Banka/00"+id, rac1);
 		for(TBankarskiRacunKlijenta k: rac1.getRacun()){
 			if(k.getRacun().getBrojRacuna().equals(zahtev.getBrojRacuna())){
-				idRacuna = k.getId();
+				idRacuna = k.getRacun().getId();
 			}
 		}
 		if(idRacuna == null){
@@ -341,8 +341,8 @@ public class Banka extends Identifiable {
 		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
 		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
 		transakcija.setRacunKlijenta(racun_primaoca);
-		transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
-		Long id = getMaxTransactionID(Long.valueOf(racun_primaoca.getRacun().getBrojRacuna().substring(0, 3)), racun_primaoca.getId());
+		transakcija.setStanjePreTransakcije(new BigDecimal(racun_primaoca.getStanje()));
+		Long id = getMaxTransactionID(Long.valueOf(racun_primaoca.getRacun().getBrojRacuna().substring(0, 3)), racun_primaoca.getRacun().getId());
 		id++;
 		transakcija.setId(id);
 		StavkaPreseka stavkaPreseka = new StavkaPreseka();
@@ -358,8 +358,8 @@ public class Banka extends Identifiable {
 		String broj_rk_primaoca = nalog.getUplata().getRacunPrimaoca().getBrojRacuna();
 		TBankarskiRacunKlijenta racun_primaoca = getSpecificAccount(broj_rk_primaoca);
 		transakcija.setRacunKlijenta(racun_primaoca);
-		transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
-		Long id = getMaxTransactionID(Long.valueOf(racun_primaoca.getRacun().getBrojRacuna().substring(0, 3)), racun_primaoca.getId());
+		transakcija.setStanjePreTransakcije(new BigDecimal(racun_primaoca.getStanje()));
+		Long id = getMaxTransactionID(Long.valueOf(racun_primaoca.getRacun().getBrojRacuna().substring(0, 3)), racun_primaoca.getRacun().getId());
 		id++;
 		transakcija.setId(id);
 		StavkaPreseka stavkaPreseka = new StavkaPreseka();
@@ -375,8 +375,8 @@ public class Banka extends Identifiable {
 		String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
 		TBankarskiRacunKlijenta racun_duznika = getSpecificAccount(broj_rk_duznika);
 		transakcija.setRacunKlijenta(racun_duznika);
-		transakcija.setStanjePreTransakcije(racun_duznika.getStanje());
-		Long id = getMaxTransactionID(Long.valueOf(racun_duznika.getRacun().getBrojRacuna().substring(0, 3)), racun_duznika.getId());
+		transakcija.setStanjePreTransakcije(new BigDecimal(racun_duznika.getStanje()));
+		Long id = getMaxTransactionID(Long.valueOf(racun_duznika.getRacun().getBrojRacuna().substring(0, 3)), racun_duznika.getRacun().getId());
 		id++;
 		transakcija.setId(id);
 		StavkaPreseka stavkaPreseka = new StavkaPreseka();

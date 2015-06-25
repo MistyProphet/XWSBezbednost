@@ -67,9 +67,9 @@ public class RTGSProccessing {
 			TBankarskiRacunKlijenta racun_duznika = PortHelper.current_bank.getSpecificAccount(nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna());
 			if(racun_duznika != null){
 				BigDecimal iznos = nalog.getPlacanje().getUplata().getIznos();
-				if(!(racun_duznika.getRaspolozivaSredstva().compareTo(iznos) == -1)){
+				if(racun_duznika.getRaspolozivaSredstva() >= iznos.doubleValue()){
 					//duznik ima dovoljno para, skidamo pare
-	    			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
+	    			racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva()-iznos.doubleValue());
 	    			
 	    			InputStream in1 = RESTUtil.retrieveResource("//Racuni", "Banka/00"+PortHelper.current_bank.getId(), RequestMethod.GET);
 	    			JAXBContext context1 = JAXBContext.newInstance(Racuni.class, Racuni.class);

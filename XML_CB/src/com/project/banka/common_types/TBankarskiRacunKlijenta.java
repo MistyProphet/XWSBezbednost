@@ -1,16 +1,10 @@
 
 package com.project.banka.common_types;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
-import com.project.banka.Identifiable;
 
 
 /**
@@ -28,7 +22,6 @@ import com.project.banka.Identifiable;
  *         &lt;element name="Raspoloziva_sredstva" type="{http://www.w3.org/2001/XMLSchema}double"/>
  *         &lt;element name="Valuta" type="{http://www.project.com/common_types}TOznaka_Valute"/>
  *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}long" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -36,7 +29,6 @@ import com.project.banka.Identifiable;
  * 
  * 
  */
-@SuppressWarnings("serial")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TBankarski_Racun_Klijenta", propOrder = {
     "racun",
@@ -44,18 +36,16 @@ import com.project.banka.Identifiable;
     "raspolozivaSredstva",
     "valuta"
 })
-public class TBankarskiRacunKlijenta extends Identifiable implements Serializable {
+public class TBankarskiRacunKlijenta {
 
     @XmlElement(name = "Racun", required = true)
     protected TRacunKlijenta racun;
     @XmlElement(name = "Stanje")
-    protected BigDecimal stanje;
+    protected double stanje;
     @XmlElement(name = "Raspoloziva_sredstva")
-    protected BigDecimal raspolozivaSredstva;
+    protected double raspolozivaSredstva;
     @XmlElement(name = "Valuta", required = true)
     protected String valuta;
-    @XmlAttribute(name = "id")
-    protected Long id;
 
     /**
      * Gets the value of the racun property.
@@ -85,7 +75,7 @@ public class TBankarskiRacunKlijenta extends Identifiable implements Serializabl
      * Gets the value of the stanje property.
      * 
      */
-    public BigDecimal getStanje() {
+    public double getStanje() {
         return stanje;
     }
 
@@ -93,7 +83,7 @@ public class TBankarskiRacunKlijenta extends Identifiable implements Serializabl
      * Sets the value of the stanje property.
      * 
      */
-    public void setStanje(BigDecimal value) {
+    public void setStanje(double value) {
         this.stanje = value;
     }
 
@@ -101,7 +91,7 @@ public class TBankarskiRacunKlijenta extends Identifiable implements Serializabl
      * Gets the value of the raspolozivaSredstva property.
      * 
      */
-    public BigDecimal getRaspolozivaSredstva() {
+    public double getRaspolozivaSredstva() {
         return raspolozivaSredstva;
     }
 
@@ -109,7 +99,7 @@ public class TBankarskiRacunKlijenta extends Identifiable implements Serializabl
      * Sets the value of the raspolozivaSredstva property.
      * 
      */
-    public void setRaspolozivaSredstva(BigDecimal value) {
+    public void setRaspolozivaSredstva(double value) {
         this.raspolozivaSredstva = value;
     }
 
@@ -135,30 +125,6 @@ public class TBankarskiRacunKlijenta extends Identifiable implements Serializabl
      */
     public void setValuta(String value) {
         this.valuta = value;
-    }
-
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setId(Long value) {
-        this.id = value;
     }
 
 }

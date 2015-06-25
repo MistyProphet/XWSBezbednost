@@ -97,10 +97,9 @@ public class RESTUtil<T> {
 		rac1.setId(new Long(1));
 		rac1.setVlasnik("Pera Peric");
 		TBankarskiRacunKlijenta racun1 = new TBankarskiRacunKlijenta();
-		racun1.setId(new Long(1));
 		racun1.setRacun(rac1);
-		racun1.setRaspolozivaSredstva(new BigDecimal(500));
-		racun1.setStanje(new BigDecimal(500));
+		racun1.setRaspolozivaSredstva(500);
+		racun1.setStanje(500);
 		racun1.setValuta("RSD");
 		t1.setRacunKlijenta(racun1);
 		
@@ -124,10 +123,9 @@ public class RESTUtil<T> {
 		rac2.setId(new Long(1));
 		rac2.setVlasnik("Pera Peric");
 		TBankarskiRacunKlijenta racun2 = new TBankarskiRacunKlijenta();
-		racun2.setId(new Long(1));
 		racun2.setRacun(rac2);
-		racun2.setRaspolozivaSredstva(new BigDecimal(500));
-		racun2.setStanje(new BigDecimal(500));
+		racun2.setRaspolozivaSredstva(500);
+		racun2.setStanje(500);
 		racun2.setValuta("RSD");
 		t2.setRacunKlijenta(racun2);
 		

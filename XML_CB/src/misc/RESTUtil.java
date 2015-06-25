@@ -39,6 +39,7 @@ import com.project.cbws.ReceiveMT102Fault;
 public class RESTUtil {
 
 	public static final String REST_URL = ResourceBundle.getBundle("basex").getString("rest.url");
+	public static final String schemaFolder = ResourceBundle.getBundle("deploy").getString("schema.path");
 	
 	public static void main(String[] args) throws Exception {
 
@@ -145,7 +146,7 @@ public class RESTUtil {
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); 
-        Schema schema = sf.newSchema(new File("WEB-INF/scheme/" +nazivSeme)); 
+        Schema schema = sf.newSchema(new File(schemaFolder +nazivSeme)); 
         marshaller.setSchema(schema);
         marshaller.setEventHandler(new MyValidationEventHandler());
 		URL url = new URL(REST_URL + schemaName + "/" + resourceId);

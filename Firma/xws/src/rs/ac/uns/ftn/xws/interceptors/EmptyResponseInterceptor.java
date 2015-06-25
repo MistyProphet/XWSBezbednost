@@ -18,7 +18,7 @@ import rs.ac.uns.ftn.xws.util.FourOhFour;
 public class EmptyResponseInterceptor {
 
 	@AroundInvoke
-	public Object intercept(InvocationContext context) {
+	public Object intercept(InvocationContext context) throws Exception {
         try { 
 		    Object result = context.proceed();
             if (result == null) {

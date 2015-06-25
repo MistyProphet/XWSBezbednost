@@ -7,9 +7,11 @@ import javax.ejb.EJB;
 import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -70,12 +72,21 @@ public class InvoiceService {
 	@GET 
 	@Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Invoice findById(@PathParam("PIB") String PIB, @PathParam("id") String id) throws Exception {
+    public Invoice findById(@PathParam("PIB") String PIB, @PathParam("id") String id) {
 		Invoice retVal = null;
-		retVal = invoiceDao.findById(Long.parseLong(id));
-        if (retVal.getSupplierTIN().equals(PIB))
-            return retVal;
-		return null;
+        try {
+		    retVal = invoiceDao.findById(Long.parseLong(id));
+            if (retVal.getSupplierTIN().equals(PIB))
+                return retVal;
+		    return null;
+        } catch (IOException | JAXBException e) {
+            log.error(e);
+        } catch (NotFoundException e) {
+            response.setStatus(404);        
+        } catch (BadRequestException e) {
+            response.setStatus(400);
+        }
+        return null;
     }
     
 	@GET 

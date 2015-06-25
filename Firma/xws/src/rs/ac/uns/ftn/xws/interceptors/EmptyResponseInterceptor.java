@@ -20,13 +20,10 @@ public class EmptyResponseInterceptor {
 		    Object result = context.proceed();
             if (result == null) {
                 System.out.println("Triggered!");
-                throw new NullPointerException("Resource not found. ");
+                throw new NotFoundException("Resource not found. ");
             }
 		    return result;
         } catch (Exception e) {
-            //FIXME Hack. Should find a way to catch null pointer errors 
-            //and convert them to something meaningful later.
-            
             throw new NotFoundException("Resource not found. ");
         }
 	}

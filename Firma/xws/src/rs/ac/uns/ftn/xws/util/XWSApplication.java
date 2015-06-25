@@ -8,7 +8,7 @@ import javax.ws.rs.core.Application;
 
 import org.apache.log4j.Logger;
 
-import rs.ac.uns.ftn.xws.interceptors.RESTExceptionMapper;
+//import rs.ac.uns.ftn.xws.interceptors.RESTExceptionMapper;
 
 @ApplicationPath("/api")
 public class XWSApplication extends Application {
@@ -18,7 +18,7 @@ public class XWSApplication extends Application {
 	@Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(RESTExceptionMapper.class);
+        //classes.add(RESTExceptionMapper.class);
         // register root resource
 		/*try {
 			for (Class clazz : ClassUtils.getClasses()) {

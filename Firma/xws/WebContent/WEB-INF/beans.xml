@@ -1,9 +1,11 @@
 <beans xmlns="http://java.sun.com/xml/ns/javaee"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
 	<interceptors>
     	<class>rs.ac.uns.ftn.xws.interceptors.AuthenticationInterceptor</class>
     	<class>rs.ac.uns.ftn.xws.interceptors.PINInterceptor</class>
     	<class>rs.ac.uns.ftn.xws.interceptors.EmptyResponseInterceptor</class>
 	</interceptors>
+
 </beans>

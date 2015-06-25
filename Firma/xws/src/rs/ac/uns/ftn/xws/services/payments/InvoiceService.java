@@ -49,10 +49,15 @@ public class InvoiceService {
      */
 	@GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Invoice> findByPIB(@PathParam("PIB") String PIB) throws Exception {
+    public List<Invoice> findByPIB(@PathParam("PIB") String PIB) {
 		List<Invoice> retVal = null;
-        retVal = invoiceDao.findInvoicesByTIN(PIB);
-		return retVal;
+        try {
+            retVal = invoiceDao.findInvoicesByTIN(PIB);
+		    return retVal;
+        } catch (IOException | JAXBException e) {
+            log.error(e);
+            return null;
+        }
     }
     
     /**

@@ -32,7 +32,6 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 		super(contextPath, schemaName);
 	}
 
-    @FourOhFour
     public List<Invoice> findInvoicesByTIN(String TIN) throws IOException, JAXBException {
         List<Invoice> invoices = new ArrayList<Invoice>();
         

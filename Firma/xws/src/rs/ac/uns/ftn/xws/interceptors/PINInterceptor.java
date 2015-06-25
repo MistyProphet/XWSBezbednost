@@ -1,5 +1,7 @@
 package rs.ac.uns.ftn.xws.interceptors;
 
+import java.io.IOException;
+
 import javax.ejb.EJB;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -7,6 +9,7 @@ import javax.interceptor.InvocationContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 
@@ -43,7 +46,23 @@ public class PINInterceptor {
                         throw new ServiceException("Resource not found. ", Status.NOT_FOUND);
                 }
             }
-		Object result = context.proceed();
-		return result;
+        try {
+		    Object result = context.proceed();
+            //if (result == null)
+            //    throw new ServiceException("Document not found. ", Status.NOT_FOUND);
+		    return result;
+        } catch (JAXBException e) {
+            System.out.println("#################################################################");
+            e.printStackTrace();
+            throw new ServiceException("Document not found. ", Status.NOT_FOUND);
+        } catch (IOException e) {
+            System.out.println("#################################################################");
+            e.printStackTrace();
+            throw new ServiceException("Document not found. ", Status.SERVICE_UNAVAILABLE);
+        } catch (Exception e) { 
+            System.out.println("#################################################################");
+            e.printStackTrace();
+            throw new ServiceException("Strange error. ", Status.NOT_ACCEPTABLE);
+        }
 	}
 }

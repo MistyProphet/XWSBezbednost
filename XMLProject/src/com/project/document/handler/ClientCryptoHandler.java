@@ -26,17 +26,11 @@ public class ClientCryptoHandler implements LogicalHandler<LogicalMessageContext
 		if (!isResponse) {
 			System.err.println("\n-- Kriptovanje --");
 			Document encryptedDoc = Encrypt.encryptDocument(document);
-			try {
-				DocumentUtil.printDocument(encryptedDoc);
-			} catch (Exception e) {}
 			context.getMessage().setPayload(new DOMSource(encryptedDoc));
 		} else {
 			System.err.println("\n-- Dekriptovanje --");	
 			
 			Document decryptedDoc = Decrypt.decryptDocument(document);
-			try {
-				DocumentUtil.printDocument(decryptedDoc);
-			} catch (Exception e) {}
 			context.getMessage().setPayload(new DOMSource(decryptedDoc));
 		}
 		return true;

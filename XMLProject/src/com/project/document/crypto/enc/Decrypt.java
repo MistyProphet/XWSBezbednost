@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.project.bankaws.PortHelper;
+import com.project.util.DocumentUtil;
 
 //Dekriptuje tajni kljuc privatnim kljucem
 //Tajnim kljucem dekriptuje podatke
@@ -96,13 +97,13 @@ public class Decrypt {
 	private static Document decrypt(Document doc, PrivateKey privateKey) {
 		
 		try {
+			DocumentUtil.printDocument(doc);
 			//cipher za dekritpovanje XML-a
 			XMLCipher xmlCipher = XMLCipher.getInstance();
 			//inicijalizacija za dekriptovanje
 			xmlCipher.init(XMLCipher.DECRYPT_MODE, null);
 			//postavlja se kljuc za dekriptovanje tajnog kljuca
 			xmlCipher.setKEK(privateKey);
-			
 			//trazi se prvi EncryptedData element
 			NodeList encDataList = doc.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
 			Element encData = (Element) encDataList.item(0);

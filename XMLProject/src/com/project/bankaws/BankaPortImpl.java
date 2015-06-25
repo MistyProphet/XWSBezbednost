@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -27,7 +28,11 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import javax.xml.ws.Binding;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.Handler;
 
 import misc.RESTUtil;
 
@@ -38,6 +43,7 @@ import com.project.banke_racuni.RacuniBanaka.KodBanke;
 import com.project.common_types.Status;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TRacunKlijenta;
+import com.project.document.handler.WSCryptoHandler;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
 import com.project.mt102.Mt102;
@@ -141,7 +147,8 @@ public class BankaPortImpl implements BankaPort {
 			//Update stanja na racunu klijenta na osnovu odobrenja
 			//Izvlacim iz baze mt103 nalog na osnovu polja u mt910
 			Mt103 temp = new Mt103();
-			temp = (Mt103) RESTUtil.doUnmarshall("//*:mt103", "Banka/00"+PortHelper.current_bank.getId()+"/MT103", temp);
+			temp = (Mt103) RESTUtil.doUnmarshall("//*:mt103", 
+					"Banka/00"+PortHelper.current_bank.getId()+"/MT103/"+mt910.getPodaciOOdobrenju().getIDPorukeNaloga(), temp);
 			//Update-ujem racun
 			Racuni rac1 = new Racuni();
 			//Ucitavamo racune iz baze, kako bi update-ovali podatke
@@ -349,6 +356,18 @@ public class BankaPortImpl implements BankaPort {
     	    	Service service = Service.create(wsdl, serviceName);
     	        CBport centralnaBanka = service.getPort(portName, CBport.class);
     	        try{
+    	        	
+    	        	///////////////////////// DEO ZA KLIJENTSKI HANDLER ///////////////////////////
+    	        	/////                                                                    //////
+    			          Binding binding = ((BindingProvider)centralnaBanka).getBinding();
+    			          @SuppressWarnings("rawtypes")
+    			          List<Handler> handlerList = binding.getHandlerChain();
+    			          handlerList.clear();
+    			          handlerList.add(new WSCryptoHandler());
+    			          binding.setHandlerChain(handlerList);  
+    	        	/////                                                                    //////
+    			    ///////////////////////////////////////////////////////////////////////////////
+    			      
     	        	Mt900RTGS rtgsResponse = centralnaBanka.receiveMT103CB(rtgsNalog);
     	        	 //Spustanje odgovora u bazu
             		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT900rtgs", rtgsResponse.getIDPoruke().toString(), rtgsResponse);
@@ -508,9 +527,8 @@ public class BankaPortImpl implements BankaPort {
     }
     
     public static void main(String[] args) {
-    	//Mt103 temp = new Mt103();
-		//temp = (Mt103) RESTUtil.doUnmarshall("//*:mt103[ID_poruke='0']", "Banka/00"+PortHelper.current_bank.getId()+"/MT103", temp);
-    	//test area
+    	
+    	//Ako kaze da nema dovoljno para na racunu, pokreni RESTUtil main metodu da ucita pare klijentima.
     	
     	BankaPortImpl b = new BankaPortImpl();
     	
@@ -550,82 +568,17 @@ public class BankaPortImpl implements BankaPort {
     	u.setSvrhaPlacanja("Eto 'nako");
     	p.setUplata(u);
     	novi.setPlacanje(p);
-    	Status s;
 		try {
 			//s = b.receiveNalog(novi);
 	    	//System.out.println(s.getStatusText());
 			//System.out.println(b.checkNalog(novi));
-			//b.receiveNalog(novi);
-	    	
-	    	Mt103 rtgsNalog = PortHelper.rtgsObrada.kreirajMT103(novi);
+		      
+			b.receiveNalog(novi);
 			
-    		URL wsdl = new URL("http://localhost:8080/projCB/services/CB?wsdl");
-	    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
-	    	QName portName = new QName("http://www.project.com/CBws", "CBport");
-	    	Service service = Service.create(wsdl, serviceName);
-	        CBport centralnaBanka = service.getPort(portName, CBport.class);
-        	Mt900RTGS rtgsResponse = centralnaBanka.receiveMT103CB(rtgsNalog);
-	        System.out.println("----->ID PORUKE: "+rtgsResponse.getIDPoruke());	
 			System.out.println("Done.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	
-    	/*
-		TBanka duznik = new TBanka();
-		duznik.setBrojRacunaBanke("001-0000000000001-00");
-		duznik.setSWIFTKod("AAAARS01");
-		duznik.setId(new Long(111));
-		duznik.setNazivBanke("UniCredit");
-		TBanka poverioc = new TBanka();
-		poverioc.setBrojRacunaBanke("001-0000000000001-00");
-		poverioc.setSWIFTKod("AAAARS01");
-		poverioc.setNazivBanke("Raiffeisen");
-		poverioc.setId(new Long(112));
-		
-    	Mt102 mt102 = new Mt102();
-		mt102.setIDPoruke("1");
-		mt102.setBankaDuznika(duznik);
-		mt102.setBankaPoverioca(poverioc);
-		mt102.setIDPoruke("434");
-		
-		Uplata u = new Uplata();
-		u.setIznos(new BigDecimal(323));
-		u.setModelOdobrenja(new Long(97));
-		u.setModelZaduzenja(new Long(97));
-		u.setPozivNaBrojOdobrenja("22222222222222222222");
-		u.setPozivNaBrojZaduzenja("22222222222222222222");
-		u.setSvrhaPlacanja("svrha placanja");
-		
-		mt102.setUkupanIznos((new BigDecimal(323)));
-		ArrayList<Placanje> placanja = new ArrayList<Placanje>();
-		Placanje placanje = new Placanje();
-		placanje.setUplata(u);
-		placanje.setIDPoruke("1");
-		placanje.setSifraValute("RSD");
-		placanja.add(placanje);
-		
-		
-		mt102.setPlacanje(placanja);
-		GregorianCalendar cal = new GregorianCalendar();
-		DatatypeFactory datatypeFactory;
-		try {
-			datatypeFactory = DatatypeFactory.newInstance();
-
-			XMLGregorianCalendar now = datatypeFactory
-					.newXMLGregorianCalendar(cal);
-			mt102.setDatum(now);
-			mt102.getPlacanje().get(0).getUplata().setDatumNaloga(now);
-			//mt102.getPlacanje().get(1).getUplata().setDatumNaloga(now);
-			mt102.setDatumValute(now);
-		} catch (DatatypeConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		mt102.setSifraValute("RSD");
-		//RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT102", "1", mt102);
-		mt102 = (Mt102) RESTUtil.doUnmarshall("//*:mt102", "Banka/001/MT102/1", mt102);
-		*/
     }
 
 }

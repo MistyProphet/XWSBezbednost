@@ -395,7 +395,6 @@ public class RESTUtil<T> {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			for (String line; (line = br.readLine()) != null;) {
 				xml=xml+line+"\n";
-				System.out.println(line);
 			}
 			StringReader reader = new StringReader(xml);
 			Object rac = (Object) unmarshaller.unmarshal(reader);

@@ -155,7 +155,7 @@ public class SignEnveloped {
 			  
 			//kreira se signature objekat
 			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
-			//PROVERITI
+			//PROVERITI        ///Ovo sam promenila, preko SourceTree-ja vidi staro sta je pisalo
 			sig.setId(aaa.toString());
 			aaa++;
 			

@@ -44,7 +44,7 @@ public class VerifySignatureEnveloped {
 			
 			//kreira se signature objekat od elementa
 			XMLSignature signature = new XMLSignature(signatureEl, null);
-			/*
+			
 			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
 			NodeList list = timestamp.getChildNodes();
 			java.util.Date expires = null;
@@ -66,7 +66,7 @@ public class VerifySignatureEnveloped {
 				ex.printStackTrace();
 				return false;
 			}
-			*/
+			
 			try {
 				DocumentUtil.printDocument(doc);
 			} catch (Exception e) {

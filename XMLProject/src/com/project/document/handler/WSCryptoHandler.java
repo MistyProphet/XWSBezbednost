@@ -18,13 +18,17 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 	public boolean handleMessage(LogicalMessageContext context) {
 
 		System.out.println("\n*** Handler za kriptovanje kod Web Servisa ***");
-
+		
+		
 		Boolean isResponse = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		Source source = context.getMessage().getPayload();
 		Document document = DocumentUtil.convertToDocument(source);
 		try {
+			System.out.println("Pristigli dokument u bankin handler");
 			DocumentUtil.printDocument(document);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			
+		}
 		if (isResponse) {
 			System.err.println("\n-- Kriptovanje --");
 			Document encryptedDoc = Encrypt.encryptDocument(document);
@@ -34,9 +38,6 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 			System.err.println("\n-- Dekriptovanje --");	
 			
 			Document decryptedDoc = Decrypt.decryptDocument(document);
-			try {
-				DocumentUtil.printDocument(decryptedDoc);
-			} catch (Exception e) {}
 			context.getMessage().setPayload(new DOMSource(decryptedDoc));
 		}
 		return true;

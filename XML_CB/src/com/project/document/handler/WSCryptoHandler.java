@@ -23,22 +23,23 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 		Boolean isResponse = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		Source source = context.getMessage().getPayload();
 		Document document = DocumentUtil.convertToDocument(source);
+		
+		try {
+			System.out.println("\n*** Pristigli dokument CB***");
+			DocumentUtil.printDocument(document);
+		} catch (Exception e) {
+			
+		}
+		
 		if (isResponse) {
 			System.err.println("\n-- Kriptovanje --");
 			Document encryptedDoc = Encrypt.encryptDocument(document);
-			try {
-				DocumentUtil.printDocument(encryptedDoc);
-			} catch (Exception e) {}
 			context.getMessage().setPayload(new DOMSource(encryptedDoc));
 		} else {
 			System.err.println("\n-- Dekriptovanje --");	
-			try {
-				System.out.println("\n*** Pristigli dokument CB***");
-				DocumentUtil.printDocument(document);
-			} catch (Exception e) {}
-			//Document decryptedDoc = Decrypt.decryptDocument(document);
+			Document decryptedDoc = Decrypt.decryptDocument(document);
 			
-			//context.getMessage().setPayload(new DOMSource(decryptedDoc));
+			context.getMessage().setPayload(new DOMSource(decryptedDoc));
 		}
 		return true;
 	}

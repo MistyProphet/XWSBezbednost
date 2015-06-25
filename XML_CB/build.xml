@@ -118,8 +118,9 @@
 			description="Copies non java files to bin directory">
 		<copy todir="${bin.dir}">
 			<fileset dir="${src.dir}" excludes="**/*.java"/>
-			<fileset dir="${basedir}" excludes="data/*.jks"/>
-			<fileset dir="${basedir}" excludes="data/*.cer"/>
+			<fileset dir="${basedir}" includes="data/*.jks"/>
+			<fileset dir="${basedir}" includes="data/*.cer"/>
+			<fileset dir="${basedir}" includes="*.properties" />
 		</copy>
 	</target>
 

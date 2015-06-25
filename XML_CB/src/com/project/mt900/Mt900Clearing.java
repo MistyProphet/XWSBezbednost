@@ -83,18 +83,9 @@ public class Mt900Clearing {
     protected String idPoruke;
     @XmlElement(name = "Podaci_o_zaduzenju", required = true)
     protected Mt900Clearing.PodaciOZaduzenju podaciOZaduzenju;
-
-    /**
-     * Gets the value of the idPoruke property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     
     public Mt900Clearing (Mt103 mt103){
-    
+        
     	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
 		zaduzenje.setIznos(mt103.getUplata().getIznos());
@@ -105,11 +96,8 @@ public class Mt900Clearing {
 		this.setPodaciOZaduzenju(zaduzenje);
 	
     }
-    public Mt900Clearing() {
-   
-	
-	}
-	public Mt900Clearing(Mt102 mt102) {
+    
+    public Mt900Clearing(Mt102 mt102) {
 		
 		PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
@@ -119,6 +107,19 @@ public class Mt900Clearing {
 		zaduzenje.setDatumValute(mt102.getDatumValute());
 		this.setPodaciOZaduzenju(zaduzenje);
 	}
+    
+    public Mt900Clearing() {
+		
+	}
+
+	/**
+     * Gets the value of the idPoruke property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
     public String getIDPoruke() {
         return idPoruke;
     }
@@ -340,6 +341,5 @@ public class Mt900Clearing {
         }
 
     }
-    
-  
+
 }

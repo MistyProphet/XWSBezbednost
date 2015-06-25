@@ -8,9 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 import com.project.common_types.TBanka;
-import com.project.entities.Identifiable;
 import com.project.nalog_za_placanje.Uplata;
 
 
@@ -64,7 +62,7 @@ import com.project.nalog_za_placanje.Uplata;
     "datumValute"
 })
 @XmlRootElement(name = "mt103")
-public class Mt103 extends Identifiable{
+public class Mt103 {
 
     @XmlElement(name = "ID_poruke", required = true)
     protected String idPoruke;
@@ -280,16 +278,5 @@ public class Mt103 extends Identifiable{
         }
 
     }
-
-
-    @Override
-	public Long getId() {
-		return Long.parseLong(idPoruke);
-	}
-
-	@Override
-	public void setId(Long value) {
-		this.idPoruke = value.toString();
-	}
 
 }

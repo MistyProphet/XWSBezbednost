@@ -112,6 +112,7 @@
 	<target name="copy-non-java" depends="compile"
 			description="Copies non java files to bin directory">
 		<copy todir="${bin.dir}">
+			<fileset dir="${basedir}" includes="*.properties" />
 			<fileset dir="${src.dir}" excludes="**/*.java"/>
 		</copy>
 	</target>
@@ -123,6 +124,7 @@
 				<exclude name="**/client/*.class"/>
 				<include name="**/*.class"/>
 				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
 			</classes>
 			<lib dir="${lib.dir}">
 				<include name="spring-*.jar"/>

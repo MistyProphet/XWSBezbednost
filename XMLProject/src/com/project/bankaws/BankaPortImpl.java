@@ -7,16 +7,12 @@
 package com.project.bankaws;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -25,8 +21,6 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -38,21 +32,16 @@ import javax.xml.ws.Service;
 import misc.RESTUtil;
 
 import org.apache.commons.io.IOUtils;
-import org.basex.server.Log;
 
-import com.project.banka.Banka;
-import com.project.banka.RTGSProccessing;
 import com.project.banke_racuni.RacuniBanaka;
 import com.project.banke_racuni.RacuniBanaka.KodBanke;
 import com.project.common_types.Status;
-import com.project.common_types.TBanka;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TRacunKlijenta;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
 import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
-import com.project.mt103.Mt103.PodaciOBankama;
 import com.project.mt900.Mt900Clearing;
 import com.project.mt900.Mt900RTGS;
 import com.project.nalog_za_placanje.NalogZaPlacanje;
@@ -62,8 +51,6 @@ import com.project.racuni.Racuni;
 import com.project.stavka_preseka.Transakcija;
 import com.project.transakcije.Transakcije;
 import com.project.util.CBport;
-import com.project.util.RecieveMT102Fault;
-import com.project.util.RecieveMT103Fault;
 import com.project.util.Util;
 
 /**
@@ -80,6 +67,7 @@ import com.project.util.Util;
                       targetNamespace = "http://www.project.com/BankaWS",
                       wsdlLocation = "WEB-INF/wsdl/Banka.wsdl",
                       endpointInterface = "com.project.bankaws.BankaPort")
+@HandlerChain(file = "/com/project/document/handler-chain-document.xml")
 public class BankaPortImpl implements BankaPort {
 
     private static final Logger LOG = Logger.getLogger(BankaPortImpl.class.getName());
@@ -100,16 +88,15 @@ public class BankaPortImpl implements BankaPort {
 		        //Za svaku banku pojedinacno poslati naloge za kliring
 		        for(Mt102 m: nalozi){
 	    	        try {
-						Mt900Clearing response = centralnaBanka.recieveMT102CB(m);
+						Mt900Clearing response = centralnaBanka.receiveMT102CB(m);
 						RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT900clearing", response.getIDPoruke(), response);
-					} catch (RecieveMT102Fault e) {
+					} catch (com.project.util.ReceiveMT102Fault e) {
 						e.printStackTrace();
 						//Ako se desila greska pri kliringu, npr. neispravan ukupan iznos ili pogresan swift kod.
 						//Revertovati svaki nalog posebno (vratiti raspoloziva sredstva na staru vrednost)
 						for(Placanje p: m.getPlacanje()){
 							TBankarskiRacunKlijenta racun_duznika = PortHelper.current_bank.getSpecificAccount(p.getUplata().getRacunDuznika().getBrojRacuna());
-							racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().add(
-									p.getUplata().getIznos()));
+							racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva()+p.getUplata().getIznos().doubleValue());
 							//Update stanja racuna u bazi
 							Racuni rac1 = new Racuni();
 			    			//Spustamo izmenjena stanja na racunima u bazu
@@ -154,7 +141,7 @@ public class BankaPortImpl implements BankaPort {
 			//Update stanja na racunu klijenta na osnovu odobrenja
 			//Izvlacim iz baze mt103 nalog na osnovu polja u mt910
 			Mt103 temp = new Mt103();
-			temp = (Mt103) RESTUtil.doUnmarshall("//"+mt910.getIDPoruke(), "Banka/00"+PortHelper.current_bank.getId()+"/MT103", temp);
+			temp = (Mt103) RESTUtil.doUnmarshall("//*:mt103", "Banka/00"+PortHelper.current_bank.getId()+"/MT103", temp);
 			//Update-ujem racun
 			Racuni rac1 = new Racuni();
 			//Ucitavamo racune iz baze, kako bi update-ovali podatke
@@ -168,15 +155,15 @@ public class BankaPortImpl implements BankaPort {
 			Transakcija transakcija = null;
 			
 			Transakcije wrappedResults = new Transakcije();
-			wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+			wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getRacun().getId(), wrappedResults);
 			
 			transakcija = PortHelper.current_bank.generisiTransakcijuUplate(temp);
-			transakcija.setStanjePreTransakcije(racun_primaoca.getStanje());
-			racun_primaoca.setStanje(racun_primaoca.getStanje().add(temp.getUplata().getIznos()));
-			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(temp.getUplata().getIznos()));
-			transakcija.setStanjePosleTransakcije(racun_primaoca.getStanje());
+			transakcija.setStanjePreTransakcije(new BigDecimal(racun_primaoca.getStanje()));
+			racun_primaoca.setStanje(racun_primaoca.getStanje()+temp.getUplata().getIznos().doubleValue());
+			racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva()+temp.getUplata().getIznos().doubleValue());
+			transakcija.setStanjePosleTransakcije(new BigDecimal(racun_primaoca.getStanje()));
 			wrappedResults.getTransakcija().add(transakcija);
-			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), "Transakcije", wrappedResults);
+			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getRacun().getId(), "Transakcije", wrappedResults);
 			for(TBankarskiRacunKlijenta k: rac1.getRacun()){
 				//Nasli smo koji je racun u pitanju
 				if(k.getRacun().getBrojRacuna().equals(temp.getUplata().getRacunPrimaoca().getBrojRacuna())){
@@ -205,17 +192,17 @@ public class BankaPortImpl implements BankaPort {
         try {
         	System.out.println(PortHelper.current_bank.getAccounts().size());
         	System.out.println(PortHelper.current_bank.getId());
-        	//RESTUtil.objectToDB("Banka/SHIT", mt102.getIDPoruke(), mt102.getIDPoruke().toString());
-			//RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT102", mt102.getIDPoruke(), mt102);
+			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT102", mt102.getIDPoruke(), mt102);
 			
-        	//PortHelper.current_bank.obradiClearingNalog(mt102);
+        	PortHelper.current_bank.obradiClearingNalog(mt102);
 	        System.out.println(mt102);
 	        com.project.common_types.Status _return = new com.project.common_types.Status();
 	        _return.setStatusText("Clearing proccessed.");
 	        return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
-            throw new ReceiveMT102Fault("Fuuu");
+            throw new ReceiveMT102Fault("An error occured while processing clearing notice.\nReason: "+
+            ex.getMessage());
         }
         //throw new ReceiveMT102Fault("receiveMT102fault...");
     }
@@ -271,7 +258,7 @@ public class BankaPortImpl implements BankaPort {
                 throw new ReceiveNalogFault("Invoice validation failed. Reason: "+
                 		PortHelper.checkNalogEx);
     		}
-    		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Nalozi", nalog.getId().toString(), nalog);
+    		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Nalozi", nalog.getPlacanje().getIDPoruke().toString(), nalog);
     		//provera da li je racun primaoca u istoj banci
     		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = PortHelper.current_bank.getSpecificAccount(broj_rk_primaoca);
@@ -285,27 +272,27 @@ public class BankaPortImpl implements BankaPort {
     				/* Generisanje podataka o transakciji*/
 					Transakcija transakcijaDuznik = PortHelper.current_bank.generisiTransakcijuIsplate(nalog);
 					
-    				if(racun_duznika.getRaspolozivaSredstva().subtract(iznos).compareTo(new BigDecimal(0))>=0){
+    				if((racun_duznika.getRaspolozivaSredstva()-iznos.doubleValue())>=0){
     					//duznik ima dovoljno para, skidamo pare
-    					transakcijaDuznik.setStanjePreTransakcije(racun_duznika.getStanje());
-    					racun_duznika.setStanje(racun_duznika.getStanje().subtract(iznos));
-    					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().subtract(iznos));
-    					transakcijaDuznik.setStanjePosleTransakcije(racun_duznika.getStanje());
+    					transakcijaDuznik.setStanjePreTransakcije(new BigDecimal(racun_duznika.getStanje()));
+    					racun_duznika.setStanje(racun_duznika.getStanje()-iznos.doubleValue());
+    					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva()-iznos.doubleValue());
+    					transakcijaDuznik.setStanjePosleTransakcije(new BigDecimal(racun_duznika.getStanje()));
     					//dodajemo primaocu
-    					transakcijaPrimalac.setStanjePreTransakcije(racun_primaoca.getStanje());
-    					racun_primaoca.setStanje(racun_primaoca.getStanje().add(iznos));
-    					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva().add(iznos));
-    					transakcijaPrimalac.setStanjePosleTransakcije(racun_primaoca.getStanje());
+    					transakcijaPrimalac.setStanjePreTransakcije(new BigDecimal(racun_primaoca.getStanje()));
+    					racun_primaoca.setStanje(racun_primaoca.getStanje()+iznos.doubleValue());
+    					racun_primaoca.setRaspolozivaSredstva(racun_primaoca.getRaspolozivaSredstva()+iznos.doubleValue());
+    					transakcijaPrimalac.setStanjePosleTransakcije(new BigDecimal(racun_primaoca.getStanje()));
     					
     					Transakcije wrappedResults = new Transakcije();
-    					wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), wrappedResults);
+    					wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getRacun().getId(), wrappedResults);
     					wrappedResults.getTransakcija().add(transakcijaPrimalac);
-    					RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getId(), "Transakcije", wrappedResults);
+    					RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getRacun().getId(), "Transakcije", wrappedResults);
     					
     					Transakcije wrappedResults2 = new Transakcije();
-    					wrappedResults2 = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), wrappedResults2);
+    					wrappedResults2 = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getRacun().getId(), wrappedResults2);
     					wrappedResults2.getTransakcija().add(transakcijaDuznik);
-    					RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), "Transakcije", wrappedResults2);
+    					RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getRacun().getId(), "Transakcije", wrappedResults2);
     					
     					Racuni rac1 = new Racuni();
     					//Spustamo izmenjena stanja na racunima u bazu
@@ -348,12 +335,12 @@ public class BankaPortImpl implements BankaPort {
     			String broj_rk_duznika = nalog.getPlacanje().getUplata().getRacunDuznika().getBrojRacuna();
     			TBankarskiRacunKlijenta racun_duznika = PortHelper.current_bank.getSpecificAccount(broj_rk_duznika);
 				Transakcija transakcijaDuznik = PortHelper.current_bank.generisiTransakcijuIsplate(nalog);
-				transakcijaDuznik.setStanjePreTransakcije(racun_duznika.getStanje());
+				transakcijaDuznik.setStanjePreTransakcije(new BigDecimal(racun_duznika.getStanje()));
 				
         		Mt103 rtgsNalog = PortHelper.rtgsObrada.kreirajMT103(nalog);
 				
         		//spustanje mt103 u bazu
-        		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT103", rtgsNalog.getId().toString(), rtgsNalog);
+        		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT103", rtgsNalog.getIDPoruke().toString(), rtgsNalog);
         		//slanje MT103
         		URL wsdl = new URL("http://localhost:8080/projCB/services/CB?wsdl");
     	    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
@@ -362,22 +349,22 @@ public class BankaPortImpl implements BankaPort {
     	    	Service service = Service.create(wsdl, serviceName);
     	        CBport centralnaBanka = service.getPort(portName, CBport.class);
     	        try{
-    	        	Mt900RTGS rtgsResponse = centralnaBanka.recieveMT103CB(rtgsNalog);
+    	        	Mt900RTGS rtgsResponse = centralnaBanka.receiveMT103CB(rtgsNalog);
     	        	 //Spustanje odgovora u bazu
-            		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT900rtgs", rtgsResponse.getId().toString(), rtgsResponse);
+            		RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT900rtgs", rtgsResponse.getIDPoruke().toString(), rtgsResponse);
 
-    				transakcijaDuznik.setStanjePosleTransakcije(racun_duznika.getStanje());
+    				transakcijaDuznik.setStanjePosleTransakcije(new BigDecimal(racun_duznika.getStanje()));
             		Transakcije wrappedResults = new Transakcije();
-    				wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), wrappedResults);
+    				wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions("//Transakcije", "Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getRacun().getId(), wrappedResults);
     				wrappedResults.getTransakcija().add(transakcijaDuznik);
-    				RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getId(), "Transakcije", wrappedResults);
+    				RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_duznika.getRacun().getId(), "Transakcije", wrappedResults);
     				
             		//Status klijentu da je poruka obradjena bez greske
         	    	_return.setStatusCode(1);
         	    	_return.setStatusText("Your payment order has been received and sent to processing.");
-    	        } catch(RecieveMT103Fault e){
-					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva().add(
-							nalog.getPlacanje().getUplata().getIznos()));
+    	        } catch(com.project.util.ReceiveMT103Fault e){
+					racun_duznika.setRaspolozivaSredstva(racun_duznika.getRaspolozivaSredstva()+
+							nalog.getPlacanje().getUplata().getIznos().doubleValue());
 					//Update stanja racuna u bazi
 					Racuni rac1 = new Racuni();
 	    			rac1 = (Racuni) RESTUtil.doUnmarshall("//Racuni", "Banka/00"+PortHelper.current_bank.getId(), rac1);
@@ -427,10 +414,7 @@ public class BankaPortImpl implements BankaPort {
 	    	if(nalog.getDatumValute() == null){
 	    		filled = false;
 	    	}
-	    	if(nalog.getId() == null){
-	    		filled = false;
-	    	}
-	    	if(nalog.getPlacanje().getId() == null){
+	    	if(nalog.getPlacanje().getIDPoruke() == null){
 	    		filled = false;
 	    	}
 	    	if(nalog.getPlacanje().getSifraValute() == null){
@@ -524,7 +508,8 @@ public class BankaPortImpl implements BankaPort {
     }
     
     public static void main(String[] args) {
-    	/*
+    	//Mt103 temp = new Mt103();
+		//temp = (Mt103) RESTUtil.doUnmarshall("//*:mt103[ID_poruke='0']", "Banka/00"+PortHelper.current_bank.getId()+"/MT103", temp);
     	//test area
     	
     	BankaPortImpl b = new BankaPortImpl();
@@ -537,9 +522,7 @@ public class BankaPortImpl implements BankaPort {
 			e1.printStackTrace();
 		}
     	novi.setHitno(true);
-    	novi.setId(Long.parseLong("1"));
     	Placanje p = new Placanje();
-    	p.setId(Long.parseLong("1"));
     	p.setIDPoruke("1");
     	p.setSifraValute("RSD");
     	Uplata u = new Uplata();
@@ -560,7 +543,7 @@ public class BankaPortImpl implements BankaPort {
     	t1.setVlasnik("Pera Peric");
     	u.setRacunDuznika(t1);
     	TRacunKlijenta t2 = new TRacunKlijenta();
-    	t2.setBrojRacuna("003-0000000000001-00");
+    	t2.setBrojRacuna("002-0000000000001-00");
     	t2.setId(Long.parseLong("1"));
     	t2.setVlasnik("Mika Mikic");
     	u.setRacunPrimaoca(t2);
@@ -569,14 +552,24 @@ public class BankaPortImpl implements BankaPort {
     	novi.setPlacanje(p);
     	Status s;
 		try {
-			s = b.receiveNalog(novi);
-	    	System.out.println(s.getStatusText());
+			//s = b.receiveNalog(novi);
+	    	//System.out.println(s.getStatusText());
 			//System.out.println(b.checkNalog(novi));
 			//b.receiveNalog(novi);
+	    	
+	    	Mt103 rtgsNalog = PortHelper.rtgsObrada.kreirajMT103(novi);
+			
+    		URL wsdl = new URL("http://localhost:8080/projCB/services/CB?wsdl");
+	    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
+	    	QName portName = new QName("http://www.project.com/CBws", "CBport");
+	    	Service service = Service.create(wsdl, serviceName);
+	        CBport centralnaBanka = service.getPort(portName, CBport.class);
+        	Mt900RTGS rtgsResponse = centralnaBanka.receiveMT103CB(rtgsNalog);
+	        System.out.println("----->ID PORUKE: "+rtgsResponse.getIDPoruke());	
 			System.out.println("Done.");
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
     	
     	/*
 		TBanka duznik = new TBanka();
@@ -633,40 +626,6 @@ public class BankaPortImpl implements BankaPort {
 		//RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT102", "1", mt102);
 		mt102 = (Mt102) RESTUtil.doUnmarshall("//*:mt102", "Banka/001/MT102/1", mt102);
 		*/
-    	PortHelper.current_bank = new Banka();
-    	String propFile = "deploy"+PortHelper.ID_Instance_Banke;
-    	Properties properties = new Properties();
-    	String s = "";
-	    try {
-	      properties.load(new FileInputStream(propFile+".properties"));
-	      s = properties.getProperty("swift.code");
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }
-    	Long i = Long.parseLong(Integer.toString(PortHelper.ID_Instance_Banke));
-    	TBanka podaci = new TBanka();
-    	podaci.setSWIFTKod(s);
-    	podaci.setId(PortHelper.current_bank.getId());
-    	String accNum =  properties.getProperty("account.number");
-    	podaci.setBrojRacunaBanke(accNum);
-    	String bName = properties.getProperty("bank.name");
-    	podaci.setNazivBanke(bName);
-    	PortHelper.current_bank.setPodaci_o_banci(podaci);
-    	PortHelper.current_bank.setSWIFTCode(s);
-    	PortHelper.current_bank.setId(i);
-    	PortHelper.KEY_STORE_FILE = properties.getProperty("keystore.file");
-    	PortHelper.KEY_STORE_PASSWORD = properties.getProperty("keystore.password");
-    	
-    	try {
-    		PortHelper.mt102ID = PortHelper.getMaxMTID(i, "MT102");
-    		PortHelper.mt103ID = PortHelper.getMaxMTID(i, "MT103");
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-    	
-    	PortHelper.current_bank.init();
-    	PortHelper.rtgsObrada = new RTGSProccessing();
-    	
     }
 
 }

@@ -7,8 +7,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.project.entities.Identifiable;
-
 
 /**
  * <p>Java class for TBanka complex type.
@@ -51,7 +49,7 @@ import com.project.entities.Identifiable;
     "swiftKod",
     "brojRacunaBanke"
 })
-public class TBanka extends Identifiable{
+public class TBanka {
 
     @XmlElement(name = "Naziv_banke", required = true)
     protected String nazivBanke;

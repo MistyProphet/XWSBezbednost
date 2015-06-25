@@ -8,6 +8,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
+import misc.DocumentUtil;
 import misc.RESTUtil;
 
 import org.apache.xml.security.exceptions.XMLSecurityException;
@@ -43,7 +44,7 @@ public class VerifySignatureEnveloped {
 			
 			//kreira se signature objekat od elementa
 			XMLSignature signature = new XMLSignature(signatureEl, null);
-			
+			/*
 			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
 			NodeList list = timestamp.getChildNodes();
 			java.util.Date expires = null;
@@ -65,7 +66,13 @@ public class VerifySignatureEnveloped {
 				ex.printStackTrace();
 				return false;
 			}
-			
+			*/
+			try {
+				DocumentUtil.printDocument(doc);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			String documentName = doc.getElementsByTagName("body").item(0).getChildNodes().item(0).getNodeName();
 			System.out.println("!!!!!!!!!!!! DOCUMENT NAME: " + documentName);
 			String idPoruke = doc.getElementsByTagName("body").item(0).getChildNodes().item(0).getAttributes().getNamedItem("id").toString();

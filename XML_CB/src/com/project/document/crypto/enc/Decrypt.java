@@ -12,7 +12,9 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.Properties;
+import java.util.ResourceBundle;
+
+import misc.DocumentUtil;
 
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
@@ -27,13 +29,10 @@ public class Decrypt {
 	private static String KEY_STORE_FILE = "";
 	
     static {
-    	Properties properties = new Properties();
-	    try {
-	      properties.load(new FileInputStream("deploy.properties"));
-	      KEY_STORE_FILE = properties.getProperty("keystore.file");
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }
+    	ResourceBundle b = ResourceBundle.getBundle ("resources.deploy");
+        
+    	KEY_STORE_FILE = (String) b.getObject("keystore.file");
+
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }
@@ -100,7 +99,7 @@ public class Decrypt {
 			xmlCipher.init(XMLCipher.DECRYPT_MODE, null);
 			//postavlja se kljuc za dekriptovanje tajnog kljuca
 			xmlCipher.setKEK(privateKey);
-			
+			DocumentUtil.printDocument(doc);
 			//trazi se prvi EncryptedData element
 			NodeList encDataList = doc.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
 			Element encData = (Element) encDataList.item(0);

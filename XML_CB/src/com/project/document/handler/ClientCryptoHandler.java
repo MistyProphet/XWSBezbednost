@@ -18,7 +18,7 @@ public class ClientCryptoHandler implements LogicalHandler<LogicalMessageContext
 	@Override
 	public boolean handleMessage(LogicalMessageContext context) {
 
-		System.out.println("\n*** Handler za kriptovanje kod Klijenta ***");
+		System.out.println("\n*** Handler za kriptovanje kod Klijenta CB***");
 
 		Boolean isResponse = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		Source source = context.getMessage().getPayload();

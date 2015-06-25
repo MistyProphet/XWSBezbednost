@@ -20,6 +20,16 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import misc.RESTUtil;
 
 import org.apache.xml.security.exceptions.XMLSecurityException;
@@ -37,6 +47,7 @@ import com.project.banka.PortHelper;
 
 //Potpisuje dokument, koristi se enveloped tip
 public class SignEnveloped {
+	public static Integer aaa = 1;
 	
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -141,10 +152,12 @@ public class SignEnveloped {
         
         try {
 			Element rootEl = doc.getDocumentElement();
+			  
 			//kreira se signature objekat
 			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
 			//PROVERITI
-			sig.setId(getNextId(rootEl.getNodeName(), rootEl.getElementsByTagName("ID_poruke").item(0).getNodeValue())+"");
+			sig.setId(aaa.toString());
+			aaa++;
 			
 			//Dodavanje timestampa
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
@@ -202,6 +215,9 @@ public class SignEnveloped {
 			e.printStackTrace();
 			return null;
 		} catch (XMLSecurityException e) {
+			e.printStackTrace();
+			return null;
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}

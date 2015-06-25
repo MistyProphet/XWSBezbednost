@@ -2,6 +2,7 @@
 package com.project.mt910;
 
 import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,7 +10,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.project.common_types.TBanka;
+import com.project.mt102.Mt102;
+import com.project.mt103.Mt103;
+import com.project.mt910.Mt910.PodaciOOdobrenju;
 
 
 /**

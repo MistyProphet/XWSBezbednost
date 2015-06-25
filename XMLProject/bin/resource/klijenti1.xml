@@ -13,7 +13,7 @@
     <Racun>
         <Racun xmlns="http://www.project.com/common_types" id="2">
             <Vlasnik>Mika Mikic</Vlasnik>
-            <Broj_Racuna>001-0000000000002-00</Broj_Racuna>
+            <Broj_Racuna>001-0000000000001-00</Broj_Racuna>
         </Racun>
         <Stanje xmlns="http://www.project.com/common_types">1000</Stanje>
         <Raspoloziva_sredstva xmlns="http://www.project.com/common_types">1000</Raspoloziva_sredstva>

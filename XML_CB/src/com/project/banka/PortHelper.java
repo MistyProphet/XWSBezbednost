@@ -1,17 +1,11 @@
 package com.project.banka;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.Properties;
-
-import com.project.banka.RESTUtil;
-
-import com.project.banka.common_types.TBanka;
-import com.project.banka.Mt102;
+import java.util.ResourceBundle;
 
 public class PortHelper {
 	public static int ID_Instance_Banke = 1;
@@ -25,39 +19,13 @@ public class PortHelper {
     
     static {
     	current_bank = new Banka();
-    	String propFile = "deploy"+ID_Instance_Banke;
-    	Properties properties = new Properties();
-    	String s = "";
-	    try {
-	      properties.load(new FileInputStream(propFile+".properties"));
-	      s = properties.getProperty("swift.code");
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }
-    	Long i = Long.parseLong(Integer.toString(ID_Instance_Banke));
-    	TBanka podaci = new TBanka();
-    	podaci.setSWIFTKod(s);
-    	podaci.setId(current_bank.getId());
-    	String accNum =  properties.getProperty("account.number");
-    	podaci.setBrojRacunaBanke(accNum);
-    	String bName = properties.getProperty("bank.name");
-    	podaci.setNazivBanke(bName);
-    	current_bank.setPodaci_o_banci(podaci);
-    	current_bank.setSWIFTCode(s);
-    	current_bank.setId(i);
-    	KEY_STORE_FILE = properties.getProperty("keystore.file");
-    	KEY_STORE_PASSWORD = properties.getProperty("keystore.password");
+    	ResourceBundle b = ResourceBundle.getBundle ("resources.deploy");
+       
+    	KEY_STORE_FILE = (String) b.getObject("keystore.file");
+    	KEY_STORE_PASSWORD = (String) b.getObject("keystore.password");
     	
-    	try {
-    		mt102ID = getMaxMTID(i, "MT102");
-    		mt103ID = getMaxMTID(i, "MT103");
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
     	
-    	current_bank.init();
     	rtgsObrada = new RTGSProccessing();
-    	ID_Instance_Banke++;
     }
     
     public static Long getMaxMTID (Long idBanke, String message) throws IOException {

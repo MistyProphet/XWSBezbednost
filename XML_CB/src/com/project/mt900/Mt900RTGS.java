@@ -14,7 +14,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import com.project.common_types.TBanka;
 import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
-import com.project.mt900.Mt900Clearing.PodaciOZaduzenju;
 
 
 /**
@@ -78,21 +77,13 @@ import com.project.mt900.Mt900Clearing.PodaciOZaduzenju;
     "podaciOZaduzenju"
 })
 @XmlRootElement(name = "mt900RTGS")
-public class Mt900RTGS{
+public class Mt900RTGS {
 
     @XmlElement(name = "ID_poruke", required = true)
     protected String idPoruke;
     @XmlElement(name = "Podaci_o_zaduzenju", required = true)
     protected Mt900RTGS.PodaciOZaduzenju podaciOZaduzenju;
-
-    /**
-     * Gets the value of the idPoruke property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public Mt900RTGS (Mt103 mt103){
     	
     	PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
@@ -105,11 +96,8 @@ public class Mt900RTGS{
 		this.setPodaciOZaduzenju(zaduzenje);
 	
     }
-    public Mt900RTGS() {
-   
-	
-	}
-	public Mt900RTGS(Mt102 mt102) {
+    
+    public Mt900RTGS(Mt102 mt102) {
 		
 		PodaciOZaduzenju zaduzenje = new PodaciOZaduzenju();
 		zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
@@ -119,6 +107,18 @@ public class Mt900RTGS{
 		zaduzenje.setDatumValute(mt102.getDatumValute());
 		this.setPodaciOZaduzenju(zaduzenje);
 	}
+    public Mt900RTGS() {
+		
+	}
+
+	/**
+     * Gets the value of the idPoruke property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
     public String getIDPoruke() {
         return idPoruke;
     }
@@ -340,6 +340,5 @@ public class Mt900RTGS{
         }
 
     }
-    
-  
+
 }

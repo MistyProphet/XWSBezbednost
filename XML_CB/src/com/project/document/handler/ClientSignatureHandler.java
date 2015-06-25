@@ -21,7 +21,7 @@ public class ClientSignatureHandler implements LogicalHandler<LogicalMessageCont
 
 	@Override
 	public boolean handleMessage(LogicalMessageContext context) {
-		System.out.println("\n*** Handler za digitalno potpisivanje kod Klijenta ***");
+		System.out.println("\n*** Handler za digitalno potpisivanje kod Klijenta CB***");
 
 		Boolean isResponse = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		Source source = context.getMessage().getPayload();

@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.project.common_types.TBanka;
-import com.project.entities.Identifiable;
 
 
 /**
@@ -76,7 +75,7 @@ import com.project.entities.Identifiable;
     "podaciOZaduzenju"
 })
 @XmlRootElement(name = "mt900Clearing")
-public class Mt900Clearing extends Identifiable{
+public class Mt900Clearing {
 
     @XmlElement(name = "ID_poruke", required = true)
     protected String idPoruke;
@@ -91,6 +90,9 @@ public class Mt900Clearing extends Identifiable{
      *     {@link String }
      *     
      */
+    
+    
+
     public String getIDPoruke() {
         return idPoruke;
     }
@@ -312,15 +314,5 @@ public class Mt900Clearing extends Identifiable{
         }
 
     }
-    
-    @Override
-	public Long getId() {
-		return Long.parseLong(idPoruke);
-	}
-
-	@Override
-	public void setId(Long value) {
-		this.idPoruke = value.toString();
-	}
 
 }

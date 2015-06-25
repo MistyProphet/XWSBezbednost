@@ -83,7 +83,35 @@ public class Mt910 {
     protected String idPoruke;
     @XmlElement(name = "Podaci_o_odobrenju", required = true)
     protected Mt910 .PodaciOOdobrenju podaciOOdobrenju;
+    
+    public Mt910(Mt103 mt103) {
+        
+    	PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
+    	zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
+    	zaduzenje.setSifraValute(mt103.getSifraValute());
+    	zaduzenje.setIznos(mt103.getUplata().getIznos());
+    	zaduzenje.setDatumValute(mt103.getDatumValute());
+    	zaduzenje.setBankaPoverioca(mt103.getPodaciOBankama().getBankaPoverioca());
+    	this.setPodaciOOdobrenju(zaduzenje);
+    	
+    }
 
+    public Mt910(Mt102 mt102) {
+    	
+    	PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
+    		zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
+    		zaduzenje.setSifraValute(mt102.getSifraValute());
+    		zaduzenje.setIznos(mt102.getUkupanIznos());
+    		zaduzenje.setDatumValute(mt102.getDatumValute());
+    		
+    		zaduzenje.setBankaPoverioca(mt102.getBankaPoverioca());
+    		this.setPodaciOOdobrenju(zaduzenje);
+    }
+    
+    public Mt910() {
+    	
+    }
+    
     /**
      * Gets the value of the idPoruke property.
      * 
@@ -92,34 +120,7 @@ public class Mt910 {
      *     {@link String }
      *     
      */
-    public Mt910(Mt103 mt103) {
-    
-    	PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
-		zaduzenje.setIDPorukeNaloga(mt103.getIDPoruke());
-		zaduzenje.setSifraValute(mt103.getSifraValute());
-		zaduzenje.setIznos(mt103.getUplata().getIznos());
-		zaduzenje.setDatumValute(mt103.getDatumValute());
-		zaduzenje.setBankaPoverioca(mt103.getPodaciOBankama().getBankaPoverioca());
-		this.setPodaciOOdobrenju(zaduzenje);
-		
-    }
-
-	public Mt910(Mt102 mt102) {
-		
-		PodaciOOdobrenju zaduzenje = new PodaciOOdobrenju();
-			zaduzenje.setIDPorukeNaloga(mt102.getIDPoruke());
-			zaduzenje.setSifraValute(mt102.getSifraValute());
-			zaduzenje.setIznos(mt102.getUkupanIznos());
-			zaduzenje.setDatumValute(mt102.getDatumValute());
-			
-			zaduzenje.setBankaPoverioca(mt102.getBankaPoverioca());
-			this.setPodaciOOdobrenju(zaduzenje);
-	}
-    public Mt910() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public String getIDPoruke() {
+    public String getIDPoruke() {
         return idPoruke;
     }
 
@@ -340,6 +341,5 @@ public class Mt910 {
         }
 
     }
-    
-  
+
 }

@@ -15,7 +15,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -48,13 +48,8 @@ public class RESTUtil<T> {
 	public static String REST_URL = "";
 	
 	static {
-		try {
-			Properties properties = new Properties();
-	        properties.load(new FileInputStream("basex.properties"));
-	        REST_URL = properties.getProperty("rest.url");
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+        ResourceBundle b = ResourceBundle.getBundle ("resource.basex");
+        REST_URL =  (String) b.getObject("rest.url");
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -71,7 +66,7 @@ public class RESTUtil<T> {
 		createResource("Banke", "Podaci", new FileInputStream(new File(file, "banke.xml")));
 
 		createResource("Banka/001", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
-		createResource("Banka/001", "MT103", new FileInputStream(new File(file, "MT103.xml")));
+		//createResource("Banka/001", "MT103", new FileInputStream(new File(file, "MT103.xml")));
 		//createResource("Banka/001", "MT102", new FileInputStream(new File(file, "MT102.xml")));
 		createResource("Banka/001", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/001", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
@@ -97,10 +92,9 @@ public class RESTUtil<T> {
 		rac1.setId(new Long(1));
 		rac1.setVlasnik("Pera Peric");
 		TBankarskiRacunKlijenta racun1 = new TBankarskiRacunKlijenta();
-		racun1.setId(new Long(1));
 		racun1.setRacun(rac1);
-		racun1.setRaspolozivaSredstva(new BigDecimal(500));
-		racun1.setStanje(new BigDecimal(500));
+		racun1.setRaspolozivaSredstva(500);
+		racun1.setStanje(500);
 		racun1.setValuta("RSD");
 		t1.setRacunKlijenta(racun1);
 		
@@ -124,10 +118,9 @@ public class RESTUtil<T> {
 		rac2.setId(new Long(1));
 		rac2.setVlasnik("Pera Peric");
 		TBankarskiRacunKlijenta racun2 = new TBankarskiRacunKlijenta();
-		racun2.setId(new Long(1));
 		racun2.setRacun(rac2);
-		racun2.setRaspolozivaSredstva(new BigDecimal(500));
-		racun2.setStanje(new BigDecimal(500));
+		racun2.setRaspolozivaSredstva(500);
+		racun2.setStanje(500);
 		racun2.setValuta("RSD");
 		t2.setRacunKlijenta(racun2);
 		
@@ -235,9 +228,8 @@ public class RESTUtil<T> {
 		
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-	
-			URL url = new URL(REST_URL + schemaName + "/" + resourceId);
 			
+			URL url = new URL(REST_URL + schemaName + "/" + resourceId);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(RequestMethod.PUT);
 			conn.setDoOutput(true);
@@ -250,7 +242,6 @@ public class RESTUtil<T> {
 			OutputStream out = conn.getOutputStream();
 			marshaller.marshal(o, out);
 			
-			System.out.println(out.toString());
 			IOUtils.closeQuietly(out);
 			IOUtils.closeQuietly(out);
 			
@@ -315,7 +306,7 @@ public class RESTUtil<T> {
 	
 	public static InputStream retrieveResource(String query, String schemaName, String encoding, boolean wrap) throws Exception {
 		System.out.println("=== GET: execute a query: " + query + " ===");
-		
+
 		StringBuilder builder = new StringBuilder(REST_URL);
 		builder.append(schemaName);
 		builder.append("?query=");
@@ -400,7 +391,6 @@ public class RESTUtil<T> {
 			Marshaller marshaller = context.createMarshaller();
 			// set optional properties
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-	
 			String xml = "";
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			for (String line; (line = br.readLine()) != null;) {
@@ -429,7 +419,6 @@ public class RESTUtil<T> {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			for (String line; (line = br.readLine()) != null;) {
 				xml=xml+line+"\n";
-				System.out.println(line);
 			}
 			xml=xml+"</ns5:Transakcije>";
 			StringReader reader = new StringReader(xml);

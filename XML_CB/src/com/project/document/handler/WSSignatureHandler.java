@@ -21,7 +21,7 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 
 	@Override
 	public boolean handleMessage(LogicalMessageContext context) {
-		System.out.println("\n*** Handler za digitalno potpisivanje kod Web Servisa ***");
+		System.out.println("\n*** Handler za digitalno potpisivanje kod Web Servisa CB***");
 
 		Boolean isResponse = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		Source source = context.getMessage().getPayload();

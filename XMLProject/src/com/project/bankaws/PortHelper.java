@@ -1,12 +1,11 @@
 package com.project.bankaws;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.Properties;
+import java.util.ResourceBundle;
 
 import misc.RESTUtil;
 
@@ -27,28 +26,23 @@ public class PortHelper {
     
     static {
     	current_bank = new Banka();
-    	String propFile = "deploy"+ID_Instance_Banke;
-    	Properties properties = new Properties();
     	String s = "";
-	    try {
-	      properties.load(new FileInputStream(propFile+".properties"));
-	      s = properties.getProperty("swift.code");
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }
+        ResourceBundle b = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
+        s =  (String) b.getObject("swift.code");
+
     	Long i = Long.parseLong(Integer.toString(ID_Instance_Banke));
     	TBanka podaci = new TBanka();
     	podaci.setSWIFTKod(s);
     	podaci.setId(current_bank.getId());
-    	String accNum =  properties.getProperty("account.number");
+    	String accNum =  (String) b.getObject("account.number");
     	podaci.setBrojRacunaBanke(accNum);
-    	String bName = properties.getProperty("bank.name");
+    	String bName = (String) b.getObject("bank.name");
     	podaci.setNazivBanke(bName);
     	current_bank.setPodaci_o_banci(podaci);
     	current_bank.setSWIFTCode(s);
     	current_bank.setId(i);
-    	KEY_STORE_FILE = properties.getProperty("keystore.file");
-    	KEY_STORE_PASSWORD = properties.getProperty("keystore.password");
+    	KEY_STORE_FILE = (String) b.getObject("keystore.file");
+    	KEY_STORE_PASSWORD = (String) b.getObject("keystore.password");
     	
     	try {
     		mt102ID = getMaxMTID(i, "MT102");

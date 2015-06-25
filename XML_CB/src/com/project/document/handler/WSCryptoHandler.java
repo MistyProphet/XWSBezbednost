@@ -18,7 +18,7 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 	@Override
 	public boolean handleMessage(LogicalMessageContext context) {
 
-		System.out.println("\n*** Handler za kriptovanje kod Web Servisa ***");
+		System.out.println("\n*** Handler za kriptovanje kod Web Servisa CB***");
 
 		Boolean isResponse = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		Source source = context.getMessage().getPayload();
@@ -32,12 +32,13 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 			context.getMessage().setPayload(new DOMSource(encryptedDoc));
 		} else {
 			System.err.println("\n-- Dekriptovanje --");	
-			
-			Document decryptedDoc = Decrypt.decryptDocument(document);
 			try {
-				DocumentUtil.printDocument(decryptedDoc);
+				System.out.println("\n*** Pristigli dokument CB***");
+				DocumentUtil.printDocument(document);
 			} catch (Exception e) {}
-			context.getMessage().setPayload(new DOMSource(decryptedDoc));
+			//Document decryptedDoc = Decrypt.decryptDocument(document);
+			
+			//context.getMessage().setPayload(new DOMSource(decryptedDoc));
 		}
 		return true;
 	}

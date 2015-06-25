@@ -6,11 +6,9 @@
 package com.project.cbws;
 
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.logging.Logger;
 
 import javax.jws.HandlerChain;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -40,10 +38,10 @@ import com.project.nalog_za_placanje.Uplata;
  */
 
 @javax.jws.WebService(serviceName = "CBservice", portName = "CBport", targetNamespace = "http://www.project.com/CBws", wsdlLocation = "WEB-INF/wsdl/Banka.wsdl", endpointInterface = "com.project.cbws.CBport")
+@HandlerChain(file = "/com/project/document/handler-chain-document.xml")
 public class CBportImpl implements CBport {
 
-	private static final Logger LOG = Logger.getLogger(CBportImpl.class
-			.getName());
+	//private static final Logger LOG = Logger.getLogger(CBportImpl.class.getName());
 
 	/*
 	 * (non-Javadoc)
@@ -139,9 +137,9 @@ public class CBportImpl implements CBport {
 	    	Service service = Service.create(wsdl, serviceName);
 	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
 			Mt910 mt910 = new Mt910(mt103);
-			bankaPort.receiveMT910(mt910);
-			
 			mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
+			//bankaPort.receiveMT910(mt910);
+			
 			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
 					"mt910.xsd");
 			// bankaPort.receiveMT103(mt103);
@@ -195,7 +193,7 @@ public class CBportImpl implements CBport {
 		u.setRacunPrimaoca(tr);
 		u.setRacunDuznika(tr);
 		request.setUplata(u);
-		Mt900RTGS response;
+		//Mt900RTGS response;
 
 		Mt102 mt102 = new Mt102();
 		mt102.setBankaDuznika(duznik);

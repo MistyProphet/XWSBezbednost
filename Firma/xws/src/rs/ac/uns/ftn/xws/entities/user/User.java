@@ -7,8 +7,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import rs.ac.uns.ftn.xws.entities.payments.Identifiable;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -35,6 +33,17 @@ import rs.ac.uns.ftn.xws.entities.payments.Identifiable;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
+ *         &lt;element name="roles">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence>
+ *                   &lt;element name="role" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}long" />
  *     &lt;/restriction>
@@ -47,15 +56,18 @@ import rs.ac.uns.ftn.xws.entities.payments.Identifiable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "username",
-    "password"
+    "password",
+    "roles"
 })
 @XmlRootElement(name = "user")
-public class User extends Identifiable {
+public class User {
 
     @XmlElement(required = true)
     protected String username;
     @XmlElement(required = true)
     protected String password;
+    @XmlElement(required = true)
+    protected User.Roles roles;
     @XmlAttribute(name = "id")
     protected Long id;
 
@@ -108,6 +120,30 @@ public class User extends Identifiable {
     }
 
     /**
+     * Gets the value of the roles property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link User.Roles }
+     *     
+     */
+    public User.Roles getRoles() {
+        return roles;
+    }
+
+    /**
+     * Sets the value of the roles property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link User.Roles }
+     *     
+     */
+    public void setRoles(User.Roles value) {
+        this.roles = value;
+    }
+
+    /**
      * Gets the value of the id property.
      * 
      * @return
@@ -129,6 +165,61 @@ public class User extends Identifiable {
      */
     public void setId(Long value) {
         this.id = value;
+    }
+
+
+    /**
+     * <p>Java class for anonymous complex type.
+     * 
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     * 
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence>
+     *         &lt;element name="role" type="{http://www.w3.org/2001/XMLSchema}string"/>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     * 
+     * 
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+        "role"
+    })
+    public static class Roles {
+
+        @XmlElement(required = true)
+        protected String role;
+
+        /**
+         * Gets the value of the role property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public String getRole() {
+            return role;
+        }
+
+        /**
+         * Sets the value of the role property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setRole(String value) {
+            this.role = value;
+        }
+
     }
 
 }

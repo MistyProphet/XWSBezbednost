@@ -33,23 +33,11 @@ public class PINInterceptor {
 
 	@AroundInvoke
 	public Object intercept(InvocationContext context) throws Exception{
-        String URL = request.getRequestURL().toString();
-        String[] parts = URL.split("/");
-        for (int i=0; i< parts.length; i++)
-            if (parts[i].equals("partneri") && parts.length > i+1) {
-                if (!partnerDao.isBusinessPartner(parts[i+1])) {
-                    if (request.getMethod().equals("POST") || 
-                        request.getMethod().equals("PUT")  ||
-                        request.getMethod().equals("DELETE"))
-                            throw new ServiceException("Partner does not exist. ", Status.FORBIDDEN);
-                    else if (request.getMethod().equals("GET"))
-                        throw new ServiceException("Resource not found. ", Status.NOT_FOUND);
-                }
-            }
+        // Throws errors and causes responses if something is wrong. Exits immediately.
+        processURL(request);
+
         try {
 		    Object result = context.proceed();
-            //if (result == null)
-            //    throw new ServiceException("Document not found. ", Status.NOT_FOUND);
 		    return result;
         } catch (JAXBException e) {
             System.out.println("#################################################################");
@@ -65,4 +53,21 @@ public class PINInterceptor {
             throw new ServiceException("Strange error. ", Status.NOT_ACCEPTABLE);
         }
 	}
+
+    private void processURL(HttpServletRequest request) {
+        String URL = request.getRequestURL().toString();
+        String[] parts = URL.split("/");
+        for (int i=0; i< parts.length; i++) {
+            if (parts[i].equals("partneri") && parts.length > i+1) {
+                if (!partnerDao.isBusinessPartner(parts[i+1])) {
+                    if (request.getMethod().equals("POST") || 
+                        request.getMethod().equals("PUT")  ||
+                        request.getMethod().equals("DELETE"))
+                            throw new ServiceException("Partner does not exist. ", Status.FORBIDDEN);
+                    else if (request.getMethod().equals("GET"))
+                        throw new ServiceException("Resource not found. ", Status.NOT_FOUND);
+                }
+            }
+        }
+    }
 }

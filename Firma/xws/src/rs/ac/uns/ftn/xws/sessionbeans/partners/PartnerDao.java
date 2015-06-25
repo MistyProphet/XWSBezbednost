@@ -2,7 +2,6 @@ package rs.ac.uns.ftn.xws.sessionbeans.partners;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,8 +32,6 @@ public class PartnerDao extends GenericDao<Partner, Long> implements PartnerDaoL
 	}
 
     public List<String> findAllTINs() throws IOException {
-        List<String> tins = new ArrayList<String>();
-
         InputStream stream = em.executeQuery(
                 "(//TIN)",
                 false);
@@ -52,10 +49,14 @@ public class PartnerDao extends GenericDao<Partner, Long> implements PartnerDaoL
         return Arrays.asList(results);
     }
 
-    public Boolean isBusinessPartner(String TIN) throws IOException, JAXBException {
-        List<Partner> partners = em.runQuery("partner", "(//Partner[TIN=\"" + TIN + "\"])");
-        if (partners.size() > 0)
-            return true;
+    public Boolean isBusinessPartner(String TIN) {
+        try {
+            List<Partner> partners = em.runQuery("partner", "(//Partner[TIN=\"" + TIN + "\"])");
+            if (partners.size() > 0)
+                return true;
+        } catch (IOException | JAXBException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

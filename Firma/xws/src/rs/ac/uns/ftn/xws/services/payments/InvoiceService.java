@@ -57,10 +57,10 @@ public class InvoiceService {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Invoice findById(@PathParam("PIB") String PIB, @PathParam("id") String id) throws Exception {
 		Invoice retVal = null;
-		    retVal = invoiceDao.findById(Long.parseLong(id));
-            if (retVal.getSupplierTIN().equals(PIB))
-                return retVal;
-		    return null;
+	    retVal = invoiceDao.findById(Long.parseLong(id));
+        if (retVal.getSupplierTIN().equals(PIB))
+            return retVal;
+        return null;
     }
     
 	@GET 

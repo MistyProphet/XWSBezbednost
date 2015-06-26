@@ -117,43 +117,4 @@ public class BasexTest {
 //            }
 //        }
 //    }
-
-    @Test 
-    public void getAllPartners() throws IOException, JAXBException {
-        List<Partner> partners = partnerDao.findAll();
-        Assert.assertNotNull(partners);
-        Assert.assertTrue(partners.size() > 0);
-    }        
-
-    @Test
-    public void addPartner() throws IOException, JAXBException {
-        Partner partner = new Partner();
-        partner.setTIN("supplierTIfN4");
-        partner.setURL("192.168.1.144");
-        partner.setName("Toster");
-
-        partnerDao.persist(partner);
-
-        List<Partner> partners = partnerDao.findAll();
-        Boolean foundPartner = false;
-        for (Partner p : partners) 
-            if (p.getTIN().equals(partner.getTIN()))
-                foundPartner = true;
-
-        Assert.assertTrue(foundPartner);
-    }
-
-    @Test 
-    public void findAllTINs() throws IOException {
-        List<String> tins = partnerDao.findAllTINs();
-        for (String s : tins)  {
-            System.out.println(s);
-            Assert.assertEquals(11, s.length());
-        }
-    }
-
-    @Test
-    public void checkIfPartnerExists() throws IOException, JAXBException {
-        Assert.assertTrue(partnerDao.isBusinessPartner("supplierTIfN4"));
-    }
 }

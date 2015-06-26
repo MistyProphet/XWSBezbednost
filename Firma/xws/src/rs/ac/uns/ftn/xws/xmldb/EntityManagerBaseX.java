@@ -66,7 +66,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		if (responseCode == HttpURLConnection.HTTP_OK) 
 			return (T) unmarshaller.unmarshal(conn.getInputStream());
@@ -91,7 +91,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			wrappedResults = (Results) basex_unmarshaller.unmarshal(conn.getInputStream());
@@ -119,7 +119,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			wrappedResults = (Results) basex_unmarshaller.unmarshal(conn.getInputStream());
@@ -147,7 +147,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			wrappedResults = (Results) basex_unmarshaller.unmarshal(conn.getInputStream());
@@ -180,7 +180,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		/*
 		 * Generate HTTP POST body.
 		 */
-		System.out.println(wrappedQuery);
+		//System.out.println(wrappedQuery);
 		OutputStream out = conn.getOutputStream();
 		out.write(wrappedQuery.getBytes("UTF-8"));
 		out.close();
@@ -188,7 +188,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		if (responseCode == HttpURLConnection.HTTP_OK)
 			result = conn.getInputStream();
@@ -210,7 +210,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 		
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		conn.disconnect();
 	}
@@ -223,7 +223,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 		
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		conn.disconnect();
 	}
@@ -239,7 +239,7 @@ public class EntityManagerBaseX<T, ID extends Serializable> {
 		int responseCode = conn.getResponseCode();
 		String message = conn.getResponseMessage();
 		
-		System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
+		//System.out.println("\n* HTTP response: " + responseCode + " (" + message + ')');
 		
 		conn.disconnect();
 	}

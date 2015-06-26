@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/home/zieghailo/development/projects/XWSBezbednost/Firma/xws/schema/Service.xsd">
+    <roles_allowed>
+        <role>Admin</role>
+        <role>Shef</role>
+        <role>H1V3M1ND</role>
+    </roles_allowed>
+    <name>findAllUsers</name>
+</service>

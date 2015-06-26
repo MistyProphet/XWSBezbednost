@@ -22,7 +22,8 @@
                 <xs:element name="roles">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="role" type="xs:string"/>
+                            <xs:element name="role" type="xs:string" maxOccurs="unbounded"
+                                minOccurs="0"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

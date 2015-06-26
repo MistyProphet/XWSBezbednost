@@ -6,7 +6,7 @@
 //
 
 
-package rs.ac.uns.ftn.xws.entities.user;;
+package rs.ac.uns.ftn.xws.entities.user;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

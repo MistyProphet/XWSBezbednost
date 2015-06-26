@@ -9,7 +9,6 @@
 		<non-jta-data-source>unmanagedxws</non-jta-data-source>
 		<class>rs.ac.uns.ftn.xws.entities.payments.Invoice</class>
 		<class>rs.ac.uns.ftn.xws.entities.payments.InvoiceItem</class>
-		<class>rs.ac.uns.ftn.xws.entities.users.User</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.transaction.flush_before_completion"

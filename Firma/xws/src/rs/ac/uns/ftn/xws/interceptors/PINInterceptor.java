@@ -13,7 +13,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 
-import rs.ac.uns.ftn.xws.entities.users.User;
+import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.sessionbeans.partners.PartnerDaoLocal;
 import rs.ac.uns.ftn.xws.util.Authenticate;
 import rs.ac.uns.ftn.xws.util.ServiceException;

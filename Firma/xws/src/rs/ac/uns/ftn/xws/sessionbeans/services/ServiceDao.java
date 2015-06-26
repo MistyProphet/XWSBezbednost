@@ -12,8 +12,6 @@ import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
 import javax.servlet.http.HttpServletRequest;
 
-import misc.RESTUtil;
-
 import rs.ac.uns.ftn.xws.entities.service.Service;
 import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDao;

@@ -12,8 +12,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 
-import misc.RESTUtil;
-
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDao;

@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
-import rs.ac.uns.ftn.xws.entities.users.User;
+import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.util.Authenticate;
 import rs.ac.uns.ftn.xws.util.ServiceException;
 

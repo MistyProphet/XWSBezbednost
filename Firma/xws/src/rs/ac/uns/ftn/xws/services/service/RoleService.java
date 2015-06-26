@@ -63,7 +63,8 @@ public class RoleService {
     }
 
     @DELETE
-    @
-
-
+    @Path("{serviceName}")
+    public void deleteService(String serviceId) throws Exception {
+        serviceDao.remove(Long.parseLong(serviceId)); 
+    }
 }

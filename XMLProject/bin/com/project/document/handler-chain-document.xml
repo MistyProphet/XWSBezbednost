@@ -4,5 +4,8 @@
 		<hc:handler>
 			<hc:handler-class>com.project.document.handler.WSCryptoHandler</hc:handler-class>
 		</hc:handler>
+		<hc:handler>
+			<hc:handler-class>com.project.document.handler.WSSignatureHandler</hc:handler-class>
+		</hc:handler>
 	</hc:handler-chain>
 </hc:handler-chains>

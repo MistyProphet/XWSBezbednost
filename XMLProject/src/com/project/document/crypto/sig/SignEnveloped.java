@@ -43,13 +43,13 @@ public class SignEnveloped {
         org.apache.xml.security.Init.init();
     }
 	
-	public static Document signDocument(Document doc) {
+	public static Document signDocument(Document doc, boolean external) {
 		//ucitava privatni kljuc
 		PrivateKey pk = readPrivateKey();
 		//ucitava sertifikat
 		Certificate cert = readCertificate();
 		//potpisuje
-		return signDocument(doc, pk, cert);
+		return signDocument(doc, pk, cert, external);
 	}
 	
 	/**
@@ -137,15 +137,23 @@ public class SignEnveloped {
 		} 
 	}
 	
-	private static Document signDocument(Document doc, PrivateKey privateKey, Certificate cert) {
+	private static Document signDocument(Document doc, PrivateKey privateKey, Certificate cert, boolean externalMessage) {
         
         try {
 			Element rootEl = doc.getDocumentElement();
 			//kreira se signature objekat
 			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
 			//PROVERITI
-			sig.setId(getNextId(rootEl.getNodeName(), rootEl.getElementsByTagName("ID_poruke").item(0).getNodeValue())+"");
+			String docType = "";
+			if (rootEl.getNodeName().split(":").length<2) {
+				docType = rootEl.getNodeName().split(":")[0];
+			} else {
+				docType = rootEl.getNodeName().split(":")[1];
+			}
 			
+			if (externalMessage) {
+				sig.setId(getNextId(docType, rootEl.getFirstChild().getFirstChild().getTextContent())+"");
+			}
 			//Dodavanje timestampa
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
 		      formatter.setTimeZone(TimeZone.getTimeZone("GMT"));;
@@ -160,7 +168,7 @@ public class SignEnveloped {
 		        createdElem.setTextContent(formatter.format(created));
 		        
 		        Element expiresElem = doc.createElement("Expires");
-		        createdElem.setTextContent(formatter.format(expires));
+		        expiresElem.setTextContent(formatter.format(expires));
 		        
 		        timestampElem.appendChild(createdElem);
 		        timestampElem.appendChild(expiresElem);

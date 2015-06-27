@@ -16,12 +16,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 
 import rs.ac.uns.ftn.xws.entities.service.Service;
 import rs.ac.uns.ftn.xws.sessionbeans.services.ServiceDaoLocal;
+import rs.ac.uns.ftn.xws.util.Authenticate;
+import rs.ac.uns.ftn.xws.util.ServiceException;
 
 @Path("/service")
 public class RoleService {
@@ -35,7 +38,11 @@ public class RoleService {
 	@Path("{serviceName}")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Service findServiceWithName(@PathParam("serviceName") String serviceName) throws Exception {
-        return serviceDao.findServiceWithName(serviceName);
+        try {
+            return serviceDao.findServiceWithName(serviceName);
+        } catch (NoSuchMethodException e) {
+            throw new ServiceException("Service not found in the database. ", Status.NOT_FOUND);
+        }
 	}
     
     @GET
@@ -64,6 +71,7 @@ public class RoleService {
     }
     
     
+    @Authenticate
     @PUT
     @Path("{serviceName}")
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -71,6 +79,7 @@ public class RoleService {
         serviceDao.merge(service, service.getId());
     }
 
+    @Authenticate
     @DELETE
     @Path("{serviceName}")
     public void deleteService(String serviceId) throws Exception {

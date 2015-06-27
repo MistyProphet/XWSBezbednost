@@ -18,11 +18,14 @@ import org.junit.rules.ExpectedException;
 import rs.ac.uns.ftn.xws.entities.service.Service;
 import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.interceptors.AuthenticationInterceptor;
+import rs.ac.uns.ftn.xws.services.service.RoleService;
 import rs.ac.uns.ftn.xws.sessionbeans.users.UserDao;
 import rs.ac.uns.ftn.xws.sessionbeans.users.UserDaoLocal;
 
 
 public class AuthTest {
+
+    private AuthenticationInterceptor auth;
 
 	@BeforeClass
 	public static void clear() {
@@ -36,11 +39,24 @@ public class AuthTest {
 
     @Before
     public void setUp() {
+        auth = new AuthenticationInterceptor();
+        System.setOut(null);
     }
 
     @Test
+    public void testGetService() throws Exception {
+        Method method = AuthenticationInterceptor.class.getDeclaredMethod("getService", Method.class);
+        method.setAccessible(true);
+
+        Method serviceMethod = RoleService.class.getDeclaredMethod("findAllRoles", null);
+
+        Service service = (Service) method.invoke(auth, serviceMethod);
+        Assert.assertNotNull(service);
+        Assert.assertEquals("findAllRoles", service.getName());
+    } 
+
+    @Test
     public void testUserHasPrivileges() throws Exception {
-        AuthenticationInterceptor auth = new AuthenticationInterceptor();
         Method method = AuthenticationInterceptor.class.getDeclaredMethod("userHasPrivileges", User.class, Service.class);
         method.setAccessible(true);
 

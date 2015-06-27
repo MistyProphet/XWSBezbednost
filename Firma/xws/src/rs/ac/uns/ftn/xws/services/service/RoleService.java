@@ -1,8 +1,10 @@
 package rs.ac.uns.ftn.xws.services.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
@@ -14,15 +16,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 
 import rs.ac.uns.ftn.xws.entities.service.Service;
-import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.sessionbeans.services.ServiceDaoLocal;
-import rs.ac.uns.ftn.xws.sessionbeans.users.UserDaoLocal;
-import rs.ac.uns.ftn.xws.util.ServiceException;
 
 @Path("/service")
 public class RoleService {
@@ -38,18 +37,28 @@ public class RoleService {
 	public Service findServiceWithName(@PathParam("serviceName") String serviceName) throws Exception {
         return serviceDao.findServiceWithName(serviceName);
 	}
-
+    
     @GET
     @Path("")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<String> findAllRoles() throws Exception {
+    public List<Service> findAllServices() throws IOException, JAXBException {
+        return serviceDao.findAll(); 
+    }
+
+    @GET
+    @Path("roles")
+	@Produces(MediaType.TEXT_PLAIN)
+    public String findAllRoles() throws Exception {
         Set<String> serviceNames = serviceDao.findAllRoles();
-        return new ArrayList<String>(serviceNames);
+        StringBuilder sb = new StringBuilder();
+        for (String s : serviceNames)
+            sb.append(s).append("\n");
+        return sb.toString().trim();
     }
     
     @POST
     @Path("")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void addNewService(Service service) throws Exception {
         serviceDao.persist(service);
     }
@@ -57,7 +66,7 @@ public class RoleService {
     
     @PUT
     @Path("{serviceName}")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void modifyService(Service service) throws Exception {
         serviceDao.merge(service, service.getId());
     }

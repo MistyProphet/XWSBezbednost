@@ -18,8 +18,10 @@ import javax.ws.rs.core.MediaType;
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
+import rs.ac.uns.ftn.xws.util.Authenticate;
 import rs.ac.uns.ftn.xws.util.ValidateSupplier;
 
+@Authenticate
 @ValidateSupplier
 @Path("/partneri/{PIB}/fakture")
 public class InvoiceService {

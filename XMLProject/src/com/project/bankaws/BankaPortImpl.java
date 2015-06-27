@@ -42,6 +42,7 @@ import com.project.banke_racuni.RacuniBanaka.KodBanke;
 import com.project.common_types.TBankarskiRacunKlijenta;
 import com.project.common_types.TRacunKlijenta;
 import com.project.document.handler.WSCryptoHandler;
+import com.project.document.handler.WSSignatureHandler;
 import com.project.exceptions.NoMoneyException;
 import com.project.exceptions.WrongBankException;
 import com.project.mt102.Mt102;
@@ -377,6 +378,7 @@ public class BankaPortImpl implements BankaPort {
     			          @SuppressWarnings("rawtypes")
     			          List<Handler> handlerList = binding.getHandlerChain();
     			          handlerList.clear();
+    			          handlerList.add(new WSSignatureHandler());
     			          handlerList.add(new WSCryptoHandler());
     			          binding.setHandlerChain(handlerList);  
     	        	/////                                                                    //////

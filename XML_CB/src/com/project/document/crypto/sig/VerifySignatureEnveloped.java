@@ -39,13 +39,15 @@ public class VerifySignatureEnveloped {
 			//Pronalazi se prvi Signature element 
 			NodeList signatures = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
 			Element signatureEl = (Element) signatures.item(0);
-			
+			System.out.println(signatureEl.getLocalName());
+			System.out.println();
 			java.util.Date now = new java.util.Date();
 			
 			//kreira se signature objekat od elementa
 			XMLSignature signature = new XMLSignature(signatureEl, null);
 			
 			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
+			System.out.println(timestamp.getLocalName());
 			NodeList list = timestamp.getChildNodes();
 			java.util.Date expires = null;
 			java.util.Date created = null;

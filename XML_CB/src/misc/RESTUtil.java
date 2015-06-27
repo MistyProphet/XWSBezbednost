@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -17,8 +18,10 @@ import java.util.ResourceBundle;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -60,6 +63,7 @@ public class RESTUtil {
 		createSchema("MT900");
 		createSchema("MT910");
 		createSchema("indeksiPoruka");
+		createSchema("crl");
 		createResource("CB", "Racuni", new FileInputStream(new File(file, "banke.xml")));
 		
 	/*	printStream(retrieveResource("(//city/name)[position()= 10 to 15]", "factbook", RequestMethod.GET));
@@ -183,6 +187,48 @@ public class RESTUtil {
 			e.printStackTrace();
 		} 
 	}
+	
+	public static void objectToDB(String schemaName, String resourceId, Object o){
+		JAXBContext context;
+		
+		try {
+			context = JAXBContext.newInstance(o.getClass());
+		
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			
+			URL url = new URL(REST_URL + schemaName + "/" + resourceId);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(RequestMethod.PUT);
+			conn.setDoOutput(true);
+	
+			String userpass = "admin:admin";
+			String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+			conn.setRequestProperty ("Authorization", basicAuth);
+			conn.connect();
+			
+			OutputStream out = conn.getOutputStream();
+			marshaller.marshal(o, out);
+			
+			IOUtils.closeQuietly(out);
+			IOUtils.closeQuietly(out);
+			
+			RESTUtil.printResponse(conn);
+			conn.disconnect();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	// ovde se menja ceo stari resurs novim. Elegantnije je putem XUPDATE, pogledati u dokumentaciji
 	// u principu se u query element ugradjuje update
 	public static int updateResource(String schemaName, String resourceId, InputStream resource) throws Exception {
@@ -221,6 +267,57 @@ public class RESTUtil {
 		
 		conn.disconnect();
 		return null;
+	}
+	
+	public static boolean doMarshall(String schemaName, Object o){
+		try{
+			JAXBContext context = JAXBContext.newInstance(o.getClass());
+		    Marshaller m = context.createMarshaller();
+		    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		    
+			URL url = new URL(REST_URL + schemaName);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(RequestMethod.PUT);
+			conn.setDoOutput(true);
+			String userpass = "admin:admin";
+			String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+			conn.setRequestProperty ("Authorization", basicAuth);
+			conn.connect();
+			OutputStream out = conn.getOutputStream();
+			m.marshal(o, out);
+			
+			IOUtils.closeQuietly(out);
+			IOUtils.closeQuietly(out);
+			RESTUtil.printResponse(conn);
+			conn.disconnect();
+			return true;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static Object doUnmarshall(String query, String schema, Object o){
+		try{
+			InputStream in = RESTUtil.retrieveResource(query, schema, RequestMethod.GET);
+			JAXBContext context = JAXBContext.newInstance(o.getClass(), o.getClass());
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Marshaller marshaller = context.createMarshaller();
+			// set optional properties
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			String xml = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			for (String line; (line = br.readLine()) != null;) {
+				xml=xml+line+"\n";
+			}
+			StringReader reader = new StringReader(xml);
+			Object rac = (Object) unmarshaller.unmarshal(reader);
+			return rac;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static InputStream retrieveResource(String query, String schemaName, String encoding, boolean wrap) throws Exception {

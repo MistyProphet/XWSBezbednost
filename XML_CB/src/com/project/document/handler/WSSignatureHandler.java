@@ -34,7 +34,7 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 			} catch (Exception e) {}
 			System.err.println("\n-- Potpisivanje --");			
 			
-			Document signedDocument = SignEnveloped.signDocument(document);		
+			Document signedDocument = SignEnveloped.signDocument(document, true);		
 			Source signedSource = new DOMSource(signedDocument);
 			try {
 				DocumentUtil.printDocument(signedDocument);

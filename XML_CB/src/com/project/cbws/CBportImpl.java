@@ -104,20 +104,7 @@ public class CBportImpl implements CBport {
 	public com.project.mt900.Mt900RTGS receiveMT103CB(
 			com.project.mt103.Mt103 mt103) throws ReceiveMT103Fault {
 
-		// TODO 1 prebaciti pare sa jednog racuna na drugi
-		/*
-		 * iz CB/Racuni izvuci podatke o racunima banke C i D. Uvecati racun D
-		 * za iznos, a C smanjiti uz proveru da ne ode u minus ili ispod
-		 * likvidnosti
-		 */
-		// TODO 2 Instancirati servis banke D i poslati joj MT103 i MT910
-		/*
-		 * Service service = Service.create(wsd banke D, serviceName); i pozvati
-		 * metodu primi MT103 i primi MT910
-		 */
-		// TODO 3 vratiti MT900
-		try { // TODO 4 sve poruke MT103, MT900 i MT910 snimiti u bazu (rekao
-				// cverdelj) npr CB/MT103 itd..
+		try {
 			RESTUtil.objectToDB("MT103", mt103.getIDPoruke(), mt103,
 					"mt103.xsd");
 			CBUtil.RTGSTransaction(mt103.getPodaciOBankama().getBankaDuznika()
@@ -125,11 +112,6 @@ public class CBportImpl implements CBport {
 					.getBankaPoverioca().getSWIFTKod(), mt103.getUplata()
 					.getIznos());
 
-			// Service service = Service.create(new URL("wsdlbanke"),
-			// new QName("serviceName"));
-			// BankaPort bankaPort =
-			// service.getPort(new
-			// QName(BankaPort.class.getAnnotation(WebService.class).name()),BankaPort.class);
 			URL wsdl;
 			wsdl = new URL("http://localhost:8080/proj/services/Banka?wsdl");
 	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");

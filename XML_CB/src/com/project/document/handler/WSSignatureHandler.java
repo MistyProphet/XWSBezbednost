@@ -27,11 +27,12 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 		Source source = context.getMessage().getPayload();
 		Document document = DocumentUtil.convertToDocument(source);
 
+		System.err.println("\nDokument koji je stigao u banku");
+		try {
+			DocumentUtil.printDocument(document);
+		} catch (Exception e) {}
+		
 		if (isResponse) {
-			System.err.println("\nDokument koji je stigao");
-			try {
-				DocumentUtil.printDocument(document);
-			} catch (Exception e) {}
 			System.err.println("\n-- Potpisivanje --");			
 			
 			Document signedDocument = SignEnveloped.signDocument(document, true);		
@@ -42,7 +43,7 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 			context.getMessage().setPayload(signedSource);			
 		} else {
 			System.err.println("\nValidacija i skidanje potpisa...");
-
+/*
 			boolean signatureValid = false;
 			try {
 				try {
@@ -61,7 +62,7 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 			
 			if(!signatureValid) {
 				return false; // potpis nije validan
-			}
+			}*/
 			// uklanjanje potpisa
 			Element element =  (Element) document.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature").item(0);  
 			element.getParentNode().removeChild(element);

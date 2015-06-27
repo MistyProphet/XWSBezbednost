@@ -223,6 +223,9 @@ public class SignEnveloped {
 		} catch (XMLSecurityException e) {
 			e.printStackTrace();
 			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	

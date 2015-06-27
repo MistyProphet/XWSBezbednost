@@ -403,8 +403,6 @@ public class Banka extends Identifiable {
 		if (line != null) 
 			result = Long.parseLong(line);
 
-
-    	System.out.println("!!!----> " + result);
 /*    	wrappedResults = (Transakcije) RESTUtil.doUnmarshallTransactions(xQuery, "Banka/00"+idBanke+"/Racuni/"+idRacuna+"/Transakcije", wrappedResults);
     	Transakcije t = new Transakcije();
     	t = (Transakcije) RESTUtil.doUnmarshall("//*:Transakcije", "Banka/00"+idBanke.toString()+"/Racuni/"+idRacuna.toString(), t);

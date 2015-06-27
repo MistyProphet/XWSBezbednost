@@ -99,7 +99,6 @@ public class CBUtil {
  
                 if (line != null)
                         result = Long.parseLong(line);
-        System.out.println("!!!----> " + result);
     
         return result;
     	} catch (IOException e) {

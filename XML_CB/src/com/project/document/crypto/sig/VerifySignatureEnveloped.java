@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 
 import misc.DocumentUtil;
 import misc.RESTUtil;
-
 import org.apache.xml.security.exceptions.XMLSecurityException;
 import org.apache.xml.security.keys.KeyInfo;
 import org.apache.xml.security.keys.keyresolver.implementations.RSAKeyValueResolver;
@@ -47,7 +46,8 @@ public class VerifySignatureEnveloped {
 			java.util.Date now = new java.util.Date();
 			
 			//kreira se signature objekat od elementa
-			XMLSignature signature = new XMLSignature(signatureEl, null);
+			XMLSignature signature = new XMLSignature(signatureEl, "");
+			KeyInfo keyInfo = signature.getKeyInfo();
 			
 			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
 			System.out.println(timestamp.getLocalName());
@@ -114,7 +114,11 @@ public class VerifySignatureEnveloped {
 			}
 			
 			//preuzima se key info
-			KeyInfo keyInfo = signature.getKeyInfo();
+			
+	        System.out.println("KEEEEEEEEEEEEEEEEY");
+	        System.out.println(keyInfo);
+	        //KeyInfo k = new KeyInfo();
+	        //System.out.println(k);
 			//ako postoji
 			if(keyInfo != null) {
 				//registruju se resolver-i za javni kljuc i sertifikat
@@ -124,6 +128,11 @@ public class VerifySignatureEnveloped {
 			    //ako sadrzi sertifikat
 			    if(keyInfo.containsX509Data() && keyInfo.itemX509Data(0).containsCertificate()) { 
 			        Certificate cert = keyInfo.itemX509Data(0).itemCertificate(0).getX509Certificate();
+			        System.out.println("SERTIFIKATI!!!!");
+			        System.out.println(cert);
+			        System.out.println(keyInfo);
+			        System.out.println(keyInfo.itemX509Data(0));
+			        System.out.println(keyInfo.itemX509Data(0).itemCertificate(0));
 			        //provera da li je sertifikat povucen
 			      
 			        if (CertificateReader.checkIfWithdrown(cert)) {
@@ -132,9 +141,10 @@ public class VerifySignatureEnveloped {
 			        	return false;
 			        }
 			        //ako postoji sertifikat, provera potpisa
-			        if(cert != null) 
+			        if(cert != null) {
+			        	System.out.println("TUUUUUUUUUU");
 			        	return signature.checkSignatureValue((X509Certificate) cert);
-			        else
+			        }else
 			        	return false;
 			    }
 			    else

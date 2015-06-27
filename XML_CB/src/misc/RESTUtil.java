@@ -165,7 +165,6 @@ public class RESTUtil {
 		OutputStream out = conn.getOutputStream();
 		marshaller.marshal(o,out );
 		
-		System.out.println(out.toString());
 		IOUtils.closeQuietly(out);
 		
 		RESTUtil.printResponse(conn);

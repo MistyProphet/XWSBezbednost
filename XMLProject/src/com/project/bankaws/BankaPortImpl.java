@@ -350,7 +350,7 @@ public class BankaPortImpl implements BankaPort {
     				throw new WrongBankException();
     			}
     		}
-        	if(!nalog.isHitno() || (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == -1)){
+        	if(!nalog.isHitno() && (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == -1)){
         		PortHelper.current_bank.addNalogZaClearing(nalog);
         	} else {
         		//RTGS

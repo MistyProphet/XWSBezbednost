@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.xws.services.users;
+package rs.ac.uns.ftn.xws.services;
 
 import java.io.IOException;
 import java.util.List;

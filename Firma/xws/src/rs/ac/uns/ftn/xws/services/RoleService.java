@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.xws.services.service;
+package rs.ac.uns.ftn.xws.services;
 
 import java.io.IOException;
 import java.util.ArrayList;

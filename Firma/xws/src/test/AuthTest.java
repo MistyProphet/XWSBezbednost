@@ -18,7 +18,7 @@ import org.junit.rules.ExpectedException;
 import rs.ac.uns.ftn.xws.entities.service.Service;
 import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.interceptors.AuthenticationInterceptor;
-import rs.ac.uns.ftn.xws.services.service.RoleService;
+import rs.ac.uns.ftn.xws.services.RoleService;
 import rs.ac.uns.ftn.xws.sessionbeans.users.UserDao;
 import rs.ac.uns.ftn.xws.sessionbeans.users.UserDaoLocal;
 
@@ -38,7 +38,7 @@ public class AuthTest {
 	}
 
     @Before
-    public void setUp() {
+    public void setUp() throws JAXBException {
         auth = new AuthenticationInterceptor();
         System.setOut(null);
     }

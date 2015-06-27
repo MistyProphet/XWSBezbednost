@@ -38,7 +38,12 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 		} else {
 			System.err.println("\n-- Dekriptovanje --");	
 			Document decryptedDoc = Decrypt.decryptDocument(document);
-			
+			try {
+				System.out.println("\n*** Dekriptovan dokument ***");
+				DocumentUtil.printDocument(document);
+			} catch (Exception e) {
+				
+			}
 			context.getMessage().setPayload(new DOMSource(decryptedDoc));
 		}
 		return true;

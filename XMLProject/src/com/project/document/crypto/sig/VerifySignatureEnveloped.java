@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
+import com.project.util.DocumentUtil;
 import misc.RESTUtil;
 
 import org.apache.xml.security.exceptions.XMLSecurityException;
@@ -17,6 +20,7 @@ import org.apache.xml.security.keys.keyresolver.implementations.X509CertificateR
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.signature.XMLSignatureException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,27 +45,45 @@ public class VerifySignatureEnveloped {
 			//Pronalazi se prvi Signature element 
 			NodeList signatures = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
 			Element signatureEl = (Element) signatures.item(0);
-			
+			System.out.println(signatureEl.getLocalName());
+			System.out.println();
 			java.util.Date now = new java.util.Date();
 			
 			//kreira se signature objekat od elementa
 			XMLSignature signature = new XMLSignature(signatureEl, null);
 			
 			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
+			System.out.println(timestamp.getLocalName());
 			NodeList list = timestamp.getChildNodes();
+			System.out.println("LIST LEN = " + list.getLength());
 			java.util.Date expires = null;
 			java.util.Date created = null;
+			System.out.println(list.item(0).getTextContent());
+			System.out.println(list.item(1).getTextContent());
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
 			if (list.item(0).getNodeName().equals("Created")) {
-				created = new java.util.Date(list.item(0).getNodeValue().trim());
-			} else if (list.item(0).getNodeName().equals("Expires")) {
-				expires = new java.util.Date(list.item(0).getNodeValue().trim());
+				try {
+					created = formatter.parse(list.item(0).getTextContent().trim());
+				} catch (DOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} 
 			
-			if (list.item(1).getNodeName().equals("Created")) {
-				created = new java.util.Date(list.item(0).getNodeValue().trim());
-			} else if (list.item(1).getNodeName().equals("Expires")) {
-				expires = new java.util.Date(list.item(0).getNodeValue().trim());
-			}
+			if (list.item(1).getNodeName().equals("Expires")) {
+				try {
+					expires = formatter.parse(list.item(1).getTextContent().trim());
+				} catch (DOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
 			
 			if (expires==null || created==null || list.getLength()!=2 || created.after(now) || expires.after(now)) {
 				WrongTimestampException ex = new WrongTimestampException();
@@ -69,9 +91,23 @@ public class VerifySignatureEnveloped {
 				return false;
 			}
 			
-			String documentName = doc.getElementsByTagName("body").item(0).getChildNodes().item(0).getNodeName();
+			try {
+				DocumentUtil.printDocument(doc);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			String documentName = "";
+			if (doc.getChildNodes().item(0).getNodeName().split(":").length<2) {
+				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[0];
+			} else {
+				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[1];
+			}
+			
 			System.out.println("!!!!!!!!!!!! DOCUMENT NAME: " + documentName);
-			String idPoruke = doc.getElementsByTagName("body").item(0).getChildNodes().item(0).getAttributes().getNamedItem("id").toString();
+			System.out.println(doc.getElementsByTagName("ns5:ID_poruke").getLength());
+			String idPoruke = doc.getElementsByTagName("ns5:ID_poruke").item(0).getTextContent();
 			System.out.println("!!!!!!!!!!!! ID PORUKE: " + idPoruke);
 			
 			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId(documentName,idPoruke)) {

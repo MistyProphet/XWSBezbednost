@@ -151,8 +151,8 @@ public class RESTUtil {
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); 
         Schema schema = sf.newSchema(new File(schemaFolder +nazivSeme)); 
-        marshaller.setSchema(schema);
-        marshaller.setEventHandler(new MyValidationEventHandler());
+        //marshaller.setSchema(schema);
+       // marshaller.setEventHandler(new MyValidationEventHandler());
 		URL url = new URL(REST_URL + schemaName + "/" + resourceId);
 		
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();

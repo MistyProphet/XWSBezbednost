@@ -194,7 +194,7 @@ public class CBportImpl implements CBport {
 		u.setRacunDuznika(tr);
 		request.setUplata(u);
 		//Mt900RTGS response;
-
+		request.setSifraValute("RSD");
 		Mt102 mt102 = new Mt102();
 		mt102.setBankaDuznika(duznik);
 		mt102.setBankaPoverioca(poverioc);
@@ -228,9 +228,9 @@ public class CBportImpl implements CBport {
 		mt102.setSifraValute("RSD");
 		CBportImpl b = new CBportImpl();
 		try {
-			// b.receiveMT103CB(request);
-			b.receiveMT102CB(mt102);
-		} catch (ReceiveMT102Fault e) {
+			 b.receiveMT103CB(request);
+			//b.receiveMT102CB(mt102);
+		} catch (ReceiveMT103Fault e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

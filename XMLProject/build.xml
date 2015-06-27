@@ -133,6 +133,7 @@
 				<include name="wsdl/**"/>
 				<include name="scheme/**"/>
 				<include name="cxf-servlet.xml"/>
+				<include name="test.xml"/>
 			</webinf>
 		</war>
 	</target>

@@ -23,10 +23,19 @@ public class PortHelper {
     public static Long mt102ID = Long.valueOf("1");
 	public static String KEY_STORE_FILE;
 	public static String KEY_STORE_PASSWORD;
+	public static String TEST_FILE;
+	public static String SCHEMA_PATH;
     
     static {
     	current_bank = new Banka();
     	String s = "";
+    	
+    	ResourceBundle bbb = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
+    	SCHEMA_PATH =  (String) bbb.getObject("schema.path");
+    	
+    	ResourceBundle bb = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
+    	TEST_FILE =  (String) bb.getObject("test.file");
+        
         ResourceBundle b = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
         s =  (String) b.getObject("swift.code");
 

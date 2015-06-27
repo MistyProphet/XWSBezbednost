@@ -427,16 +427,16 @@ public class BankaPortImpl implements BankaPort {
     	try {
     		//Validacija po semi
     		//Upisujemo u privremeni fajl, kako bi mogli da radimo validaciju nad xml fajlom, a ne java objektom
-	    	File schemaFile = new File("WEB-INF/scheme/nalog_za_placanje.xsd");
+	    	File schemaFile = new File(PortHelper.SCHEMA_PATH+"nalog_za_placanje.xsd");
 			JAXBContext context1 = JAXBContext.newInstance(nalog.getClass());
 			Marshaller marshaller1 = context1.createMarshaller();
 			marshaller1.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            OutputStream os = new FileOutputStream("src/resource/test.xml" );
+            OutputStream os = new FileOutputStream(PortHelper.TEST_FILE );
             marshaller1.marshal( nalog, os );
 			IOUtils.closeQuietly(os);
 				
 				
-	    	Source xmlFile = new StreamSource(new File("src/resource/test.xml"));
+	    	Source xmlFile = new StreamSource(new File(PortHelper.TEST_FILE));
 	    	SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	    	Schema schema = schemaFactory.newSchema(schemaFile);
 	    	Validator validator = schema.newValidator();
@@ -497,7 +497,7 @@ public class BankaPortImpl implements BankaPort {
 	    	if(!filled){
 	    		PortHelper.checkNalogEx = "One of the fields was empty.";
 		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 				return false;
@@ -519,13 +519,13 @@ public class BankaPortImpl implements BankaPort {
 			if(!found){
 				PortHelper.checkNalogEx = "Recipient's bank does not exist.";
 		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 				return false;
 			}
 
-	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 	    	writer.write((new String()).getBytes());
 	    	writer.close();
 	    	PortHelper.checkNalogEx = "";
@@ -533,7 +533,7 @@ public class BankaPortImpl implements BankaPort {
     	} catch (Exception e) {
 	    	System.out.println("Xml is NOT valid");
 	    	System.out.println("Reason: " + e.getLocalizedMessage());
-	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 	    	writer.write((new String()).getBytes());
 	    	writer.close();
 	    	return false;
@@ -544,15 +544,15 @@ public class BankaPortImpl implements BankaPort {
     	try {
     		//Validacija po semi
     		//Upisujemo u privremeni fajl, kako bi mogli da radimo validaciju nad xml fajlom, a ne java objektom
-	    	File schemaFile = new File("WEB-INF/scheme/mt910.xsd");
+	    	File schemaFile = new File(PortHelper.SCHEMA_PATH+"mt910.xsd");
 			JAXBContext context1 = JAXBContext.newInstance(mt910.getClass());
 			Marshaller marshaller1 = context1.createMarshaller();
 			marshaller1.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            OutputStream os = new FileOutputStream("src/resource/test.xml" );
+            OutputStream os = new FileOutputStream(PortHelper.TEST_FILE );
             marshaller1.marshal( mt910, os );
 			IOUtils.closeQuietly(os);
 				
-	    	Source xmlFile = new StreamSource(new File("src/resource/test.xml"));
+	    	Source xmlFile = new StreamSource(new File(PortHelper.TEST_FILE));
 	    	SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	    	Schema schema = schemaFactory.newSchema(schemaFile);
 	    	Validator validator = schema.newValidator();
@@ -585,12 +585,12 @@ public class BankaPortImpl implements BankaPort {
 	    	if(!filled){
 	    		PortHelper.checkNalogEx = "One of the fields was empty.";
 		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 				return false;
 			}
-	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 	    	writer.write((new String()).getBytes());
 	    	writer.close();
 	    	PortHelper.checkNalogEx = "";
@@ -600,7 +600,7 @@ public class BankaPortImpl implements BankaPort {
 	    	System.out.println("Reason: " + e.getLocalizedMessage());
 	    	FileOutputStream writer;
 			try {
-				writer = new FileOutputStream("src/resource/test.xml");
+				writer = new FileOutputStream(PortHelper.TEST_FILE);
 				writer.write((new String()).getBytes());
 				writer.close();
 			} catch (Exception e1) {
@@ -614,16 +614,16 @@ public class BankaPortImpl implements BankaPort {
     	try {
     		//Validacija po semi
     		//Upisujemo u privremeni fajl, kako bi mogli da radimo validaciju nad xml fajlom, a ne java objektom
-	    	File schemaFile = new File("WEB-INF/scheme/mt103.xsd");
+	    	File schemaFile = new File(PortHelper.SCHEMA_PATH+"mt103.xsd");
 			JAXBContext context1 = JAXBContext.newInstance(mt103.getClass());
 			Marshaller marshaller1 = context1.createMarshaller();
 			marshaller1.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            OutputStream os = new FileOutputStream("src/resource/test.xml" );
+            OutputStream os = new FileOutputStream(PortHelper.TEST_FILE );
             marshaller1.marshal( mt103, os );
 			IOUtils.closeQuietly(os);
 				
 				
-	    	Source xmlFile = new StreamSource(new File("src/resource/test.xml"));
+	    	Source xmlFile = new StreamSource(new File(PortHelper.TEST_FILE));
 	    	SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	    	Schema schema = schemaFactory.newSchema(schemaFile);
 	    	Validator validator = schema.newValidator();
@@ -713,13 +713,13 @@ public class BankaPortImpl implements BankaPort {
 	    	if(!filled){
 	    		PortHelper.checkNalogEx = "One of the fields was empty.";
 		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 				return false;
 			}
 
-	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 	    	writer.write((new String()).getBytes());
 	    	writer.close();
 	    	PortHelper.checkNalogEx = "";
@@ -729,7 +729,7 @@ public class BankaPortImpl implements BankaPort {
 	    	System.out.println("Reason: " + e.getLocalizedMessage());
 	    	FileOutputStream writer;
 			try {
-				writer = new FileOutputStream("src/resource/test.xml");
+				writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 			} catch (Exception e1) {
@@ -743,16 +743,16 @@ public class BankaPortImpl implements BankaPort {
     	try {
     		//Validacija po semi
     		//Upisujemo u privremeni fajl, kako bi mogli da radimo validaciju nad xml fajlom, a ne java objektom
-	    	File schemaFile = new File("WEB-INF/scheme/mt102.xsd");
+	    	File schemaFile = new File(PortHelper.SCHEMA_PATH+"mt102.xsd");
 			JAXBContext context1 = JAXBContext.newInstance(mt102.getClass());
 			Marshaller marshaller1 = context1.createMarshaller();
 			marshaller1.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            OutputStream os = new FileOutputStream("src/resource/test.xml" );
+            OutputStream os = new FileOutputStream(PortHelper.TEST_FILE );
             marshaller1.marshal( mt102, os );
 			IOUtils.closeQuietly(os);
 				
 				
-	    	Source xmlFile = new StreamSource(new File("src/resource/test.xml"));
+	    	Source xmlFile = new StreamSource(new File(PortHelper.TEST_FILE));
 	    	SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	    	Schema schema = schemaFactory.newSchema(schemaFile);
 	    	Validator validator = schema.newValidator();
@@ -818,13 +818,13 @@ public class BankaPortImpl implements BankaPort {
 	    	if(!filled){
 	    		PortHelper.checkNalogEx = "One of the fields was empty.";
 		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 				return false;
 			}
 
-	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 	    	writer.write((new String()).getBytes());
 	    	writer.close();
 	    	PortHelper.checkNalogEx = "";
@@ -834,7 +834,7 @@ public class BankaPortImpl implements BankaPort {
 	    	System.out.println("Reason: " + e.getLocalizedMessage());
 	    	FileOutputStream writer;
 			try {
-				writer = new FileOutputStream("src/resource/test.xml");
+				writer = new FileOutputStream(PortHelper.TEST_FILE);
 				writer.write((new String()).getBytes());
 				writer.close();
 			} catch (Exception e1) {
@@ -848,16 +848,16 @@ public class BankaPortImpl implements BankaPort {
     	try {
     		//Validacija po semi
     		//Upisujemo u privremeni fajl, kako bi mogli da radimo validaciju nad xml fajlom, a ne java objektom
-	    	File schemaFile = new File("WEB-INF/scheme/zahtev_za_izvod.xsd");
+	    	File schemaFile = new File(PortHelper.SCHEMA_PATH+"zahtev_za_izvod.xsd");
 			JAXBContext context1 = JAXBContext.newInstance(zahtev.getClass());
 			Marshaller marshaller1 = context1.createMarshaller();
 			marshaller1.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            OutputStream os = new FileOutputStream("src/resource/test.xml" );
+            OutputStream os = new FileOutputStream(PortHelper.TEST_FILE );
             marshaller1.marshal( zahtev, os );
 			IOUtils.closeQuietly(os);
 				
 				
-	    	Source xmlFile = new StreamSource(new File("src/resource/test.xml"));
+	    	Source xmlFile = new StreamSource(new File(PortHelper.TEST_FILE));
 	    	SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	    	Schema schema = schemaFactory.newSchema(schemaFile);
 	    	Validator validator = schema.newValidator();
@@ -875,7 +875,7 @@ public class BankaPortImpl implements BankaPort {
 	    	if(!filled){
 	    		PortHelper.checkNalogEx = "One of the fields was empty.";
 		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 				return false;
@@ -889,13 +889,13 @@ public class BankaPortImpl implements BankaPort {
 			if(!found){
 				PortHelper.checkNalogEx = "Client's account does not exist.";
 		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 		    	writer.write((new String()).getBytes());
 		    	writer.close();
 				return false;
 			}
 
-	    	FileOutputStream writer = new FileOutputStream("src/resource/test.xml");
+	    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 	    	writer.write((new String()).getBytes());
 	    	writer.close();
 	    	PortHelper.checkNalogEx = "";
@@ -905,7 +905,7 @@ public class BankaPortImpl implements BankaPort {
 	    	System.out.println("Reason: " + e.getLocalizedMessage());
 	    	FileOutputStream writer;
 			try {
-				writer = new FileOutputStream("src/resource/test.xml");
+				writer = new FileOutputStream(PortHelper.TEST_FILE);
 				writer.write((new String()).getBytes());
 				writer.close();
 			} catch (Exception e1) {

@@ -12,7 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -38,13 +38,9 @@ public class Encrypt {
 	private static String KEY_STORE_FILE = "";
 	
     static {
-    	Properties properties = new Properties();
-	    try {
-	      properties.load(new FileInputStream("deploy"+PortHelper.current_bank.getId()+".properties"));
-	      KEY_STORE_FILE = properties.getProperty("keystore.file");
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }
+    	ResourceBundle b = ResourceBundle.getBundle ("resource.deploy"+PortHelper.current_bank.getId());
+        
+    	KEY_STORE_FILE = (String) b.getObject("keystore.file");
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }

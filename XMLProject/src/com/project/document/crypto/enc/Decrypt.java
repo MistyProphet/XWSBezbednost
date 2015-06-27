@@ -13,6 +13,7 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
@@ -30,13 +31,9 @@ public class Decrypt {
 	private static String KEY_STORE_FILE = "";
 	
     static {
-    	Properties properties = new Properties();
-	    try {
-	      properties.load(new FileInputStream("deploy"+PortHelper.current_bank.getId()+".properties"));
-	      KEY_STORE_FILE = properties.getProperty("keystore.file");
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }
+    	ResourceBundle b = ResourceBundle.getBundle ("resource.deploy"+PortHelper.current_bank.getId());
+        
+    	KEY_STORE_FILE = (String) b.getObject("keystore.file");
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }
@@ -44,6 +41,7 @@ public class Decrypt {
 	public static Document decryptDocument(Document doc) {
 		//ucitava se privatni kljuc
 		PrivateKey pk = readPrivateKey();
+		System.out.println("PRIVATE KEY: "+pk);
 		//dekriptuje se dokument
 		return decrypt(doc, pk);
 	}
@@ -97,7 +95,7 @@ public class Decrypt {
 	private static Document decrypt(Document doc, PrivateKey privateKey) {
 		
 		try {
-			DocumentUtil.printDocument(doc);
+			//DocumentUtil.printDocument(doc);
 			//cipher za dekritpovanje XML-a
 			XMLCipher xmlCipher = XMLCipher.getInstance();
 			//inicijalizacija za dekriptovanje
@@ -114,10 +112,10 @@ public class Decrypt {
 			
 			return doc;
 		} catch (XMLEncryptionException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}

@@ -11,6 +11,10 @@ import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDaoLocal;
 
 public interface InvoiceDaoLocal extends GenericDaoLocal<Invoice, Long>{
 
+    public List<Invoice> findIncomingInvoices() throws IOException, JAXBException;
+
+    public List<Invoice> findOutgoingInvoices() throws IOException, JAXBException;
+
     public List<Invoice> findInvoicesByTIN(String TIN) throws IOException, JAXBException;
 
 	public InvoiceItem findItemInInvoice(Long invoiceId, Long itemId) throws IOException, JAXBException;

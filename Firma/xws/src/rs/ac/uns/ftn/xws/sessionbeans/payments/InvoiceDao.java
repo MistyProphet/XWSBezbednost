@@ -1,8 +1,6 @@
 package rs.ac.uns.ftn.xws.sessionbeans.payments;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,12 +8,11 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.IOUtils;
 
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
+import rs.ac.uns.ftn.xws.entities.self.Company;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDao;
-import rs.ac.uns.ftn.xws.util.FourOhFour;
 
 @Stateless
 @Local(InvoiceDaoLocal.class)
@@ -28,13 +25,31 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 	public InvoiceDao() {
 		super(contextPath, schemaName);
 	}
+
+    public List<Invoice> findIncomingInvoices() throws IOException, JAXBException {
+        List<Invoice> invoices;
+        invoices = (List<Invoice>) em .runQuery("invoice", 
+                "(//invoice[buyerName=\""
+                + Company.getInstance().getName() +
+                "\"])"); 
+        return invoices; 
+    }
+
+    public List<Invoice> findOutgoingInvoices() throws IOException, JAXBException {
+        List<Invoice> invoices;
+        invoices = (List<Invoice>) em .runQuery("invoice", 
+                "(//invoice[supplierTIN=\""
+                + Company.getInstance().getTIN() +
+                "\"])"); 
+        return invoices; 
+    }
+
     public List<Invoice> findInvoicesByTIN(String TIN) throws IOException, JAXBException {
-        List<Invoice> invoices = new ArrayList<Invoice>();
+        List<Invoice> invoices;
         
         invoices = (List<Invoice>) em.runQuery("invoice", "(//invoice[supplierTIN=\"" + TIN + "\"])");
         return invoices;
     }
-
 
 	public InvoiceItem findItemInInvoice(Long invoiceId, Long itemId) throws IOException, JAXBException {
 		Invoice invoice = findById(invoiceId);

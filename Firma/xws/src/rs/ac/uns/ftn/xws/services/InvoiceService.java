@@ -22,8 +22,6 @@ import rs.ac.uns.ftn.xws.util.Authenticate;
 import rs.ac.uns.ftn.xws.util.ValidateSupplier;
 
 @Authenticate
-@ValidateSupplier
-@Path("/partneri/{PIB}/fakture")
 public class InvoiceService {
 
     @Context
@@ -34,15 +32,47 @@ public class InvoiceService {
 
 // ########## Gets for the invoices and the items
     
+    @GET
+    @Path("")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Invoice> findAllInvoices() throws Exception {
+        return invoiceDao.findAll();
+    }
+
+    @GET
+    @Path("/dolazece")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Invoice> findAllIncoming() throws Exception {
+        List<Invoice> retVal = invoiceDao.findIncomingInvoices();    
+        return retVal;
+    }
+
+    /**
+     * Returns a list of outgoing invoices not yet sent.
+     * @return A list of invoices still being prepared.
+     */
+    @GET
+    @Path("/odlazece")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Invoice> findAllOutgoing() throws Exception {
+        List<Invoice> retVal = invoiceDao.findOutgoingInvoices();
+        return retVal;
+    }
+
     /**
      * Returns a list of invoices of the supplier the PIN in the URL.
      * @return A list of suppliers invoices, as an XML or JSON.
      * In case the supplier isn't a business partner, returns 403 Forbidden.
      */
+    @ValidateSupplier
 	@GET
+    @Path("/partneri/{PIB}/fakture")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Invoice> findByPIB(@PathParam("PIB") String PIB) throws Exception {
 		List<Invoice> retVal = null;
+        //FIXME
+        if(PIB.equals("svi"))
+            retVal = invoiceDao.findIncomingInvoices();
         retVal = invoiceDao.findInvoicesByTIN(PIB);
 		return retVal;
     }
@@ -54,8 +84,9 @@ public class InvoiceService {
      * In case the supplier isn't a business partner, returns 403 Forbidden.
      * In case the invoice doesn't exist, returns 404 Not Found.
      */
+    @ValidateSupplier
 	@GET 
-	@Path("{id}")
+    @Path("/partneri/{PIB}/fakture/{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Invoice findById(@PathParam("PIB") String PIB, @PathParam("id") String id) throws Exception {
 		Invoice retVal = null;
@@ -65,8 +96,9 @@ public class InvoiceService {
         return null;
     }
     
+    @ValidateSupplier
 	@GET 
-	@Path("{id}/stavke")
+	@Path("/partneri/{PIB}/fakture/{id}/stavke")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<InvoiceItem> findAllItems(@PathParam("PIB") String PIB, @PathParam("id") String id) throws Exception {
 		Invoice retVal = null;
@@ -76,8 +108,9 @@ public class InvoiceService {
 		return null;
     }
 
+    @ValidateSupplier
 	@GET 
-	@Path("{id}/stavke/{item_id}")
+	@Path("/partneri/{PIB}/fakture/{id}/stavke/{item_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public InvoiceItem findItemByID(@PathParam("PIB") String PIB, @PathParam("id") String id, @PathParam("item_id") String item_id) throws Exception {
 		return invoiceDao.findItemInInvoice(Long.parseLong(id), Long.parseLong(item_id));
@@ -92,7 +125,9 @@ public class InvoiceService {
      * In case the supplier isn't a business partner, returns 403 Forbidden.
      * In case the invoice passed is invalid, returns 400 Bad Request.
      */
+    @ValidateSupplier
     @POST
+    @Path("/partneri/{PIB}/fakture")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void createInvoice(Invoice entity) throws Exception {
 		invoiceDao.persist(entity);
@@ -108,6 +143,7 @@ public class InvoiceService {
      * In case the invoice doesn't exist, returns 404 Not Found.
      * In case the invoice item passed is invalid, returns 400 Bad Request.
      */
+    @ValidateSupplier
     @POST
     @Path("{id}/stavke/")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -123,8 +159,9 @@ public class InvoiceService {
      * In case the invoice or the item doesn't exist, returns 404 Not Found.
      * In case the invoice item passed is invalid, returns 400 Bad Request.
      */
+    @ValidateSupplier
     @PUT
-    @Path("{id}/stavke/{item_id}")
+    @Path("/partneri/{PIB}/fakture/{id}/stavke/{item_id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void updateInvoiceItem(InvoiceItem newItem, @PathParam("id") String id, @PathParam("item_id") String item_id) throws Exception {
         invoiceDao.updateInvoiceItem(Long.parseLong(id), Long.parseLong(item_id), newItem);
@@ -136,8 +173,9 @@ public class InvoiceService {
      * If the supplier is not a business partner, returns 403 Forbidden.
      * If the invoice or the invoice item is not found, returns 404 Not Found.
      */
+    @ValidateSupplier
     @DELETE
-    @Path("{id}/stavke/{item_id}")
+    @Path("/partneri/{PIB}/fakture/{id}/stavke/{item_id}")
     public void deleteInvoiceItemWithID(@PathParam("id") String id, @PathParam("item_id") String item_id) throws Exception {
         invoiceDao.removeItemFromInvoice(Long.parseLong(id), Long.parseLong(item_id));
     }

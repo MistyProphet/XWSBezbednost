@@ -10,6 +10,7 @@ import misc.DocumentUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.project.banka.WithdrawnCertificateException;
 import com.project.banka.WrongIdSignatureException;
@@ -27,6 +28,11 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 		Source source = context.getMessage().getPayload();
 		Document document = DocumentUtil.convertToDocument(source);
 
+		NodeList nl = document.getElementsByTagNameNS("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
+		if(nl.getLength() > 0){
+			System.out.println("Handle-ovan fault!");
+			return true;
+		}
 		System.err.println("\nDokument koji je stigao u banku");
 		try {
 			DocumentUtil.printDocument(document);

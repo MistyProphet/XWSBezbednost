@@ -7,6 +7,7 @@ import javax.xml.ws.handler.LogicalMessageContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import com.project.document.crypto.enc.Decrypt;
 import com.project.document.crypto.enc.Encrypt;
@@ -28,6 +29,11 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 			DocumentUtil.printDocument(document);
 		} catch (Exception e) {
 			
+		}
+		NodeList nl = document.getElementsByTagNameNS("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
+		if(nl.getLength() > 0){
+			System.out.println("Handle-ovan fault!");
+			return true;
 		}
 		if (isResponse) {
 			System.err.println("\n-- Kriptovanje --");

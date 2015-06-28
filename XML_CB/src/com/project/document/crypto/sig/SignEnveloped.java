@@ -20,16 +20,6 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import misc.RESTUtil;
 
 import org.apache.xml.security.exceptions.XMLSecurityException;
@@ -47,7 +37,6 @@ import com.project.banka.PortHelper;
 
 //Potpisuje dokument, koristi se enveloped tip
 public class SignEnveloped {
-	public static Integer aaa = 1;
 	
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -165,7 +154,7 @@ public class SignEnveloped {
 			if (externalMessage) {
 				sig.setId(getNextId(docType, rootEl.getFirstChild().getFirstChild().getTextContent())+"");
 			}
-			/*
+
 			//Dodavanje timestampa
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
 		      formatter.setTimeZone(TimeZone.getTimeZone("GMT"));;
@@ -186,8 +175,7 @@ public class SignEnveloped {
 		        timestampElem.appendChild(expiresElem);
 		        
 		        sig.getElement().appendChild(timestampElem);
-
-               */ 
+                
 			//kreiraju se transformacije nad dokumentom
 			Transforms transforms = new Transforms(doc);
 			//iz potpisa uklanja Signature element
@@ -222,9 +210,6 @@ public class SignEnveloped {
 			e.printStackTrace();
 			return null;
 		} catch (XMLSecurityException e) {
-			e.printStackTrace();
-			return null;
-		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}

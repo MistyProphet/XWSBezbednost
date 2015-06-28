@@ -8,6 +8,7 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.project.document.crypto.sig.SignEnveloped;
 import com.project.document.crypto.sig.VerifySignatureEnveloped;
@@ -26,6 +27,11 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 		Source source = context.getMessage().getPayload();
 		Document document = DocumentUtil.convertToDocument(source);
 
+		NodeList nl = document.getElementsByTagNameNS("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
+		if(nl.getLength() > 0){
+			System.out.println("Handle-ovan fault!");
+			return true;
+		}
 		if (isResponse) {
 			System.err.println("\nDokument koji je stigao");
 			try {

@@ -4,15 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.Provider;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.dom.DOMValidateContext;
 
 import misc.DocumentUtil;
 import misc.RESTUtil;
@@ -47,12 +43,8 @@ public class VerifySignatureEnveloped {
 			NodeList signatures = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
 			Element signatureEl = (Element) signatures.item(0);
 			java.util.Date now = new java.util.Date();
-			
-			//kreira se signature objekat od elementa
-			XMLSignature signature = new XMLSignature(signatureEl, "");
-			KeyInfo keyInfo = signature.getKeyInfo();
-			/*
-			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
+
+			Node timestamp = doc.getElementsByTagName("Timestamp").item(0);
 			System.out.println(timestamp.getLocalName());
 			NodeList list = timestamp.getChildNodes();
 			System.out.println("LIST LEN = " + list.getLength());
@@ -89,15 +81,22 @@ public class VerifySignatureEnveloped {
 				WrongTimestampException ex = new WrongTimestampException();
 				ex.printStackTrace();
 				return false;
+			} else {
+				//uklanjanje timestampa
+				signatureEl.removeChild(timestamp);
 			}
-			*/
 
+			
+			//kreira se signature objekat od elementa
+			XMLSignature signature = new XMLSignature(signatureEl, null);
+			
 			String documentName = "";
 			if (doc.getChildNodes().item(0).getNodeName().split(":").length<2) {
 				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[0];
 			} else {
 				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[1];
 			}
+			
 			
 			String idPoruke = "";
 			if(doc.getElementsByTagName("ns5:ID_poruke").item(0) != null){
@@ -122,13 +121,24 @@ public class VerifySignatureEnveloped {
 				}
 			}
 			
+			
 			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId(documentName,idPoruke)) {
 				WrongIdSignatureException ex = new WrongIdSignatureException();
 				ex.printStackTrace();
 				return false;
+			} /*else {
+				setLastId(documentName, ""+Integer.parseInt(signature.getElement().getAttribute("Id")));
+			}*/
+			
+			try {
+				DocumentUtil.printDocument(doc);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 			//preuzima se key info
+			KeyInfo keyInfo = signature.getKeyInfo();
 			//ako postoji
 			if(keyInfo != null) {
 				//registruju se resolver-i za javni kljuc i sertifikat
@@ -146,9 +156,9 @@ public class VerifySignatureEnveloped {
 			        	return false;
 			        }
 			        //ako postoji sertifikat, provera potpisa
-			        if(cert != null) {
+			        if(cert != null) 
 			        	return signature.checkSignatureValue((X509Certificate) cert);
-			        }else
+			        else
 			        	return false;
 			    }
 			    else
@@ -194,7 +204,36 @@ public class VerifySignatureEnveloped {
 
 		return result;
 	}
-	
+/*	
+	private static int setLastId(String documentName, String docId) {
+
+        String xQuery = "//" + documentName + "[@id=\"" + docId + "\"]/text()";
+        
+        InputStream stream = null;
+		try {
+			stream = RESTUtil.retrieveResource(xQuery, "Banka/001/indeksiPoruka", "UTF-8", false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+    	int result = -1;
+		String line;
+		try {
+			line = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+
+		if (line != null) 
+			result = Integer.parseInt(line);
+
+		return result;
+	}
+*/	
 	public static void main(String[] args) {
 		System.out.println(getLastId("mt103", "1"));
 	}

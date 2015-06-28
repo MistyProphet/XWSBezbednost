@@ -42,7 +42,7 @@ public class CBUtil {
 				throw new ReceiveMT103Fault("Neuspesna transakcija");
 			}
 		}else {
-			throw new ReceiveMT103Fault("Duznik nema dovoljno na racunu");
+			throw new ReceiveMT103Fault("Banka duznika nema dovoljno novca na racunu.");
 		}
 
 		return true;

@@ -9,6 +9,7 @@ import javax.xml.ws.handler.MessageContext;
 import misc.DocumentUtil;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import com.project.document.crypto.enc.Decrypt;
 import com.project.document.crypto.enc.Encrypt;
@@ -23,7 +24,12 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 		Boolean isResponse = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		Source source = context.getMessage().getPayload();
 		Document document = DocumentUtil.convertToDocument(source);
-		
+
+		NodeList nl = document.getElementsByTagNameNS("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
+		if(nl.getLength() > 0){
+			System.out.println("Handle-ovan fault!");
+			return true;
+		}
 		if (isResponse) {
 			System.err.println("\n-- Kriptovanje --");
 			Document encryptedDoc = Encrypt.encryptDocument(document);

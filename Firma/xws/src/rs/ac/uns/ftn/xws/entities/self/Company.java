@@ -8,11 +8,14 @@ public class Company {
     
     protected Company() {
         try {
-            properties = new Properties();
-            properties.load(new FileInputStream("company.properties"));
-            name = properties.getProperty("name");
-            url = properties.getProperty("url");
-            TIN = properties.getProperty("TIN");
+            //properties = new Properties();
+            //properties.load(new FileInputStream("company.properties"));
+            //name = properties.getProperty("name");
+            //url = properties.getProperty("url");
+            //TIN = properties.getProperty("TIN");
+            name="Weyland-Yutani";
+            url="192.168.1.80";
+            TIN="tintintinti";
         } catch (Exception e) {
             e.printStackTrace();
         }

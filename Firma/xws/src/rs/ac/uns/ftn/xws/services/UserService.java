@@ -61,18 +61,14 @@ public class UserService {
     @Path("login")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public User login(User sentUser) throws IOException, JAXBException {
+    public User login(User sentUser) {
         try {
             User user = userDao.login(sentUser.getUsername(), sentUser.getPassword());
             return user;
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             response.setStatus(401);
             return null;
-		} catch (NotFoundException | NotAuthorizedException e) {
-            e.printStackTrace(); 
-            response.setStatus(401);
-            return null;
-        } 
+        }
     }
 	
 	@GET

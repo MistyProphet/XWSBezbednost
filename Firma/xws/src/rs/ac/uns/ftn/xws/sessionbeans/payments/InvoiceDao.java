@@ -28,19 +28,14 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 
     public List<Invoice> findIncomingInvoices() throws IOException, JAXBException {
         List<Invoice> invoices;
-        invoices = (List<Invoice>) em .runQuery("invoice", 
-                "(//invoice[buyerName=\""
-                + Company.getInstance().getName() +
-                "\"])"); 
+        System.out.println(Company.getInstance().getName());
+        invoices = (List<Invoice>) em.runQuery("invoice", "(//invoice[buyerName=\"" + Company.getInstance().getName() + "\"])"); 
         return invoices; 
     }
 
     public List<Invoice> findOutgoingInvoices() throws IOException, JAXBException {
         List<Invoice> invoices;
-        invoices = (List<Invoice>) em .runQuery("invoice", 
-                "(//invoice[supplierTIN=\""
-                + Company.getInstance().getTIN() +
-                "\"])"); 
+        invoices = (List<Invoice>) em .runQuery("invoice", "(//invoice[supplierTIN=\"" + Company.getInstance().getTIN() + "\"])"); 
         return invoices; 
     }
 

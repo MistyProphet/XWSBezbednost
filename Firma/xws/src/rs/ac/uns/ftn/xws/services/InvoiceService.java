@@ -39,10 +39,18 @@ public class InvoiceService {
     }
 
     @GET
-    @Path("/dolazece")
+    @Path("/pristigle/")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Invoice> findAllIncoming() throws Exception {
         List<Invoice> retVal = invoiceDao.findIncomingInvoices();    
+        return retVal;
+    }
+
+    @GET
+    @Path("/pristigle/{id}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Invoice findAllIncoming(@PathParam("id") String id) throws Exception {
+        Invoice retVal = invoiceDao.findById(Long.parseLong(id));    
         return retVal;
     }
 
@@ -51,7 +59,7 @@ public class InvoiceService {
      * @return A list of invoices still being prepared.
      */
     @GET
-    @Path("/odlazece")
+    @Path("/slanje")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Invoice> findAllOutgoing() throws Exception {
         List<Invoice> retVal = invoiceDao.findOutgoingInvoices();

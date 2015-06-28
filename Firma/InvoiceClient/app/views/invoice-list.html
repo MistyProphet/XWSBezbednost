@@ -6,8 +6,8 @@
             <th><a ng-href="#/" ng-click="orderProp='totalAmount'; reverseSort = !reverseSort">total amount</a></th>
 		</tr>
 		<tr ng-repeat="invoice in invoices | filter:query | orderBy:orderProp:reverseSort" ng-click="insertOrEditInvoice(invoice)">
-			<td>{{invoice.suplierName}}</td>
-			<td>{{invoice.suplierAddress}}</td>
+			<td>{{invoice.supplierName}}</td>
+			<td>{{invoice.supplierAddress}}</td>
 			<td>{{invoice.totalAmount}}</td>
 		</tr>
 	</table>

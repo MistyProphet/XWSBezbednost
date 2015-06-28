@@ -79,8 +79,7 @@ public class RESTUtil {
 		createSchema("MT102");
 		createSchema("MT900");
 		createSchema("MT910");
-		createSchema("indeksiPoruka");
-		createSchema("crl");
+		createResource("CB", "indeksiPoruka", new FileInputStream(new File(file, "indeksiPoruka.xml")));
 		createResource("CB", "Racuni", new FileInputStream(new File(file, "banke.xml")));
 		
 	/*	printStream(retrieveResource("(//city/name)[position()= 10 to 15]", "factbook", RequestMethod.GET));

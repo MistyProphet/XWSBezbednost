@@ -2,9 +2,11 @@ package com.project.document.crypto.sig;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -14,14 +16,22 @@ import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import misc.RESTUtil;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.project.security.CRL;
+
 import misc.DocumentUtil;
 
 /**
@@ -39,8 +49,7 @@ public class CertificateReader {
 	 * public static final String BASE64_ENC_CERT_FILE = ResourceBundle.getBundle(propFile).getString("cert.file");
 	 * public static final String CLR_FILE = ResourceBundle.getBundle(propFile).getString("crl.file");
 	 */
-	
-	//private static List<Certificate> certificateList = new ArrayList<Certificate>();
+
 	private static CRL crl = new CRL();
 	private static List<Certificate> certificateList = new ArrayList<Certificate>();
 	
@@ -49,13 +58,12 @@ public class CertificateReader {
 		Certificate test = loadBase64CertificateFromPath(testCert);
 		readFromBase64EncFile();
 
-		saveCRL();
-		crl = null;
-		loadCRL();
-		
 		sign();
 		
+		loadIgnoreSignature();
+		
 	}
+	
 	
 	//pocetno citanje certifikata iz Base64 fajla
 	//poziva se po kreiranju resursa
@@ -90,6 +98,7 @@ public class CertificateReader {
 		}
 	}
 	
+	
 	private static void saveCRL() {
 		if (crl.getCertificate().size() > 0) {
 			RESTUtil.doMarshall("/crl", crl);
@@ -111,7 +120,7 @@ public class CertificateReader {
 		}
 	}
 	
-	public void sign() {
+	public static void sign() {
 		try {
 			JAXBContext jc = JAXBContext.newInstance(CRL.class);
 		
@@ -120,18 +129,115 @@ public class CertificateReader {
 	        Document document = db.newDocument();
 
 	        // Marshal the Object to a Document
+			if(crl==null){
+				crl = new CRL();
+				crl.getCertificate();
+			}
+			
 	        Marshaller marshaller = jc.createMarshaller();
 			marshaller.marshal(crl, document);
 			DocumentUtil.printDocument(document);
-			Document signedDocument = SignEnveloped.signDocument(document, false);	
 			
-			RESTUtil.objectToDB("", "crl", signedDocument);
+			Document signedDocument = SignEnveloped.signDocumentSimple(document);	
+			
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			Source xmlSource = new DOMSource(signedDocument);
+			Result outputTarget = new StreamResult(outputStream);
+			TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+			InputStream is = new ByteArrayInputStream(outputStream.toByteArray());
+			
+			RESTUtil.updateResource("CB", "crl", is);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}    
+	}
+	
+	public static boolean checkSignature() {
+		try {
+			
+			InputStream is = RESTUtil.retrieveResource("/*", "CB/crl", "UTF-8", true);
 
-	        
+			 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+		      dbf.setValidating(false);
+		      dbf.setIgnoringComments(false);
+		      dbf.setIgnoringElementContentWhitespace(true);
+		      dbf.setNamespaceAware(true);
+
+
+		      DocumentBuilder db = null;
+		      db = dbf.newDocumentBuilder();
+
+		      Document doc = db.parse(is);
+		      DocumentUtil.printDocument(doc);
+		      System.out.println("////////////////////////////");
+		      
+		      if (VerifySignatureEnveloped.verifySignatureSimple(doc)) {
+					
+					// uklanjanje potpisa
+					Element element =  (Element) doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature").item(0);  
+					element.getParentNode().removeChild(element);
+					try {
+						DocumentUtil.printDocument(doc);
+					} catch (Exception e) {}
+		      } else {
+		    	  return false;
+		      }
+
+			JAXBContext jc = JAXBContext.newInstance(CRL.class);
+
+		    Unmarshaller u = jc.createUnmarshaller();
+
+		     crl = (CRL)u.unmarshal(doc);
+			return true;
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    
+		return false;
+	}
+	
+	public static void loadIgnoreSignature() {
+		try {
+			
+			InputStream is = RESTUtil.retrieveResource("/*", "CB/crl", "UTF-8", true);
+
+			 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+		      dbf.setValidating(false);
+		      dbf.setIgnoringComments(false);
+		      dbf.setIgnoringElementContentWhitespace(true);
+		      dbf.setNamespaceAware(true);
+
+
+		      DocumentBuilder db = null;
+		      db = dbf.newDocumentBuilder();
+
+		      Document doc = db.parse(is);
+		      DocumentUtil.printDocument(doc);		      
+
+			  // uklanjanje potpisa
+			  Element element =  (Element) doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature").item(0);  
+
+			  try {
+				    element.getParentNode().removeChild(element);
+			    	DocumentUtil.printDocument(doc);
+			  } catch (Exception e) {}
+
+			JAXBContext jc = JAXBContext.newInstance(CRL.class);
+
+		    Unmarshaller u = jc.createUnmarshaller();
+
+		     crl = (CRL)u.unmarshal(doc);
+
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    
 	}
 	
 	private Certificate loadBase64CertificateFromPath(String path) {
@@ -170,8 +276,8 @@ public class CertificateReader {
 	private static void convertCRLtoCertificateList() {
 		try {
         
-			if (crl.getCertificate().size()==0) {
-				loadCRL();
+			if (crl==null || crl.getCertificate().size()==0) {
+				loadIgnoreSignature();
 			}
 			 CertificateFactory cf = CertificateFactory.getInstance("X.509");
 			 Certificate cert = null;

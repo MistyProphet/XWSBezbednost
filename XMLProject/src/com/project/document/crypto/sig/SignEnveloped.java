@@ -2,6 +2,8 @@ package com.project.document.crypto.sig;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,6 +22,14 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import misc.RESTUtil;
 
 import org.apache.xml.security.exceptions.XMLSecurityException;
@@ -32,8 +42,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.project.bankaws.PortHelper;
+import com.project.util.DocumentUtil;
 
 //Potpisuje dokument, koristi se enveloped tip
 public class SignEnveloped {
@@ -50,6 +62,15 @@ public class SignEnveloped {
 		Certificate cert = readCertificate();
 		//potpisuje
 		return signDocument(doc, pk, cert, external);
+	}
+	
+	public static Document signDocumentSimple(Document doc) {
+		//ucitava privatni kljuc
+		PrivateKey pk = readPrivateKey();
+		//ucitava sertifikat
+		Certificate cert = readCertificate();
+		//potpisuje
+		return signDocumentSimple(doc, pk, cert);
 	}
 	
 	/**
@@ -198,6 +219,53 @@ public class SignEnveloped {
 			//potpisivanje
 			sig.sign(privateKey);
 			
+			incrementNextId(docType, rootEl.getFirstChild().getFirstChild().getTextContent()+"");
+			return doc;
+			
+		} catch (TransformationException e) {
+			e.printStackTrace();
+			return null;
+		} catch (XMLSignatureException e) {
+			e.printStackTrace();
+			return null;
+		} catch (DOMException e) {
+			e.printStackTrace();
+			return null;
+		} catch (XMLSecurityException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static Document signDocumentSimple(Document doc, PrivateKey privateKey, Certificate cert) {
+        
+        try {
+			Element rootEl = doc.getDocumentElement();
+			//kreira se signature objekat
+			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
+			
+			//kreiraju se transformacije nad dokumentom
+			Transforms transforms = new Transforms(doc);
+			//iz potpisa uklanja Signature element
+			//Ovo je potrebno za enveloped tip po specifikaciji
+			transforms.addTransform(Transforms.TRANSFORM_ENVELOPED_SIGNATURE);
+			//normalizacija
+			transforms.addTransform(Transforms.TRANSFORM_C14N_WITH_COMMENTS);
+
+			//potpisuje se citav dokument (URI "")
+			sig.addDocument("", transforms, Constants.ALGO_ID_DIGEST_SHA1);
+   
+			//U KeyInfo se postavalja Javni kljuc samostalno i citav sertifikat
+			sig.addKeyInfo(cert.getPublicKey());
+			sig.addKeyInfo((X509Certificate) cert);
+
+			    
+			//poptis je child root elementa
+			rootEl.appendChild(sig.getElement());
+			    
+			//potpisivanje
+			sig.sign(privateKey);
+			
 			return doc;
 			
 		} catch (TransformationException e) {
@@ -221,7 +289,7 @@ public class SignEnveloped {
         
         InputStream stream = null;
 		try {
-			stream = RESTUtil.retrieveResource(xQuery, "Banka/001/indeksiPoruka", "UTF-8", false);
+			stream = RESTUtil.retrieveResource(xQuery, "Banka/00" + PortHelper.current_bank.getId() + "/indeksiPoruka", "UTF-8", false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -244,7 +312,73 @@ public class SignEnveloped {
 		return result+1;
 	}
 	
+	private static void incrementNextId(String documentName, String idPoruke) {
+		InputStream is = null;
+		try {
+			is = RESTUtil.retrieveResource("/*", "Banka/00"+PortHelper.current_bank.getId()+"/indeksiPoruka", "UTF-8", true);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+	      dbf.setValidating(false);
+	      dbf.setIgnoringComments(false);
+	      dbf.setIgnoringElementContentWhitespace(true);
+	      dbf.setNamespaceAware(true);
+
+
+	      DocumentBuilder db = null;
+	      Document doc = null;
+	      try {
+			db = dbf.newDocumentBuilder();
+		     doc = db.parse(is);
+		     DocumentUtil.printDocument(doc);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+	    NodeList listaCvorova = doc.getElementsByTagName(documentName);
+	    boolean postoji = false;
+	    for (int i=0; i<listaCvorova.getLength(); i++) {
+	    	if (listaCvorova.item(i).getAttributes().getNamedItem("id").getTextContent().trim().equals(idPoruke.trim())) {
+	    		int rbrPoruke = Integer.parseInt(listaCvorova.item(i).getTextContent().trim())+1;
+	    		listaCvorova.item(i).setTextContent(rbrPoruke+"");
+	    		postoji = true;
+	    		break;
+	    	}
+	    }
+	    
+	    //dodaje se novi element
+	    if (!postoji) {
+	    	Element newEl = doc.createElement(documentName);
+	    	newEl.setAttribute("id", idPoruke);
+	    	newEl.setTextContent(0+"");
+	    	doc.getFirstChild().appendChild(newEl);
+	    }
+	    
+	    try {
+			DocumentUtil.printDocument(doc);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		Source xmlSource = new DOMSource(doc);
+		Result outputTarget = new StreamResult(outputStream);
+		try {
+		TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+		InputStream is2 = new ByteArrayInputStream(outputStream.toByteArray());
+		RESTUtil.updateResource("Banka/00"+PortHelper.current_bank.getId(), "indeksiPoruka", is2);     
+	      
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void main(String[] args) {
 		System.out.println(getNextId("mt102", "2"));
+		incrementNextId("mt102", "2");
 	}
 }

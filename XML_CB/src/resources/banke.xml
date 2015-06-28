@@ -4,7 +4,7 @@
 
 	<kod_banke id='AAAARS01'>
 		<racun_banke>
-			111-1231231231231-32
+			001-1231231231231-32
 		</racun_banke>
 		<stanje_racuna>
 			33432523.43
@@ -18,7 +18,7 @@
 	</kod_banke>
 	<kod_banke id='BBBBRS01'>
 		<racun_banke>
-			111-1231555551231-32
+			002-1231555551231-32
 		</racun_banke>
 		<stanje_racuna>
 			656432523.43

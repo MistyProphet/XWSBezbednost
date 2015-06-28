@@ -12,7 +12,6 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.ResourceBundle;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -29,17 +28,15 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.project.banka.PortHelper;
+
 //Generise tajni kljuc
 //Kriptije sadrzaj dokumenta tajnim kljucem
 //Kriptuje tajni kljuc javnim kljucem
 //Kriptovani tajni kljuc se stavlja kao KeyInfo kriptovanog elementa
 public class Encrypt {
-	private static String KEY_STORE_FILE = "";
 	
     static {
-    	ResourceBundle b = ResourceBundle.getBundle ("resources.deploy");
-        
-    	KEY_STORE_FILE = (String) b.getObject("keystore.file");
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }
@@ -62,11 +59,11 @@ public class Encrypt {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
-			ks.load(in, "primer".toCharArray());
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(PortHelper.KEY_STORE_FILE_BANKA));
+			ks.load(in, PortHelper.KEY_STORE_PASSWORD_BANKA.toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				Certificate cert = ks.getCertificate("primer");
+			if(ks.isKeyEntry(PortHelper.KEY_STORE_PASSWORD_BANKA)) {
+				Certificate cert = ks.getCertificate(PortHelper.KEY_STORE_PASSWORD_BANKA);
 				return cert;
 				
 			}

@@ -14,6 +14,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.xml.XMLConstants;
@@ -41,9 +42,25 @@ import com.project.cbws.ReceiveMT102Fault;
  */
 public class RESTUtil {
 
-	public static final String REST_URL = ResourceBundle.getBundle("basex").getString("rest.url");
-	public static final String schemaFolder = ResourceBundle.getBundle("deploy").getString("schema.path");
-	
+	public static String REST_URL = ResourceBundle.getBundle("basex").getString("rest.url");
+	public static String schemaFolder = ResourceBundle.getBundle("deploy").getString("schema.path");
+	/*
+	static {
+		Properties properties = new Properties();
+		try {
+		  properties.load(new FileInputStream("basex.properties"));
+		} catch (IOException e) {
+			
+		}
+		REST_URL = properties.getProperty("rest.url");
+		properties = new Properties();
+		try {
+		  properties.load(new FileInputStream("deploy.properties"));
+		} catch (IOException e) {
+			
+		}
+		schemaFolder = properties.getProperty("schema.path");
+	}*/
 	public static void main(String[] args) throws Exception {
 
 		BaseXHTTP http = null;
@@ -151,8 +168,8 @@ public class RESTUtil {
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); 
         Schema schema = sf.newSchema(new File(schemaFolder +nazivSeme)); 
-        //marshaller.setSchema(schema);
-       // marshaller.setEventHandler(new MyValidationEventHandler());
+        marshaller.setSchema(schema);
+        marshaller.setEventHandler(new MyValidationEventHandler());
 		URL url = new URL(REST_URL + schemaName + "/" + resourceId);
 		
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();

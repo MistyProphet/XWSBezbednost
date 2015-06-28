@@ -7,12 +7,12 @@
         <naziv>A Banka</naziv>
     </kod_banke>
     <kod_banke swift='BBBBRS01'>
-        <racun_banke>111-1231555551231-32</racun_banke>
+        <racun_banke>002-1231555551231-32</racun_banke>
         <id>002</id>
         <naziv>B Banka</naziv>
     </kod_banke>
     <kod_banke swift='CCCCRS01'>
-        <racun_banke>111-1231266661231-32</racun_banke>
+        <racun_banke>003-1231266661231-32</racun_banke>
         <id>003</id>
         <naziv>C Banka</naziv>
     </kod_banke>

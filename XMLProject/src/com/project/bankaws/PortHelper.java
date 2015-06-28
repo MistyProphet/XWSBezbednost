@@ -23,6 +23,8 @@ public class PortHelper {
     public static Long mt102ID = Long.valueOf("1");
 	public static String KEY_STORE_FILE;
 	public static String KEY_STORE_PASSWORD;
+	public static String KEY_STORE_FILE_CB;
+	public static String KEY_STORE_PASSWORD_CB;
 	public static String TEST_FILE;
 	public static String SCHEMA_PATH;
     
@@ -30,13 +32,11 @@ public class PortHelper {
     	current_bank = new Banka();
     	String s = "";
     	
-    	ResourceBundle bbb = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
-    	SCHEMA_PATH =  (String) bbb.getObject("schema.path");
-    	
-    	ResourceBundle bb = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
-    	TEST_FILE =  (String) bb.getObject("test.file");
-        
-        ResourceBundle b = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
+    	ResourceBundle b = ResourceBundle.getBundle ("resource.deploy"+ID_Instance_Banke);
+    	SCHEMA_PATH =  (String) b.getObject("schema.path");
+    	TEST_FILE =  (String) b.getObject("test.file");
+    	KEY_STORE_FILE_CB =  (String) b.getObject("cb.file");
+    	KEY_STORE_PASSWORD_CB =  (String) b.getObject("cb.password");
         s =  (String) b.getObject("swift.code");
 
     	Long i = Long.parseLong(Integer.toString(ID_Instance_Banke));

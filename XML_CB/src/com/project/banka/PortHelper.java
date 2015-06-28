@@ -16,6 +16,8 @@ public class PortHelper {
     public static Long mt102ID = Long.valueOf("1");
 	public static String KEY_STORE_FILE;
 	public static String KEY_STORE_PASSWORD;
+	public static String KEY_STORE_FILE_BANKA;
+	public static String KEY_STORE_PASSWORD_BANKA;
     
     static {
     	current_bank = new Banka();
@@ -23,8 +25,8 @@ public class PortHelper {
        
     	KEY_STORE_FILE = (String) b.getObject("keystore.file");
     	KEY_STORE_PASSWORD = (String) b.getObject("keystore.password");
-    	
-    	
+    	KEY_STORE_FILE_BANKA = (String) b.getObject("banka.file");
+    	KEY_STORE_PASSWORD_BANKA = (String) b.getObject("banka.password");
     	rtgsObrada = new RTGSProccessing();
     }
     

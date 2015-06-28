@@ -115,7 +115,7 @@ public class SignEnveloped {
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(PortHelper.KEY_STORE_FILE));
-			ks.load(in, "primer".toCharArray());
+			ks.load(in, PortHelper.KEY_STORE_PASSWORD.toCharArray());
 			
 			if(ks.isKeyEntry(PortHelper.KEY_STORE_PASSWORD)) {
 				PrivateKey pk = (PrivateKey) ks.getKey(PortHelper.KEY_STORE_PASSWORD, PortHelper.KEY_STORE_PASSWORD.toCharArray());

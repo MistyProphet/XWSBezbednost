@@ -12,7 +12,6 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.ResourceBundle;
 
 import misc.DocumentUtil;
 
@@ -23,16 +22,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.project.banka.PortHelper;
+
 //Dekriptuje tajni kljuc privatnim kljucem
 //Tajnim kljucem dekriptuje podatke
 public class Decrypt {
-	private static String KEY_STORE_FILE = "";
 	
     static {
-    	ResourceBundle b = ResourceBundle.getBundle ("resources.deploy");
-        
-    	KEY_STORE_FILE = (String) b.getObject("keystore.file");
-
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }
@@ -53,11 +49,11 @@ public class Decrypt {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
-			ks.load(in, "primer".toCharArray());
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(PortHelper.KEY_STORE_FILE));
+			ks.load(in, PortHelper.KEY_STORE_PASSWORD.toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				PrivateKey pk = (PrivateKey) ks.getKey("primer", "primer".toCharArray());
+			if(ks.isKeyEntry(PortHelper.KEY_STORE_PASSWORD)) {
+				PrivateKey pk = (PrivateKey) ks.getKey(PortHelper.KEY_STORE_PASSWORD, PortHelper.KEY_STORE_PASSWORD.toCharArray());
 				return pk;
 			}
 			else

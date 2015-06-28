@@ -45,12 +45,12 @@ public class HelloClient {
 			request.setIDPoruke("333");
 			PodaciOBankama pb = new PodaciOBankama();
 			TBanka duznik = new TBanka();
-			duznik.setBrojRacunaBanke("111-1231231231231-32");
+			duznik.setBrojRacunaBanke("001-0000000000001-00");
 			duznik.setSWIFTKod("AAAARS01");
 			duznik.setId(new Long(111));
 			duznik.setNazivBanke("UniCredit");
 			TBanka poverioc = new TBanka();
-			poverioc.setBrojRacunaBanke("111-1231555551231-32");
+			poverioc.setBrojRacunaBanke("002-0000000000001-00");
 			poverioc.setSWIFTKod("BBBBRS01");
 			poverioc.setNazivBanke("Raiffeisen");
 			poverioc.setId(new Long(112));

@@ -45,13 +45,11 @@ public class VerifySignatureEnveloped {
 			//Pronalazi se prvi Signature element 
 			NodeList signatures = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
 			Element signatureEl = (Element) signatures.item(0);
-			System.out.println(signatureEl.getLocalName());
-			System.out.println();
 			java.util.Date now = new java.util.Date();
 			
 			//kreira se signature objekat od elementa
 			XMLSignature signature = new XMLSignature(signatureEl, null);
-			
+			/*
 			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
 			System.out.println(timestamp.getLocalName());
 			NodeList list = timestamp.getChildNodes();
@@ -97,7 +95,7 @@ public class VerifySignatureEnveloped {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+*/
 			String documentName = "";
 			if (doc.getChildNodes().item(0).getNodeName().split(":").length<2) {
 				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[0];
@@ -105,10 +103,30 @@ public class VerifySignatureEnveloped {
 				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[1];
 			}
 			
-			System.out.println("!!!!!!!!!!!! DOCUMENT NAME: " + documentName);
-			System.out.println(doc.getElementsByTagName("ns5:ID_poruke").getLength());
-			String idPoruke = doc.getElementsByTagName("ns5:ID_poruke").item(0).getTextContent();
-			System.out.println("!!!!!!!!!!!! ID PORUKE: " + idPoruke);
+			
+			String idPoruke = "";
+			if(doc.getElementsByTagName("ns5:ID_poruke").item(0) != null){
+				idPoruke = doc.getElementsByTagName("ns5:ID_poruke").item(0).getTextContent();
+			}else{
+				if(doc.getElementsByTagName("ns4:ID_poruke").item(0) != null){
+					idPoruke = doc.getElementsByTagName("ns4:ID_poruke").item(0).getTextContent();
+				}else{
+					if(doc.getElementsByTagName("ns3:ID_poruke").item(0) != null){
+						idPoruke = doc.getElementsByTagName("ns3:ID_poruke").item(0).getTextContent();
+					}else{
+						if(doc.getElementsByTagName("ns2:ID_poruke").item(0) != null){
+							idPoruke = doc.getElementsByTagName("ns2:ID_poruke").item(0).getTextContent();
+						}else{
+							if(doc.getElementsByTagName("ns1:ID_poruke").item(0) != null){
+								idPoruke = doc.getElementsByTagName("ns1:ID_poruke").item(0).getTextContent();
+							}else{
+								idPoruke="0";
+							}
+						}
+					}
+				}
+			}
+			
 			
 			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId(documentName,idPoruke)) {
 				WrongIdSignatureException ex = new WrongIdSignatureException();

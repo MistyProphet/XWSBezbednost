@@ -314,7 +314,6 @@ public class RESTUtil {
 			Object rac = (Object) unmarshaller.unmarshal(reader);
 			return rac;
 		}catch(Exception e){
-			e.printStackTrace();
 			return null;
 		}
 	}

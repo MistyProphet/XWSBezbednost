@@ -165,6 +165,7 @@ public class SignEnveloped {
 			if (externalMessage) {
 				sig.setId(getNextId(docType, rootEl.getFirstChild().getFirstChild().getTextContent())+"");
 			}
+			/*
 			//Dodavanje timestampa
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
 		      formatter.setTimeZone(TimeZone.getTimeZone("GMT"));;
@@ -186,7 +187,7 @@ public class SignEnveloped {
 		        
 		        sig.getElement().appendChild(timestampElem);
 
-                
+               */ 
 			//kreiraju se transformacije nad dokumentom
 			Transforms transforms = new Transforms(doc);
 			//iz potpisa uklanja Signature element

@@ -4,14 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.Provider;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
+
 import misc.DocumentUtil;
 import misc.RESTUtil;
+
 import org.apache.xml.security.exceptions.XMLSecurityException;
 import org.apache.xml.security.keys.KeyInfo;
 import org.apache.xml.security.keys.keyresolver.implementations.RSAKeyValueResolver;
@@ -41,14 +46,12 @@ public class VerifySignatureEnveloped {
 			//Pronalazi se prvi Signature element 
 			NodeList signatures = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
 			Element signatureEl = (Element) signatures.item(0);
-			System.out.println(signatureEl.getLocalName());
-			System.out.println();
 			java.util.Date now = new java.util.Date();
 			
 			//kreira se signature objekat od elementa
 			XMLSignature signature = new XMLSignature(signatureEl, "");
 			KeyInfo keyInfo = signature.getKeyInfo();
-			
+			/*
 			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
 			System.out.println(timestamp.getLocalName());
 			NodeList list = timestamp.getChildNodes();
@@ -87,13 +90,7 @@ public class VerifySignatureEnveloped {
 				ex.printStackTrace();
 				return false;
 			}
-			
-			try {
-				DocumentUtil.printDocument(doc);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			*/
 
 			String documentName = "";
 			if (doc.getChildNodes().item(0).getNodeName().split(":").length<2) {
@@ -102,10 +99,28 @@ public class VerifySignatureEnveloped {
 				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[1];
 			}
 			
-			System.out.println("!!!!!!!!!!!! DOCUMENT NAME: " + documentName);
-			System.out.println(doc.getElementsByTagName("ns5:ID_poruke").getLength());
-			String idPoruke = doc.getElementsByTagName("ns5:ID_poruke").item(0).getTextContent();
-			System.out.println("!!!!!!!!!!!! ID PORUKE: " + idPoruke);
+			String idPoruke = "";
+			if(doc.getElementsByTagName("ns5:ID_poruke").item(0) != null){
+				idPoruke = doc.getElementsByTagName("ns5:ID_poruke").item(0).getTextContent();
+			}else{
+				if(doc.getElementsByTagName("ns4:ID_poruke").item(0) != null){
+					idPoruke = doc.getElementsByTagName("ns4:ID_poruke").item(0).getTextContent();
+				}else{
+					if(doc.getElementsByTagName("ns3:ID_poruke").item(0) != null){
+						idPoruke = doc.getElementsByTagName("ns3:ID_poruke").item(0).getTextContent();
+					}else{
+						if(doc.getElementsByTagName("ns2:ID_poruke").item(0) != null){
+							idPoruke = doc.getElementsByTagName("ns2:ID_poruke").item(0).getTextContent();
+						}else{
+							if(doc.getElementsByTagName("ns1:ID_poruke").item(0) != null){
+								idPoruke = doc.getElementsByTagName("ns1:ID_poruke").item(0).getTextContent();
+							}else{
+								idPoruke="0";
+							}
+						}
+					}
+				}
+			}
 			
 			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId(documentName,idPoruke)) {
 				WrongIdSignatureException ex = new WrongIdSignatureException();
@@ -114,11 +129,6 @@ public class VerifySignatureEnveloped {
 			}
 			
 			//preuzima se key info
-			
-	        System.out.println("KEEEEEEEEEEEEEEEEY");
-	        System.out.println(keyInfo);
-	        //KeyInfo k = new KeyInfo();
-	        //System.out.println(k);
 			//ako postoji
 			if(keyInfo != null) {
 				//registruju se resolver-i za javni kljuc i sertifikat
@@ -128,11 +138,6 @@ public class VerifySignatureEnveloped {
 			    //ako sadrzi sertifikat
 			    if(keyInfo.containsX509Data() && keyInfo.itemX509Data(0).containsCertificate()) { 
 			        Certificate cert = keyInfo.itemX509Data(0).itemCertificate(0).getX509Certificate();
-			        System.out.println("SERTIFIKATI!!!!");
-			        System.out.println(cert);
-			        System.out.println(keyInfo);
-			        System.out.println(keyInfo.itemX509Data(0));
-			        System.out.println(keyInfo.itemX509Data(0).itemCertificate(0));
 			        //provera da li je sertifikat povucen
 			      
 			        if (CertificateReader.checkIfWithdrown(cert)) {
@@ -142,7 +147,6 @@ public class VerifySignatureEnveloped {
 			        }
 			        //ako postoji sertifikat, provera potpisa
 			        if(cert != null) {
-			        	System.out.println("TUUUUUUUUUU");
 			        	return signature.checkSignatureValue((X509Certificate) cert);
 			        }else
 			        	return false;

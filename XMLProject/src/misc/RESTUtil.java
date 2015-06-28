@@ -406,7 +406,6 @@ public class RESTUtil<T> {
 			Object rac = (Object) unmarshaller.unmarshal(reader);
 			return rac;
 		}catch(Exception e){
-			e.printStackTrace();
 			return null;
 		}
 	}

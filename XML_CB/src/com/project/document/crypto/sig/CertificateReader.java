@@ -97,7 +97,18 @@ public class CertificateReader {
 	}
 	
 	private static void loadCRL() {
-		crl = (CRL)RESTUtil.doUnmarshall("//*:CRL", "/crl", new CRL());
+		try{
+			crl = (CRL)RESTUtil.doUnmarshall("//*:CRL", "/crl", new CRL());
+			if(crl==null){
+				crl = new CRL();
+				crl.getCertificate();
+				return;
+			}
+		}catch(Exception e){
+			crl = new CRL();
+			crl.getCertificate();
+			return;
+		}
 	}
 	
 	public void sign() {
@@ -167,7 +178,6 @@ public class CertificateReader {
 			 for (String s : crl.getCertificate()) {
 			    cert = cf.generateCertificate(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)));
 			    certificateList.add(cert);
-			    System.out.println(cert.toString());	   
 			 }
 
 		} catch (CertificateException e) {

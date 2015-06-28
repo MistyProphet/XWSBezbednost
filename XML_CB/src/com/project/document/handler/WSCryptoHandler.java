@@ -24,13 +24,6 @@ public class WSCryptoHandler implements LogicalHandler<LogicalMessageContext> {
 		Source source = context.getMessage().getPayload();
 		Document document = DocumentUtil.convertToDocument(source);
 		
-		try {
-			System.out.println("\n*** Pristigli dokument CB***");
-			DocumentUtil.printDocument(document);
-		} catch (Exception e) {
-			
-		}
-		
 		if (isResponse) {
 			System.err.println("\n-- Kriptovanje --");
 			Document encryptedDoc = Encrypt.encryptDocument(document);

@@ -41,7 +41,7 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 			context.getMessage().setPayload(signedSource);			
 		} else {
 			System.err.println("\nValidacija i skidanje potpisa...");
-/*
+
 			boolean signatureValid = false;
 			try {
 				try {
@@ -60,7 +60,7 @@ public class WSSignatureHandler implements LogicalHandler<LogicalMessageContext>
 			
 			if(!signatureValid) {
 				return false; // potpis nije validan
-			}*/
+			}
 			// uklanjanje potpisa
 			Element element =  (Element) document.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature").item(0);  
 			element.getParentNode().removeChild(element);

@@ -4,16 +4,21 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 
+import org.apache.http.HttpResponse;
 import org.apache.log4j.Logger;
 
 import rs.ac.uns.ftn.xws.entities.user.User;
@@ -27,6 +32,9 @@ public class UserService {
 
 	@EJB
 	private UserDaoLocal userDao;
+
+    @Context
+    private HttpServletResponse response;
 
 	@GET
 	@Path("")
@@ -54,11 +62,17 @@ public class UserService {
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User login(User sentUser) throws IOException, JAXBException {
-        User user = userDao.login(sentUser.getUsername(), sentUser.getPassword());
-		if(user==null) {
-			throw new ServiceException("Wrong username or password", Status.FORBIDDEN);
-		}
-        return user;
+        try {
+            User user = userDao.login(sentUser.getUsername(), sentUser.getPassword());
+            return user;
+        } catch (NullPointerException e) {
+            response.setStatus(401);
+            return null;
+		} catch (NotFoundException | NotAuthorizedException e) {
+            e.printStackTrace(); 
+            response.setStatus(401);
+            return null;
+        } 
     }
 	
 	@GET

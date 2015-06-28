@@ -8,11 +8,13 @@ import javax.ejb.Stateless;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.servlet.http.HttpServletRequest;
 
 import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDao;
+import rs.ac.uns.ftn.xws.util.ServiceException;
 
 @Stateless
 @Local(UserDaoLocal.class)
@@ -39,17 +41,23 @@ public class UserDao extends GenericDao<User, Long> implements UserDaoLocal{
 		return null;
     }
 
+    /**
+     * Searches for the user with the given username.
+     * If the user doesn't exists, throws a NotFoundException.
+     * If he exists, but has the wrong password, throws NotAuthorizedException.
+     * @return Returns the user object.
+     */
 	@Override
 	public User login(String username, String password) throws IOException, JAXBException, NotFoundException, NotAuthorizedException {
         User user = findUserWithUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
-            request.getSession().setAttribute("user", user);
-            return user;
-        }
-        else if (user == null)
-            throw new NotFoundException("User not found "); 
-        else 
+        if (user == null)
+            throw new NullPointerException("User not found ");
+
+        if (!user.getPassword().equals(password))
             throw new NotAuthorizedException("Wrong password ");
+
+        request.getSession().setAttribute("user", user);
+        return user;
 	}
 
 	@Override

@@ -29,8 +29,6 @@ import rs.ac.uns.ftn.xws.util.ServiceException;
 @Path("/service")
 public class RoleService {
 
-	private static Logger log = Logger.getLogger(RoleService.class);
-
 	@EJB
 	private ServiceDaoLocal serviceDao;
 
@@ -71,7 +69,6 @@ public class RoleService {
     }
     
     
-    @Authenticate
     @PUT
     @Path("{serviceName}")
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -79,7 +76,6 @@ public class RoleService {
         serviceDao.merge(service, service.getId());
     }
 
-    @Authenticate
     @DELETE
     @Path("{serviceName}")
     public void deleteService(String serviceId) throws Exception {

@@ -8,8 +8,6 @@ import javax.ws.rs.core.Application;
 
 import org.apache.log4j.Logger;
 
-//import rs.ac.uns.ftn.xws.interceptors.RESTExceptionMapper;
-
 @ApplicationPath("/api")
 public class XWSApplication extends Application {
 	private static Logger log = Logger.getLogger(XWSApplication.class);

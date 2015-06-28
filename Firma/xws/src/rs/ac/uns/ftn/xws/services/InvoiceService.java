@@ -21,7 +21,6 @@ import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
 import rs.ac.uns.ftn.xws.util.Authenticate;
 import rs.ac.uns.ftn.xws.util.ValidateSupplier;
 
-@Authenticate
 public class InvoiceService {
 
     @Context

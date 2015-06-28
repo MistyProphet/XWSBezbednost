@@ -46,11 +46,8 @@ public class VerifySignatureEnveloped {
 			NodeList signatures = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
 			Element signatureEl = (Element) signatures.item(0);
 			java.util.Date now = new java.util.Date();
-			
-			//kreira se signature objekat od elementa
-			XMLSignature signature = new XMLSignature(signatureEl, null);
-			/*
-			Node timestamp = signature.getElement().getElementsByTagName("Timestamp").item(0);
+
+			Node timestamp = doc.getElementsByTagName("Timestamp").item(0);
 			System.out.println(timestamp.getLocalName());
 			NodeList list = timestamp.getChildNodes();
 			System.out.println("LIST LEN = " + list.getLength());
@@ -87,15 +84,15 @@ public class VerifySignatureEnveloped {
 				WrongTimestampException ex = new WrongTimestampException();
 				ex.printStackTrace();
 				return false;
+			} else {
+				//uklanjanje timestampa
+				signatureEl.removeChild(timestamp);
 			}
+
 			
-			try {
-				DocumentUtil.printDocument(doc);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-*/
+			//kreira se signature objekat od elementa
+			XMLSignature signature = new XMLSignature(signatureEl, null);
+			
 			String documentName = "";
 			if (doc.getChildNodes().item(0).getNodeName().split(":").length<2) {
 				documentName = doc.getChildNodes().item(0).getNodeName().split(":")[0];
@@ -132,6 +129,15 @@ public class VerifySignatureEnveloped {
 				WrongIdSignatureException ex = new WrongIdSignatureException();
 				ex.printStackTrace();
 				return false;
+			} /*else {
+				setLastId(documentName, ""+Integer.parseInt(signature.getElement().getAttribute("Id")));
+			}*/
+			
+			try {
+				DocumentUtil.printDocument(doc);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 			//preuzima se key info
@@ -201,7 +207,36 @@ public class VerifySignatureEnveloped {
 
 		return result;
 	}
-	
+/*	
+	private static int setLastId(String documentName, String docId) {
+
+        String xQuery = "//" + documentName + "[@id=\"" + docId + "\"]/text()";
+        
+        InputStream stream = null;
+		try {
+			stream = RESTUtil.retrieveResource(xQuery, "Banka/001/indeksiPoruka", "UTF-8", false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+    	int result = -1;
+		String line;
+		try {
+			line = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+
+		if (line != null) 
+			result = Integer.parseInt(line);
+
+		return result;
+	}
+*/	
 	public static void main(String[] args) {
 		System.out.println(getLastId("mt103", "1"));
 	}

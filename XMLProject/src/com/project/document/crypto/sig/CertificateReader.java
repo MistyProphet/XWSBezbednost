@@ -133,7 +133,8 @@ public class CertificateReader {
 			DocumentUtil.printDocument(document);
 			Document signedDocument = SignEnveloped.signDocument(document, false);	
 			
-			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId(), "crl", signedDocument);
+			//RESTUtil.createResource("Banka/00"+PortHelper.current_bank.getId(), "crl", signedDocument);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -35,7 +35,7 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 
     public List<Invoice> findOutgoingInvoices() throws IOException, JAXBException {
         List<Invoice> invoices;
-        invoices = (List<Invoice>) em .runQuery("invoice", "(//invoice[supplierTIN=\"" + Company.getInstance().getTIN() + "\"])"); 
+        invoices = (List<Invoice>) em .runQuery("invoice", "(//invoice[supplierName=\"" + Company.getInstance().getName() + "\"])"); 
         return invoices; 
     }
 

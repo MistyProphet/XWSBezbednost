@@ -64,6 +64,7 @@ public class RESTUtil<T> {
 
 		createSchema("Banka");
 		createSchema("Banke");
+		createSchema("Firma");
 		createResource("Banke", "Podaci", new FileInputStream(new File(file, "banke.xml")));
 
 		createResource("Banka/001", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
@@ -71,6 +72,7 @@ public class RESTUtil<T> {
 		createResource("Banka/001", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/001", "MT910", new FileInputStream(new File(file, "MT910.xml")));
 		createResource("Banka/001", "indeksiPoruka", new FileInputStream(new File(file, "indeksiPoruka.xml")));
+		createResource("Firma/001", "indeksiPoruka", new FileInputStream(new File(file, "indeksiPoruka.xml")));
 		
 		createResource("Banka/002", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
 		createResource("Banka/002", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));

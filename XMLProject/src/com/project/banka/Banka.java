@@ -345,6 +345,7 @@ public class Banka extends Identifiable {
 		for(TBankarskiRacunKlijenta k: rac1.getRacun()){
 			if(k.getRacun().getBrojRacuna().equals(zahtev.getBrojRacuna())){
 				idRacuna = k.getRacun().getId();
+				break;
 			}
 		}
 		if(idRacuna == null){

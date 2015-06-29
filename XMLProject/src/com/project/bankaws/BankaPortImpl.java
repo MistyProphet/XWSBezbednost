@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -247,8 +248,10 @@ public class BankaPortImpl implements BankaPort {
                 throw new ReceiveNalogFault("Invoice validation failed. Reason: "+
                 		PortHelper.checkNalogEx);
     		}
-        	PortHelper.current_bank.formirajPresek(zahtev);
-            com.project.presek.Presek _return = null;
+    		ResourceBundle b = ResourceBundle.getBundle ("resource.deploy"+PortHelper.current_bank.getId());
+    		PortHelper.KEY_STORE_FILE_CB =  (String) b.getObject("firma1.file");
+    		PortHelper.KEY_STORE_PASSWORD_CB =  (String) b.getObject("firma1.password");
+            com.project.presek.Presek _return = PortHelper.current_bank.formirajPresek(zahtev);
             return _return;
         } catch (java.lang.Exception ex) {
             ex.printStackTrace();
@@ -811,7 +814,7 @@ public class BankaPortImpl implements BankaPort {
 	    	boolean found = false;
 	    	//Provera da li taj racun postoji
 	    	if (PortHelper.current_bank.getSpecificAccount(zahtev.getBrojRacuna()) != null)
-	    		found = false;
+	    		found = true;
 			
 			if(!found){
 				PortHelper.checkNalogEx = "Client's account does not exist.";

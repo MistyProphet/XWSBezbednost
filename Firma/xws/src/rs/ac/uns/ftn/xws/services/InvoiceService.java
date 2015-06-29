@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.xws.services;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -39,11 +40,48 @@ public class InvoiceService {
     }
 
     @GET
-    @Path("/pristigle/")
+    @Path("/pristigle")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Invoice> findAllIncoming() throws Exception {
         List<Invoice> retVal = invoiceDao.findIncomingInvoices();    
         return retVal;
+    }
+
+    @POST
+    @Path("/pristigle")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void createNewInvoice(Invoice invoice) {
+        try {
+            invoiceDao.persist(invoice);
+            response.setStatus(201);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(400);
+        }
+    } 
+
+    @PUT
+    @Path("/pristigle/{id}")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public void updateInvoice(Invoice invoice, @PathParam("id") String id) {
+        try {
+            invoiceDao.merge(invoice, Long.parseLong(id));
+            response.setStatus(201);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(400);
+        }
+    } 
+
+    @DELETE
+    @Path("/pristigle/{id}")
+    public void deleteInvoice(@PathParam("id") String id) {
+        try {
+            invoiceDao.remove(Long.parseLong(id));
+        } catch (IOException e) {
+            response.setStatus(400);
+        }
     }
 
     @GET
@@ -53,6 +91,19 @@ public class InvoiceService {
         Invoice retVal = invoiceDao.findById(Long.parseLong(id));    
         return retVal;
     }
+
+    //@PUT
+    //@Path("/pristigle/{id}")
+    //@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    //public 
+    
+//    @GET
+//    @Path("/pristigleStavke/{id}")
+//    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+//    public InvoiceItem findAllIncomingItems(@PathParam("id") String id) throws Exception {
+//        InvoiceItem retVal = invoiceDao.findById(Long.parseLong(id));    
+//        return retVal;
+//    }
 
     /**
      * Returns a list of outgoing invoices not yet sent.
@@ -65,6 +116,11 @@ public class InvoiceService {
         List<Invoice> retVal = invoiceDao.findOutgoingInvoices();
         return retVal;
     }
+
+
+
+//####################################################################################################
+
 
     /**
      * Returns a list of invoices of the supplier the PIN in the URL.

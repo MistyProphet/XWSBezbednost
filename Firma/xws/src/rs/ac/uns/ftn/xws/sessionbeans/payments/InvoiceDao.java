@@ -57,6 +57,10 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 		return null;
 	}
 
+    //public InvoiceItem findItemById(Long itemId) throws IOException, JAXBException {
+    //    List<InvoiceItem> items = em.runQuery("invoice", "(//invoiceItem[@id=\"" + itemId + "\"])");
+    //    if (items jk
+
 	public Invoice removeItemFromInvoice(Long invoiceId, Long itemId) throws IOException, JAXBException {
 		Invoice invoice = findById(invoiceId);
 		

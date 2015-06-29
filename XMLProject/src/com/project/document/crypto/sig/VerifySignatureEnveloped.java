@@ -136,6 +136,8 @@ public class VerifySignatureEnveloped {
 			if (Integer.parseInt(signature.getElement().getAttribute("Id"))<=getLastId(documentName,idPoruke)) {
 				WrongIdSignatureException ex = new WrongIdSignatureException();
 				ex.printStackTrace();
+				System.out.println("ID ===== " + Integer.parseInt(signature.getElement().getAttribute("Id")));
+				System.out.println(getLastId(documentName,idPoruke));
 				return false;
 			} else {
 				setLastId(documentName, signature.getElement().getAttribute("Id"), idPoruke);
@@ -248,7 +250,7 @@ public class VerifySignatureEnveloped {
         
         InputStream stream = null;
 		try {
-			stream = RESTUtil.retrieveResource(xQuery, "Banka/001/indeksiPoruka", "UTF-8", false);
+			stream = RESTUtil.retrieveResource(xQuery, "Banka/00"+PortHelper.current_bank.getId()+"/indeksiPoruka", "UTF-8", false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -301,11 +303,20 @@ public class VerifySignatureEnveloped {
 		}
 
 	    NodeList listaCvorova = doc.getElementsByTagName(documentName);
+	    boolean postoji = false;
 	    for (int i=0; i<listaCvorova.getLength(); i++) {
 	    	if (listaCvorova.item(i).getAttributes().getNamedItem("id").getTextContent().trim().equals(idPoruke.trim())) {
 	    		listaCvorova.item(i).setTextContent(docId.trim());
+	    		postoji = true;
 	    		break;
 	    	}
+	    }
+	    //dodaje se novi element
+	    if (!postoji) {
+	    	Element newEl = doc.createElement(documentName);
+	    	newEl.setAttribute("id", idPoruke);
+	    	newEl.setTextContent(0+"");
+	    	doc.getFirstChild().appendChild(newEl);
 	    }
 	      
 	    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

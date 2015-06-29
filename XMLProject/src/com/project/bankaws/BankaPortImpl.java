@@ -87,7 +87,7 @@ public class BankaPortImpl implements BankaPort {
             ArrayList<Mt102> nalozi = PortHelper.current_bank.formirajClearingNalog();
             
 			try {
-				URL wsdl = new URL("http://localhost:8080/XML_CB/services/Banka?wsdl");
+				URL wsdl = new URL("http://localhost:8080/projCB/services/Banka?wsdl");
 		    	QName serviceName = new QName("http://www.project.com/CBws", "CBservice");
 		    	QName portName = new QName("http://www.project.com/CBws", "CBport");
 		    	Service service = Service.create(wsdl, serviceName);
@@ -95,6 +95,18 @@ public class BankaPortImpl implements BankaPort {
 		        //Za svaku banku pojedinacno poslati naloge za kliring
 		        for(Mt102 m: nalozi){
 	    	        try {
+	    	        	///////////////////////// DEO ZA KLIJENTSKI HANDLER ///////////////////////////
+	    	        	/////                                                                    //////
+	    			          Binding binding = ((BindingProvider)centralnaBanka).getBinding();
+	    			          @SuppressWarnings("rawtypes")
+	    			          List<Handler> handlerList = binding.getHandlerChain();
+	    			          handlerList.clear();
+	    			          handlerList.add(new WSSignatureHandler());
+	    			          handlerList.add(new WSCryptoHandler());
+	    			          binding.setHandlerChain(handlerList);  
+	    	        	/////                                                                    //////
+	    			    ///////////////////////////////////////////////////////////////////////////////
+    			          
 						Mt900Clearing response = centralnaBanka.receiveMT102CB(m);
 						RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/MT900clearing", response.getIDPoruke(), response);
 					} catch (com.project.util.ReceiveMT102Fault e) {
@@ -284,6 +296,7 @@ public class BankaPortImpl implements BankaPort {
     		//provera da li je racun primaoca u istoj banci
     		String broj_rk_primaoca = nalog.getPlacanje().getUplata().getRacunPrimaoca().getBrojRacuna();
     		TBankarskiRacunKlijenta racun_primaoca = PortHelper.current_bank.getSpecificAccount(broj_rk_primaoca);
+    		
     		if(racun_primaoca != null){
     			//ako jeste, prebaciti odmah pare
     			Transakcija transakcijaPrimalac = PortHelper.current_bank.generisiTransakcijuUplate(nalog);
@@ -350,7 +363,7 @@ public class BankaPortImpl implements BankaPort {
     				throw new WrongBankException();
     			}
     		}
-        	if(!nalog.isHitno() && (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == -1)){
+    		if(!nalog.isHitno() && (nalog.getPlacanje().getUplata().getIznos().compareTo(BigDecimal.valueOf(250000.0)) == -1)){
         		PortHelper.current_bank.addNalogZaClearing(nalog);
         	} else {
         		//RTGS
@@ -631,95 +644,7 @@ public class BankaPortImpl implements BankaPort {
 	    	Validator validator = schema.newValidator();
 	    	validator.validate(xmlFile);
 	    	
-	    	//Provera da li su sva polja ispunjena
-	    	boolean filled = true;
-	    	if(mt103.getDatumValute() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getIDPoruke() == null || mt103.getIDPoruke().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getSifraValute() == null || mt103.getSifraValute().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getDatumNaloga() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getIznos() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getPozivNaBrojOdobrenja() == null || mt103.getUplata().getPozivNaBrojOdobrenja().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getPozivNaBrojZaduzenja() == null || mt103.getUplata().getPozivNaBrojZaduzenja().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getRacunDuznika() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getRacunDuznika().getId() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getRacunDuznika().getVlasnik() == null || mt103.getUplata().getRacunDuznika().getVlasnik().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getRacunPrimaoca() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getRacunPrimaoca().getId() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getRacunPrimaoca().getVlasnik() == null || mt103.getUplata().getRacunPrimaoca().getVlasnik().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getUplata().getSvrhaPlacanja() == null || mt103.getUplata().getSvrhaPlacanja().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaDuznika() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaDuznika().getBrojRacunaBanke() == null || mt103.getPodaciOBankama().getBankaDuznika().getBrojRacunaBanke().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaDuznika().getId() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaDuznika().getNazivBanke() == null || mt103.getPodaciOBankama().getBankaDuznika().getNazivBanke().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaDuznika().getSWIFTKod() == null || mt103.getPodaciOBankama().getBankaDuznika().getSWIFTKod().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaPoverioca() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaPoverioca().getBrojRacunaBanke() == null || mt103.getPodaciOBankama().getBankaPoverioca().getBrojRacunaBanke().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaPoverioca().getId() == null){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaPoverioca().getNazivBanke() == null || mt103.getPodaciOBankama().getBankaPoverioca().getNazivBanke().equals("")){
-	    		filled = false;
-	    	}
-	    	if(mt103.getPodaciOBankama().getBankaPoverioca().getSWIFTKod() == null || mt103.getPodaciOBankama().getBankaPoverioca().getSWIFTKod().equals("")){
-	    		filled = false;
-	    	}
 	    	
-	    	if(!filled){
-	    		PortHelper.checkNalogEx = "One of the fields was empty.";
-		    	System.out.println(PortHelper.checkNalogEx);
-		    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
-		    	writer.write((new String()).getBytes());
-		    	writer.close();
-				return false;
-			}
 
 	    	FileOutputStream writer = new FileOutputStream(PortHelper.TEST_FILE);
 	    	writer.write((new String()).getBytes());
@@ -932,7 +857,7 @@ public class BankaPortImpl implements BankaPort {
 		}
     	novi.setHitno(true);
     	Placanje p = new Placanje();
-    	p.setIDPoruke("1");
+    	p.setIDPoruke("5");
     	p.setSifraValute("RSD");
     	Uplata u = new Uplata();
     	try {
@@ -954,7 +879,7 @@ public class BankaPortImpl implements BankaPort {
     	TRacunKlijenta t2 = new TRacunKlijenta();
     	t2.setBrojRacuna("002-0000000000001-00");
     	t2.setId(Long.parseLong("1"));
-    	t2.setVlasnik("Mika Mikic");
+    	t2.setVlasnik("Mara Maric");
     	u.setRacunPrimaoca(t2);
     	u.setSvrhaPlacanja("Eto 'nako");
     	p.setUplata(u);

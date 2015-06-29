@@ -9,19 +9,27 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.jws.HandlerChain;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import javax.xml.ws.Binding;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.Handler;
 
 import misc.RESTUtil;
 
 import com.project.banka.BankaPort;
+import com.project.banka.PortHelper;
 import com.project.common_types.TBanka;
 import com.project.common_types.TRacunKlijenta;
+import com.project.document.handler.WSCryptoHandler;
+import com.project.document.handler.WSSignatureHandler;
 import com.project.mt102.Mt102;
 import com.project.mt103.Mt103;
 import com.project.mt103.Mt103.PodaciOBankama;
@@ -57,33 +65,44 @@ public class CBportImpl implements CBport {
 					"mt102.xsd");
 			CBUtil.ClearingTransaction(mt102);
 			
-			
+			ResourceBundle b = ResourceBundle.getBundle ("resources.deploy");
+	    	PortHelper.KEY_STORE_FILE_BANKA = (String) b.getObject("banka2.file");
+	    	PortHelper.KEY_STORE_PASSWORD_BANKA = (String) b.getObject("banka2.password");
+	    	
 			URL wsdl;
-				wsdl = new URL("http://localhost:8080/proj/services/Banka?wsdl");
-		    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
-		    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
-		    	Service service = Service.create(wsdl, serviceName);
-		        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+			wsdl = new URL("http://localhost:8082/proj/services/Banka?wsdl");
+	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
+	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
+	    	Service service = Service.create(wsdl, serviceName);
+	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
 	        
-	        
-				// Service service = Service.create(new URL("wsdlbanke"),
-				// new QName("serviceNAme"));
-				// BankaPort bankaPort =
-				// service.getPort(new
-				// QName(BankaPort.class.getAnnotation(WebService.class).name()),BankaPort.class);
-				Mt910 mt910 = new Mt910(mt102);
+	        ///////////////////////// DEO ZA KLIJENTSKI HANDLER ///////////////////////////
+	    	/////                                                                    //////
+		          Binding binding = ((BindingProvider)bankaPort).getBinding();
+		          @SuppressWarnings("rawtypes")
+		          List<Handler> handlerList = binding.getHandlerChain();
+		          handlerList.clear();
+		          handlerList.add(new WSSignatureHandler());
+		          handlerList.add(new WSCryptoHandler());
+		          binding.setHandlerChain(handlerList);  
+	    	/////                                                                    //////
+		    ///////////////////////////////////////////////////////////////////////////////
+	          
+			Mt910 mt910 = new Mt910(mt102);
+			mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
+			bankaPort.receiveMT910(mt910);
+			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
+					"mt910.xsd");
+			bankaPort.receiveMT102(mt102);
+			Mt900Clearing mt900 = new Mt900Clearing(mt102);
+			mt900.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT900")+1));
+			RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
+					"mt900.xsd");
 			
-				mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
-				// bankaPort.receiveMT910(mt910);
-				RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
-						"mt910.xsd");
-				bankaPort.receiveMT102(mt102);
-				Mt900Clearing mt900 = new Mt900Clearing(mt102);
-				mt900.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT900")+1));
-				//mt900.setIDPoruke("1");
-				RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
-						"mt900.xsd");
-				return mt900;
+	    	PortHelper.KEY_STORE_FILE_BANKA = (String) b.getObject("banka1.file");
+	    	PortHelper.KEY_STORE_PASSWORD_BANKA = (String) b.getObject("banka1.password");
+	    	
+			return mt900;
 
 		} catch (ReceiveMT102Fault e) {
 			throw e;
@@ -111,25 +130,46 @@ public class CBportImpl implements CBport {
 					.getSWIFTKod(), mt103.getPodaciOBankama()
 					.getBankaPoverioca().getSWIFTKod(), mt103.getUplata()
 					.getIznos());
-
+			
+			ResourceBundle b = ResourceBundle.getBundle ("resources.deploy");
+	    	PortHelper.KEY_STORE_FILE_BANKA = (String) b.getObject("banka2.file");
+	    	PortHelper.KEY_STORE_PASSWORD_BANKA = (String) b.getObject("banka2.password");
+	    	
 			URL wsdl;
-			wsdl = new URL("http://localhost:8080/proj/services/Banka?wsdl");
+			wsdl = new URL("http://localhost:8082/proj/services/Banka?wsdl");
 	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
 	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
 	    	Service service = Service.create(wsdl, serviceName);
 	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+	        
+
+	        ///////////////////////// DEO ZA KLIJENTSKI HANDLER ///////////////////////////
+	    	/////                                                                    //////
+		          Binding binding = ((BindingProvider)bankaPort).getBinding();
+		          @SuppressWarnings("rawtypes")
+		          List<Handler> handlerList = binding.getHandlerChain();
+		          handlerList.clear();
+		          handlerList.add(new WSSignatureHandler());
+		          handlerList.add(new WSCryptoHandler());
+		          binding.setHandlerChain(handlerList);  
+	    	/////                                                                    //////
+		    ///////////////////////////////////////////////////////////////////////////////
+		    bankaPort.receiveMT103(mt103);   
+		    
 			Mt910 mt910 = new Mt910(mt103);
 			mt910.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT910")+1));
-			//bankaPort.receiveMT910(mt910);
+			bankaPort.receiveMT910(mt910);
 			
 			RESTUtil.objectToDB("MT910", mt910.getIDPoruke(), mt910,
 					"mt910.xsd");
-			// bankaPort.receiveMT103(mt103);
 			Mt900RTGS mt900 = new Mt900RTGS(mt103);
-			//mt900.setIDPoruke(("1"));
 			mt900.setIDPoruke(String.valueOf(CBUtil.getMaxTransactionID("MT900")+1));
 			RESTUtil.objectToDB("MT900", mt900.getIDPoruke(), mt900,
 					"mt900.xsd");
+			
+			PortHelper.KEY_STORE_FILE_BANKA = (String) b.getObject("banka1.file");
+	    	PortHelper.KEY_STORE_PASSWORD_BANKA = (String) b.getObject("banka1.password");
+	    	
 			return mt900;
 
 		} catch (ReceiveMT103Fault e) {

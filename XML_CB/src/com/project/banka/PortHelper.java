@@ -25,8 +25,8 @@ public class PortHelper {
        
     	KEY_STORE_FILE = (String) b.getObject("keystore.file");
     	KEY_STORE_PASSWORD = (String) b.getObject("keystore.password");
-    	KEY_STORE_FILE_BANKA = (String) b.getObject("banka.file");
-    	KEY_STORE_PASSWORD_BANKA = (String) b.getObject("banka.password");
+    	KEY_STORE_FILE_BANKA = (String) b.getObject("banka1.file");
+    	KEY_STORE_PASSWORD_BANKA = (String) b.getObject("banka1.password");
     	rtgsObrada = new RTGSProccessing();
     }
     

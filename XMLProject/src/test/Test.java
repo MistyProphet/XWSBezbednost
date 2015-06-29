@@ -12,6 +12,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import com.project.bankaws.BankaPort;
+import com.project.bankaws.BankaPortImpl;
 import com.project.bankaws.ReceiveNalogFault;
 import com.project.common_types.TBanka;
 import com.project.common_types.TRacunKlijenta;
@@ -32,7 +33,7 @@ public class Test {
 	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
 	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
 	    	Service service = Service.create(wsdlLocation, serviceName);
-	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+	    	BankaPortImpl bankaPort = new BankaPortImpl();
 
 	        NalogZaPlacanje nalog = getNalog();
 	        nalog.getPlacanje().getUplata().getRacunPrimaoca().setBrojRacuna("001-0000000000002-00");
@@ -57,7 +58,7 @@ public class Test {
 	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
 	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
 	    	Service service = Service.create(wsdlLocation, serviceName);
-	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+	    	BankaPortImpl bankaPort = new BankaPortImpl();
 
 				bankaPort.receiveNalog(getNalog());
 			} catch (ReceiveNalogFault e) {
@@ -80,7 +81,7 @@ public class Test {
 	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
 	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
 	    	Service service = Service.create(wsdlLocation, serviceName);
-	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+	        BankaPortImpl bankaPort = new BankaPortImpl();
 	        NalogZaPlacanje nalog = getNalog();
 	        nalog.getPlacanje().getUplata().setIznos(new BigDecimal(260000));
 				bankaPort.receiveNalog(nalog);
@@ -103,7 +104,7 @@ public class Test {
 	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
 	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
 	    	Service service = Service.create(wsdlLocation, serviceName);
-	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+	        BankaPortImpl bankaPort = new BankaPortImpl();
 	        NalogZaPlacanje nalog = getNalog();
 	        nalog.getPlacanje().setUplata(null);
 				bankaPort.receiveNalog(nalog);
@@ -128,7 +129,7 @@ public void nemaTolikoParaNalog(){
 	    	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
 	    	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
 	    	Service service = Service.create(wsdlLocation, serviceName);
-	        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+	        BankaPortImpl bankaPort = new BankaPortImpl();
 	        NalogZaPlacanje nalog = getNalog();
 	        nalog.getPlacanje().getUplata().setIznos(new BigDecimal(300000));
 				bankaPort.receiveNalog(nalog);
@@ -152,7 +153,7 @@ public void racunUBanciNePostojiNalog(){
     	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
     	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
     	Service service = Service.create(wsdlLocation, serviceName);
-        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+        BankaPortImpl bankaPort = new BankaPortImpl();
         NalogZaPlacanje nalog = getNalog();
         nalog.getPlacanje().getUplata().getRacunPrimaoca().setBrojRacuna("001-9999999999999-00");
 			bankaPort.receiveNalog(nalog);
@@ -176,7 +177,7 @@ public void racunVanBankeNePostojiNalog(){
     	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
     	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
     	Service service = Service.create(wsdlLocation, serviceName);
-        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+        BankaPortImpl bankaPort = new BankaPortImpl();
         NalogZaPlacanje nalog = getNalog();
         nalog.getPlacanje().getUplata().getRacunPrimaoca().setBrojRacuna("002-9999999999999-00");
 			bankaPort.receiveNalog(nalog);
@@ -200,7 +201,7 @@ public void bankeNePostojiNalog(){
     	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
     	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
     	Service service = Service.create(wsdlLocation, serviceName);
-        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+        BankaPortImpl bankaPort = new BankaPortImpl();
         NalogZaPlacanje nalog = getNalog();
         nalog.getPlacanje().getUplata().getRacunPrimaoca().setBrojRacuna("999-9999999999999-00");
 			bankaPort.receiveNalog(nalog);
@@ -224,7 +225,7 @@ public void racunBlokiranNalog(){
     	QName serviceName = new QName("http://www.project.com/BankaWS", "BankaService");
     	QName portName = new QName("http://www.project.com/BankaWS", "BankaPort");
     	Service service = Service.create(wsdlLocation, serviceName);
-        BankaPort bankaPort = service.getPort(portName, BankaPort.class);
+        BankaPortImpl bankaPort = new BankaPortImpl();
         NalogZaPlacanje nalog = getNalog();
         nalog.getPlacanje().getUplata().getRacunPrimaoca().setBrojRacuna("001-0000000000003-00");
 			bankaPort.receiveNalog(nalog);
@@ -293,7 +294,6 @@ public void racunBlokiranNalog(){
 		test.bankeNePostojiNalog();
 		test.losXMLNaloga();
 		test.nemaTolikoParaNalog();
-		test.racunBlokiranNalog();
 		test.racunUBanciNePostojiNalog();
 		test.racunVanBankeNePostojiNalog();
 		

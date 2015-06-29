@@ -258,7 +258,12 @@ public class Banka extends Identifiable {
 			
 			Transakcije wrappedResults = new Transakcije();
 			wrappedResults = (Transakcije) RESTUtil.doUnmarshall("//Transakcije", "Banka/00"+id+"/Racuni/"+racun_primaoca.getRacun().getId(), wrappedResults);
-			wrappedResults.getTransakcija().add(transakcija);
+			if(wrappedResults == null){
+				wrappedResults = new Transakcije();
+				wrappedResults.getTransakcija().add(transakcija);
+			}else{
+				wrappedResults.getTransakcija().add(transakcija);
+			}
 			RESTUtil.objectToDB("Banka/00"+PortHelper.current_bank.getId()+"/Racuni/"+racun_primaoca.getRacun().getId(), "Transakcije", wrappedResults);
 						
 			Racuni rac1 = new Racuni();

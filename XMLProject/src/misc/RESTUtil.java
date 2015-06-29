@@ -67,19 +67,16 @@ public class RESTUtil<T> {
 		createResource("Banke", "Podaci", new FileInputStream(new File(file, "banke.xml")));
 
 		createResource("Banka/001", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
-		//createResource("Banka/001", "MT103", new FileInputStream(new File(file, "MT103.xml")));
-		//createResource("Banka/001", "MT102", new FileInputStream(new File(file, "MT102.xml")));
 		createResource("Banka/001", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/001", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/001", "MT910", new FileInputStream(new File(file, "MT910.xml")));
 		createResource("Banka/001", "indeksiPoruka", new FileInputStream(new File(file, "indeksiPoruka.xml")));
 		
 		createResource("Banka/002", "Nalozi", new FileInputStream(new File(file, "NalogZaPlacanje.xml")));
-		createResource("Banka/002", "MT103", new FileInputStream(new File(file, "MT103.xml")));
-		createResource("Banka/002", "MT102", new FileInputStream(new File(file, "MT102.xml")));
 		createResource("Banka/002", "MT900rtgs", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/002", "MT900clearing", new FileInputStream(new File(file, "MT900.xml")));
 		createResource("Banka/002", "MT910", new FileInputStream(new File(file, "MT910.xml")));
+		createResource("Banka/002", "indeksiPoruka", new FileInputStream(new File(file, "indeksiPoruka.xml")));
 		
 		createResource("Banka/001", "Racuni", new FileInputStream(new File(file, "klijenti1.xml")));
 		createResource("Banka/002", "Racuni", new FileInputStream(new File(file, "klijenti2.xml")));

@@ -299,11 +299,20 @@ public class VerifySignatureEnveloped {
 		}
 
 	    NodeList listaCvorova = doc.getElementsByTagName(documentName);
+	    boolean postoji = false;
 	    for (int i=0; i<listaCvorova.getLength(); i++) {
 	    	if (listaCvorova.item(i).getAttributes().getNamedItem("id").getTextContent().trim().equals(idPoruke.trim())) {
 	    		listaCvorova.item(i).setTextContent(docId.trim());
+	    		postoji = true;
 	    		break;
 	    	}
+	    }
+	    //dodaje se novi element
+	    if (!postoji) {
+	    	Element newEl = doc.createElement(documentName);
+	    	newEl.setAttribute("id", idPoruke);
+	    	newEl.setTextContent(0+"");
+	    	doc.getFirstChild().appendChild(newEl);
 	    }
 	    try {
 			DocumentUtil.printDocument(doc);

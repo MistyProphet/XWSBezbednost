@@ -163,44 +163,41 @@ public class SignEnveloped {
 	private static Document signDocument(Document doc, PrivateKey privateKey, Certificate cert, boolean externalMessage) {
         
         try {
-			Element rootEl = doc.getDocumentElement();
+        	Element rootEl = doc.getDocumentElement();
 			//kreira se signature objekat
-
+			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
+			//PROVERITI
 			String docType = "";
 			if (rootEl.getNodeName().split(":").length<2) {
 				docType = rootEl.getNodeName().split(":")[0];
 			} else {
 				docType = rootEl.getNodeName().split(":")[1];
 			}
-
 			
-			//Dodavanje timestampa
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
-		    formatter.setTimeZone(TimeZone.getTimeZone("GMT"));;
-		        
-	        //This is for TimeStamp element value
-	        java.util.Date created = new java.util.Date();
-	        java.util.Date expires = new java.util.Date(created.getTime() + (5l * 60l * 1000l));
-	        //This is for TimeStamp value ends
-	        
-	        Element timestampElem = doc.createElement("Timestamp");
-	        Element createdElem = doc.createElement("Created");
-	        createdElem.setTextContent(formatter.format(created));
-	        
-	        Element expiresElem = doc.createElement("Expires");
-	        expiresElem.setTextContent(formatter.format(expires));
-	        
-	        timestampElem.appendChild(createdElem);
-	        timestampElem.appendChild(expiresElem);
-	        
-	        
-	        rootEl.appendChild(timestampElem);
-	        
-			XMLSignature sig = new XMLSignature(doc, null, XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1);
-
 			if (externalMessage) {
 				sig.setId(getNextId(docType, rootEl.getFirstChild().getFirstChild().getTextContent())+"");
 			}
+
+			//Dodavanje timestampa
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSS'Z'");
+		      formatter.setTimeZone(TimeZone.getTimeZone("GMT"));;
+		        
+		        //This is for TimeStamp element value
+		        java.util.Date created = new java.util.Date();
+		        java.util.Date expires = new java.util.Date(created.getTime() + (5l * 60l * 1000l));
+		        //This is for TimeStamp value ends
+		        
+		        Element timestampElem = doc.createElement("Timestamp");
+		        Element createdElem = doc.createElement("Created");
+		        createdElem.setTextContent(formatter.format(created));
+		        
+		        Element expiresElem = doc.createElement("Expires");
+		        expiresElem.setTextContent(formatter.format(expires));
+		        
+		        timestampElem.appendChild(createdElem);
+		        timestampElem.appendChild(expiresElem);
+		        
+		        sig.getElement().appendChild(timestampElem);
                
 			//kreiraju se transformacije nad dokumentom
 			Transforms transforms = new Transforms(doc);

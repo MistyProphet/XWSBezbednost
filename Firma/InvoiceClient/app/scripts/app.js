@@ -19,9 +19,12 @@
   'main',
   'about',
   'invoices',
+  'outgoingInvoices',
   'invoice',
   'user',
-  'resource.user'
+  'resource.user',
+  'resource.invoice',
+  'resource.outgoingInvoice'
   ])
  .config(function ($routeProvider) {
   $routeProvider
@@ -30,7 +33,7 @@
     controller: 'invoicesListCtrl'
   })
   .when('/outgoing', {
-    templateUrl: 'views/invoice-list.html',
+    templateUrl: 'views/outgoing-invoice-list.html',
     controller: 'outgoingInvoicesListCtrl'
   })
   .when('/invoice-list', {

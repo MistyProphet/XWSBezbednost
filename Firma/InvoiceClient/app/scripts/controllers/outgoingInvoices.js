@@ -1,6 +1,6 @@
 'use strict';
 
- angular.module('invoices', ['resource.invoice',
+ angular.module('outgoingInvoices', ['resource.invoice',
  	'angular-md5'])
 
  .controller('outgoingInvoicesListCtrl', function (OutgoingInvoice, $scope, $location, md5, $log) {

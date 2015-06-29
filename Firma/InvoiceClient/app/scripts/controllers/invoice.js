@@ -20,7 +20,7 @@ angular.module('invoice', [
 	//ako kreiramo novu fakutru
 	else{
 		$scope.invoice = new Invoice();
-		$scope.invoice.invoiceItems = [];
+		$scope.invoice.invoiceItems = {"invoiceItem": []};
 	}
 	//funkcija koja otvara datepicker
 	$scope.openDatepicker = function($event, opened) {
@@ -43,18 +43,18 @@ angular.module('invoice', [
 			}
 		});
 		modalInstance.result.then(function (data) {
-			var invoiceItem = data.invoiceItem;
+			var item = data.invoiceItem;
 			//ako stavka fakture nema id i ako je akcija 'save' znaci da je nova i dodaje se u listu. ako ima, svakako se manja u listi
-			if(!invoiceItem.id && data.action==='save'){
-				$scope.invoice.invoiceItems.push(invoiceItem);				
+			if(!item.id && data.action==='save'){
+				$scope.invoice.invoiceItems.invoiceItem.push(item);				
 			}
 			//ako stavka treba da se obrise izbaci se iz niza
 			if(data.action==='delete'){
-				var index = $scope.invoice.invoiceItems.indexOf(invoiceItem);
-				$scope.invoice.invoiceItems.splice(index, 1);
+				var index = $scope.invoice.invoiceItems.invoiceItem.indexOf(item);
+				$scope.invoice.invoiceItems.invoiceItem.splice(index, 1);
 				//ako je stavka imala i id, treba da se obrise i na serveru (da li je to dobro?)
-				if(invoiceItem.id){
-					InvoiceItem.delete({invoiceItemId:invoiceItem.id});
+				if(item.id){
+					InvoiceItem.delete({invoiceItemId:item.id});
 				}
 			}
 		}, function () {

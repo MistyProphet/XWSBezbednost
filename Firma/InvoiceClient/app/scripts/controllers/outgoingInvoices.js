@@ -3,8 +3,8 @@
  angular.module('invoices', ['resource.invoice',
  	'angular-md5'])
 
- .controller('invoicesListCtrl', function (Invoice, $scope, $location, md5, $log) {
-	$scope.invoices = Invoice.query();
+ .controller('outgoingInvoicesListCtrl', function (OutgoingInvoice, $scope, $location, md5, $log) {
+	$scope.invoices = OutgoingInvoice.query();
     $scope.reverseSort = false;
     $scope.orderProp = 'suplierName';
 	$log.info($scope.invoices.length);//0

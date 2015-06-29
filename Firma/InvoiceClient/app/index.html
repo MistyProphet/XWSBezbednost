@@ -24,7 +24,8 @@
       <div class="header">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a ng-click="about()">About</a></li>
-          <li  ng-if="!isLoginPage()" ><a ng-href="#/">Home</a></li>
+          <li  ng-if="!isLoginPage()" ><a ng-href="#/incoming">Pristigle</a></li>
+          <li  ng-if="!isLoginPage()" ><a ng-href="#/outgoing">Za slanje</a></li>
           <li><a ng-if="!isLoginPage()" ng-click="logout()">Logout</a></li>
         </ul>
         <h3 class="text-muted">Invoice application</h3>
@@ -78,10 +79,12 @@
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/about.js"></script>
     <script src="scripts/controllers/invoices.js"></script>
+    <script src="scripts/controllers/outgoingInvoices.js"></script>
     <script src="scripts/controllers/invoice.js"></script>
     <script src="scripts/controllers/invoiceItem.js"></script>
     <script src="scripts/controllers/user.js"></script>
     <script src="scripts/factories/invoiceFactory.js"></script>
+    <script src="scripts/factories/outgoingInvoiceFactory.js"></script>
     <script src="scripts/factories/invoiceItemFactory.js"></script>
     <script src="scripts/factories/userFactory.js"></script>
     <!-- endbuild -->

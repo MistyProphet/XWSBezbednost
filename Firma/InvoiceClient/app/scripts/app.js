@@ -25,9 +25,13 @@
   ])
  .config(function ($routeProvider) {
   $routeProvider
-  .when('/', {
+  .when('/incoming', {
     templateUrl: 'views/invoice-list.html',
     controller: 'invoicesListCtrl'
+  })
+  .when('/outgoing', {
+    templateUrl: 'views/invoice-list.html',
+    controller: 'outgoingInvoicesListCtrl'
   })
   .when('/invoice-list', {
     templateUrl: 'views/invoice-list.html',
@@ -42,7 +46,7 @@
     controller: 'userCtrl'
   })
   .otherwise({
-    redirectTo: '/'
+    redirectTo: '/incoming'
   });
 })
  //tricky deo

@@ -24,7 +24,9 @@
   'user',
   'resource.user',
   'resource.invoice',
-  'resource.outgoingInvoice'
+  'resource.outgoingInvoice',
+  'resource.company',
+  'resource.admin'
   ])
  .config(function ($routeProvider) {
   $routeProvider
@@ -47,6 +49,10 @@
   .when('/login', {
     templateUrl: 'views/login.html',
     controller: 'userCtrl'
+  })
+  .when('/admin', {
+    templateUrl: 'views/admin.html',
+    controller: 'adminCtrl'
   })
   .otherwise({
     redirectTo: '/incoming'
@@ -94,11 +100,12 @@
     $http.defaults.transformResponse.unshift(parseResponse);//ovu funkciju stavimo na pocetak niza transformer funkcija
   }
   ])
- .controller('appCtrl', function($scope, User, $log, $location, $modal){
+ .controller('appCtrl', function($scope, User, Company, $log, $location, $modal){
   $scope.logout = User.logout;
   $scope.isLoginPage = function () {
     return $location.path() === '/login';
   };
+  $scope.company = Company.get();
   $scope.about = function (size) {
     var modalInstance = $modal.open({
       templateUrl: 'views/about.html',

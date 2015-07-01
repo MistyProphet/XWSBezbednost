@@ -85,12 +85,12 @@
 				</tr>
 			</table>
 		</div>
-		<div class="form-group">
+		<div ng-if="invoice.supplierName==company.name" class="form-group">
 			<button class="btn btn-default" ng-click="openModal()">new</button>
 		</div>
 	</form>
 </div>
-<div>
+<div ng-if="invoice.supplierName==company.name">
     <button class="btn" ng-click="save()">save</button>
     <button class="btn" ng-click="delete()">delete</button>
 </div>

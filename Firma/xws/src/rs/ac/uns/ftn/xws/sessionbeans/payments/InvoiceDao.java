@@ -9,10 +9,12 @@ import javax.ejb.Stateless;
 import javax.xml.bind.JAXBException;
 
 
+
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.entities.self.Company;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDao;
+import rs.ac.uns.ftn.xws.xmldb.EntityManagerBaseX;
 
 @Stateless
 @Local(InvoiceDaoLocal.class)
@@ -101,4 +103,8 @@ public class InvoiceDao extends GenericDao<Invoice, Long> implements InvoiceDaoL
 		
 		return merge(invoice, invoiceId);
 	}
+
+    public EntityManagerBaseX getEm() {
+        return em;
+    }
 }

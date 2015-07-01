@@ -1,0 +1,47 @@
+<div class="col-sm-9">
+  
+   <h3><i class="glyphicon glyphicon-dashboard"></i> Uloge </h3>  
+   <hr>
+ 
+
+ 
+
+  <table class="table table-striped" >
+    <thead>
+      <tr>
+          <th> <a ng-click = "orderProp = 'artikal.nazivArtikla'; reverseSort = !reverseSort">Naziv</th> 
+          <th> <a ng-click = "orderProp = 'artikal.pakovanje'; reverseSort = !reverseSort">Uloge</th> 
+          
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-click="setSelected(article)" ng-class="{selected: article === selectedDoc}" ng-repeat="article in articles  | filter:query | orderBy:orderProp : reverseSort ">
+          <td>{{article.name}}</td>
+          <td><ul ng-repeat="role in article.roles_allowed  | filter:query | orderBy:orderProp : reverseSort ">
+            <li>{{role.role}}</li><ul/></td>
+         
+      </tr>
+    </tbody>
+</table>
+
+
+  
+    
+</div>
+
+
+    <div class="form-group">
+       <button class="btn btn-default" ng-click="openModal()">Dodaj Ulogu</button>
+   <button class="btn btn-default" ng-click="koriguj()">Obrisi Ulogu</button>
+     </div>
+
+
+
+<hr />
+
+
+   
+
+
+
+</div>

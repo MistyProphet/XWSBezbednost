@@ -28,7 +28,7 @@
           <li  ng-if="!isLoginPage()" ><a ng-href="#/outgoing">Za slanje</a></li>
           <li><a ng-if="!isLoginPage()" ng-click="logout()">Logout</a></li>
         </ul>
-        <h3 class="text-muted">Invoice application</h3>
+        <h3 class="text-muted">{{company.name}}</h3>
       </div>
 
       <div ng-view=""></div>
@@ -78,6 +78,7 @@
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/about.js"></script>
+    <script src="scripts/controllers/admin.js"></script>
     <script src="scripts/controllers/invoices.js"></script>
     <script src="scripts/controllers/outgoingInvoices.js"></script>
     <script src="scripts/controllers/invoice.js"></script>
@@ -87,6 +88,7 @@
     <script src="scripts/factories/outgoingInvoiceFactory.js"></script>
     <script src="scripts/factories/invoiceItemFactory.js"></script>
     <script src="scripts/factories/userFactory.js"></script>
+    <script src="scripts/factories/companyFactory.js"></script>
     <!-- endbuild -->
 
 

@@ -1,9 +1,12 @@
 package rs.ac.uns.ftn.xws.services;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -15,17 +18,32 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.JAXBException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
+import rs.ac.uns.ftn.xws.entities.self.Company;
+import rs.ac.uns.ftn.xws.entities.user.User;
 import rs.ac.uns.ftn.xws.sessionbeans.payments.InvoiceDaoLocal;
 import rs.ac.uns.ftn.xws.util.Authenticate;
+import rs.ac.uns.ftn.xws.util.ServiceException;
 import rs.ac.uns.ftn.xws.util.ValidateSupplier;
+import rs.ac.uns.ftn.xws.xmldb.EntityManagerBaseX;
 
+@Authenticate
 public class InvoiceService {
 
     @Context
     private HttpServletResponse response;
+
+    @Context
+    private HttpServletRequest request;
 
 	@EJB
 	private InvoiceDaoLocal invoiceDao;
@@ -65,14 +83,60 @@ public class InvoiceService {
     @Path("/pristigle/{id}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public void updateInvoice(Invoice invoice, @PathParam("id") String id) {
+        User user = (User) request.getSession().getAttribute("user");
+        if (!user.getRoles().getRole().contains("shef") || !user.getRoles().getRole().contains("direktor"))
+            throw new ServiceException("Not authorized to change the invoice", Status.FORBIDDEN);
+
         try {
-            invoiceDao.merge(invoice, Long.parseLong(id));
+            Invoice oldInvoice = invoiceDao.findById(invoice.getId());
+            if (!checkIfIllegalChange(oldInvoice, invoice))
+                throw new ServiceException("Illegal invoice change", Status.BAD_REQUEST);
+
+            if (user.getRoles().getRole().contains("direktor")) {
+                invoiceDao.remove(invoice.getId());
+                send(invoice); 
+                return;
+            }
+            if (user.getRoles().getRole().contains("shef")) {
+                if (invoice.getTotalAmount() < Company.getInstance().getMaxAmount()) {
+                    invoiceDao.remove(invoice.getId());
+                    send(invoice); 
+                    return;
+                }
+                invoiceDao.merge(invoice, invoice.getId());
+            }
+
             response.setStatus(201);
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(400);
         }
     } 
+
+    private HttpResponse send(Invoice invoice) throws IOException, JAXBException {
+        HttpPost post = new HttpPost(invoice.getBuyerAddress() + "/Firma/api/pristigle");
+        post.setHeader("Content-Type", "application/xml");
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        invoiceDao.getEm().getMarshaller().marshal(invoice, stream);
+
+        post.setEntity(new ByteArrayEntity(stream.toByteArray()));
+
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpResponse response = client.execute(post);
+        return response;
+    }
+
+    private boolean checkIfIllegalChange(Invoice o, Invoice n) {
+        if (o.getSupplierTIN().equals(n.getSupplierTIN()) &&
+            o.getDate().equals(n.getDate()) &&
+            o.getBuyerName().equals(n.getBuyerName()) &&
+            o.getDate().equals(n.getDate()) &&
+            o.getBuyerAddress().equals(n.getBuyerAddress()) &&
+            o.getSupplierName().equals(n.getSupplierName()) &&
+            o.getAccountNumber() == n.getAccountNumber())
+            return true;
+        return false;
+    }
 
     @DELETE
     @Path("/pristigle/{id}")

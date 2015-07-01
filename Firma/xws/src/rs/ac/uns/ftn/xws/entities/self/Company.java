@@ -16,6 +16,7 @@ public class Company {
             name="Weyland-Yutani";
             url="192.168.1.80";
             TIN="tintintinti";
+            maxAmount = 100000;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,9 +41,14 @@ public class Company {
         return TIN;
     }
 
+    public double getMaxAmount() {
+        return maxAmount;
+    }
+
     private String name;
     private String url;
     private String TIN;
+    private double maxAmount;
 
     private Properties properties;
     private static Company instance = null;

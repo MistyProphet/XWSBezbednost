@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 import rs.ac.uns.ftn.xws.entities.payments.Invoice;
 import rs.ac.uns.ftn.xws.entities.payments.InvoiceItem;
 import rs.ac.uns.ftn.xws.sessionbeans.common.GenericDaoLocal;
+import rs.ac.uns.ftn.xws.xmldb.EntityManagerBaseX;
 
 public interface InvoiceDaoLocal extends GenericDaoLocal<Invoice, Long>{
 
@@ -24,4 +25,6 @@ public interface InvoiceDaoLocal extends GenericDaoLocal<Invoice, Long>{
 	public Invoice createInvoiceItem(Long invoiceId, InvoiceItem item) throws IOException, JAXBException;
 
 	public Invoice updateInvoiceItem(Long invoiceId, Long itemID, InvoiceItem item) throws IOException, JAXBException;
+
+    public EntityManagerBaseX getEm();
 }

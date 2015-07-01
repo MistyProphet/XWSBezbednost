@@ -60,7 +60,7 @@ public class AuthenticationInterceptor {
                 String roles = "";
                 for (String role : service.getRolesAllowed().getRole())
                     roles.concat(" / " + role);
-                throw new ServiceException("Not authorized. \nRoles required: "+roles, Status.UNAUTHORIZED);
+                throw new ServiceException("Not authorized. \nRoles required: "+roles, Status.FORBIDDEN);
             }
         }
 		Object result = context.proceed();

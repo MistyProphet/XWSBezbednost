@@ -17,7 +17,7 @@ public abstract class GenericDao<T extends Identifiable, ID extends Serializable
 	
 	protected JAXBContext context;
 	
-	protected EntityManagerBaseX<T, ID> em;
+	public EntityManagerBaseX<T, ID> em;
 	
 	public GenericDao(String contextPath, String schemaName) {
 		
